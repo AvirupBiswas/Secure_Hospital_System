@@ -21,7 +21,7 @@ public class OTPController {
 	 @GetMapping("/generateOtp")
 	    public String generateOtp(){
 		 int otp = otpService.generateOTP("abiswa15@asu.edu");//username/email will be passed
-	        //emailService.sendOTPMail("abiswa15@asu.edu", Integer.toString(otp));
+	        emailService.sendOTPMail("abiswa15@asu.edu", Integer.toString(otp));
 	        return ""+otp;
 	    }
 
