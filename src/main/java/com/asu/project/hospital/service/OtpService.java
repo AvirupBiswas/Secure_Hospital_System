@@ -10,7 +10,7 @@ import com.google.common.cache.CacheLoader;
 @Service
 public class OtpService {
 	// cache based on username and OTP
-	private static final Integer EXPIRE_MINS = 1;
+	public static final Integer EXPIRE_MINS = 3;
 	private LoadingCache<String, Integer> otpCache;
 
 	public OtpService() {
