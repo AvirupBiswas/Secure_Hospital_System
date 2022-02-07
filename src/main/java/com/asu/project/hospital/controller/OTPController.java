@@ -1,6 +1,8 @@
 package com.asu.project.hospital.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -24,9 +26,11 @@ public class OTPController {
 
 	@GetMapping("/generateOtp/{pageToView}")
 	public String generateOtp(@PathVariable("pageToView") String pageToView, Model model) {
-		int otp = otpService.generateOTP("abiswa15@asu.edu");// username/email will be passed
-		emailService.sendOTPMail("abiswa15@asu.edu", Integer.toString(otp));
-		model.addAttribute("email", "abiswa15@asu.edu");
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		String username = auth.getName();
+		int otp = otpService.generateOTP(username);
+		emailService.sendOTPMail(username, Integer.toString(otp));
+		model.addAttribute("email", username);
 		if (pageToView.equals("viewPDF")) {
 			model.addAttribute("viewPage", pageToView);
 		}
@@ -36,7 +40,8 @@ public class OTPController {
 
 	@RequestMapping(value = "/validateOtp", method = RequestMethod.POST)
 	public String validateOtp(@ModelAttribute("otp") String otpnum, @ModelAttribute("viewPage") String viewPage) {
-		String username = "abiswa15@asu.edu";
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		String username = auth.getName();
 		otpnum = otpnum.trim();
 		if (Integer.parseInt(otpnum) >= 0) {
 			int serverOtp = otpService.getOtp(username);

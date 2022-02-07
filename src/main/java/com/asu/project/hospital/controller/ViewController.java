@@ -10,6 +10,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import com.asu.project.hospital.entity.User;
+import com.asu.project.hospital.service.OtpService;
 import com.asu.project.hospital.service.UserService;
 
 import javax.servlet.http.HttpServletRequest;
@@ -22,6 +23,9 @@ public class ViewController {
 	
 	@Autowired
     private UserService userService;
+	
+	@Autowired
+    private OtpService otpService;
 
 	@GetMapping("/login")
 	public String login() {
@@ -53,5 +57,23 @@ public class ViewController {
 	        } catch(Exception e) {
 	            return e.getMessage();
 	        }
+	    }
+	    
+	    @GetMapping(value="/logout")
+	    public @ResponseBody String logout(HttpServletRequest request, HttpServletResponse response){
+	        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+	        if (auth != null){
+	            String username = auth.getName();
+	            //Remove the recently used OTP from server.
+	            otpService.clearOTP(username);
+	            new SecurityContextLogoutHandler().logout(request, response, auth);
+
+				/*
+				 * SystemLog systemLog=new SystemLog(); systemLog.setMessage(username +
+				 * " logged out"); systemLog.setTimestamp(new Date());
+				 * systemLogRepository.save(systemLog);
+				 */
+	        }
+	        return "redirect:/login?logout";
 	    }
 }
