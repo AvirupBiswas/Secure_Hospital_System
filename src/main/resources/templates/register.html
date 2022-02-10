@@ -80,7 +80,6 @@
                     <option th:value="LABSTAFF" th:text="Lab_Staff">Lab Staff</option>
                     <option th:value="HOSPITALSTAFF" th:text="Hospital_Staff">Hospital Staff</option>
                     <option th:value="INSURANCESTAFF" th:text="Insurance_Staff">Insurance Staff</option>
-                    <option th:value="ADMIN" th:text="Admin">Admin</option>
                 </select>
                 <span class="text-danger" th:if="${#fields.hasErrors('role')}" th:errors="*{role}"></span>
             </div>
