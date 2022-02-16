@@ -20,60 +20,66 @@ import java.util.Date;
 
 @Controller
 public class ViewController {
-	
+
 	@Autowired
-    private UserService userService;
-	
+	private UserService userService;
+
 	@Autowired
-    private OtpService otpService;
+	private OtpService otpService;
 
 	@GetMapping("/login")
 	public String login() {
 		return "signin";
 	}
 
-	
-	 @GetMapping("/register")
-	    public String register(Model model){
-	        model.addAttribute("user", new User());
-	        return "register";
-	    }
+	@GetMapping("/register")
+	public String register(Model model) {
+		model.addAttribute("user", new User());
+		return "register";
+	}
 
-	    @PostMapping("/register")
-	    public String register(@Valid @ModelAttribute("user") User userForm, BindingResult result){
-	        if (result.hasErrors()) {
-	            return "register";
-	        }
-	        try {
-	            userService.registerUser(userForm);
+	@PostMapping("/register")
+	public String register(@Valid @ModelAttribute("user") User userForm, BindingResult result, Model model) {
+		if (result.hasErrors()) {
+			return "register";
+		}
+		try {
+			userService.registerUser(userForm);
 
-				/*
-				 * SystemLog systemLog=new SystemLog(); systemLog.setMessage(userForm.getEmail()
-				 * + " successfully registered"); systemLog.setTimestamp(new Date());
-				 * systemLogRepository.save(systemLog);
-				 */
+			/*
+			 * SystemLog systemLog=new SystemLog(); systemLog.setMessage(userForm.getEmail()
+			 * + " successfully registered"); systemLog.setTimestamp(new Date());
+			 * systemLogRepository.save(systemLog);
+			 */
+			String role = userForm.getRole();
+			model.addAttribute("firstName", userForm.getFirstName());
+			model.addAttribute("lastName", userForm.getLastName());
+			model.addAttribute("email", userForm.getEmail());
+			if (role.equals("PATIENT")) {
+				return "registrationSucessfull";
+			} else {
+				return "registrationPending";
+			}
+		} catch (Exception e) {
+			return e.getMessage();
+		}
+	}
 
-	            return "signin";
-	        } catch(Exception e) {
-	            return e.getMessage();
-	        }
-	    }
-	    
-	    @GetMapping(value="/logout")
-	    public @ResponseBody String logout(HttpServletRequest request, HttpServletResponse response){
-	        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-	        if (auth != null){
-	            String username = auth.getName();
-	            //Remove the recently used OTP from server.
-	            otpService.clearOTP(username);
-	            new SecurityContextLogoutHandler().logout(request, response, auth);
+	@GetMapping(value = "/logout")
+	public @ResponseBody String logout(HttpServletRequest request, HttpServletResponse response) {
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		if (auth != null) {
+			String username = auth.getName();
+			// Remove the recently used OTP from server.
+			otpService.clearOTP(username);
+			new SecurityContextLogoutHandler().logout(request, response, auth);
 
-				/*
-				 * SystemLog systemLog=new SystemLog(); systemLog.setMessage(username +
-				 * " logged out"); systemLog.setTimestamp(new Date());
-				 * systemLogRepository.save(systemLog);
-				 */
-	        }
-	        return "redirect:/login?logout";
-	    }
+			/*
+			 * SystemLog systemLog=new SystemLog(); systemLog.setMessage(username +
+			 * " logged out"); systemLog.setTimestamp(new Date());
+			 * systemLogRepository.save(systemLog);
+			 */
+		}
+		return "redirect:/login?logout";
+	}
 }
