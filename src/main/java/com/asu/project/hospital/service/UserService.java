@@ -8,54 +8,77 @@ import org.springframework.stereotype.Service;
 
 import com.asu.project.hospital.Exception.EmailUsedException;
 import com.asu.project.hospital.Exception.RoleException;
+import com.asu.project.hospital.entity.AdminDecisionForUser;
 import com.asu.project.hospital.entity.User;
+import com.asu.project.hospital.repository.AdminDecisionForUserRepository;
 import com.asu.project.hospital.repository.UserRepository;
 
 @Service
 public class UserService {
+
+	@Autowired
+	private PasswordEncoder passwordEncoder;
+
+	@Autowired
+	private UserRepository userRepository;
 	
 	@Autowired
-    private PasswordEncoder passwordEncoder;
-	
-	@Autowired
-    private UserRepository userRepository;
-	
-	public User registerUser(User user){
-        return registerUser(user, user.getRole());
-    }
-	
-	public User registerUser(User user, String role) {
+	private AdminDecisionForUserRepository adminDecisionForUserRepository;
+
+	public void registerUser(User user) {
+		String role = user.getRole();
 		validateUser(user);
 		validateUserRole(role);
+		if (role.equals("PATIENT")) {
+			User u = new User();
+			u.setFirstName(user.getFirstName());
+			u.setLastName(user.getLastName());
+			u.setEmail(user.getEmail());
+			u.setRole(role);
+			u.setPassword(passwordEncoder.encode(user.getPassword()));
+			u.setActive(true);
+			userRepository.save(u);
+		}
+		else {
+			AdminDecisionForUser u = new AdminDecisionForUser();
+			u.setFirstName(user.getFirstName());
+			u.setLastName(user.getLastName());
+			u.setEmail(user.getEmail());
+			u.setRole(role);
+			u.setPassword(passwordEncoder.encode(user.getPassword()));
+			adminDecisionForUserRepository.save(u);
+		}
+	}
+	
+	
+	public void registerUserAfterAdminApproval(AdminDecisionForUser user) {
 		User u = new User();
 		u.setFirstName(user.getFirstName());
 		u.setLastName(user.getLastName());
 		u.setEmail(user.getEmail());
-		u.setRole(role);
-//        u.setPassword(user.getPassword());
-		u.setPassword(passwordEncoder.encode(user.getPassword()));
+		u.setRole(user.getRole());
+		u.setPassword(user.getPassword());
 		u.setActive(true);
 		userRepository.save(u);
-		return u;
 	}
-	
-	@Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
-	
-	  public void validateUser(User user){
-	        userRepository.findOneByEmailIgnoreCase(user.getEmail()).
-	            ifPresent(existing ->{
-	                if(existing.getEmail().equalsIgnoreCase(user.getEmail())){
-	                    throw new EmailUsedException();
-	                } 
-	            });
-	    }
 
-	    public void validateUserRole(String role){
-	        if(!(role.equals("PATIENT") || role.equals("LABSTAFF") || role.equals("HOSPITALSTAFF") || role.equals("INSURANCESTAFF") || role.equals("ADMIN") || role.equals("DOCTOR"))){
-	            throw new RoleException();
-	        }
-	    }
+	@Bean
+	public PasswordEncoder passwordEncoder() {
+		return new BCryptPasswordEncoder();
+	}
+
+	public void validateUser(User user) {
+		userRepository.findOneByEmailIgnoreCase(user.getEmail()).ifPresent(existing -> {
+			if (existing.getEmail().equalsIgnoreCase(user.getEmail())) {
+				throw new EmailUsedException();
+			}
+		});
+	}
+
+	public void validateUserRole(String role) {
+		if (!(role.equals("PATIENT") || role.equals("LABSTAFF") || role.equals("HOSPITALSTAFF")
+				|| role.equals("INSURANCESTAFF") || role.equals("ADMIN") || role.equals("DOCTOR"))) {
+			throw new RoleException();
+		}
+	}
 }

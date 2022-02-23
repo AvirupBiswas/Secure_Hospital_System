@@ -31,9 +31,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
-		http.authorizeRequests().antMatchers("/viewPDF/**").hasAnyAuthority("ADMIN").antMatchers("/")
+		http.authorizeRequests().antMatchers("/viewPDF/**").hasAnyAuthority("ADMIN","HOSPITALSTAFF").antMatchers("/")
 				.permitAll().and().formLogin().loginPage("/login") // Loginform all can access ..
-				// .successHandler(myAuthenticationSuccessHandler())
+				.successHandler(myAuthenticationSuccessHandler())
 //                        .defaultSuccessUrl("/dashboard")
 				.failureUrl("/login?error").permitAll().and().logout()
 				.logoutRequestMatcher(new AntPathRequestMatcher("/logout")).logoutSuccessUrl("/login").and()
@@ -46,4 +46,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	public PasswordEncoder getPasswordEncoder() {
 		return new BCryptPasswordEncoder();
 	}
+	
+	@Bean
+    public AuthenticationSuccessHandler myAuthenticationSuccessHandler(){
+        return new UrlAuthenticationSuccessHandler();
+    }
 }
