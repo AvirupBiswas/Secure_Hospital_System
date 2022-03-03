@@ -27,9 +27,9 @@ public class UserService {
 
 	public void registerUser(User user) {
 		String role = user.getRole();
-		validateUser(user);
 		validateUserRole(role);
 		if (role.equals("PATIENT")) {
+			validateUser(user);
 			User u = new User();
 			u.setFirstName(user.getFirstName());
 			u.setLastName(user.getLastName());
@@ -40,6 +40,7 @@ public class UserService {
 			userRepository.save(u);
 		}
 		else {
+			validateUserBeforeAdminApproval(user);
 			AdminDecisionForUser u = new AdminDecisionForUser();
 			u.setFirstName(user.getFirstName());
 			u.setLastName(user.getLastName());
@@ -69,6 +70,14 @@ public class UserService {
 
 	public void validateUser(User user) {
 		userRepository.findOneByEmailIgnoreCase(user.getEmail()).ifPresent(existing -> {
+			if (existing.getEmail().equalsIgnoreCase(user.getEmail())) {
+				throw new EmailUsedException();
+			}
+		});
+	}
+	
+	public void validateUserBeforeAdminApproval(User user) {
+		adminDecisionForUserRepository.findOneByEmailIgnoreCase(user.getEmail()).ifPresent(existing -> {
 			if (existing.getEmail().equalsIgnoreCase(user.getEmail())) {
 				throw new EmailUsedException();
 			}

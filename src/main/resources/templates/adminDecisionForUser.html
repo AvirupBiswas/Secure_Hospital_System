@@ -11,6 +11,12 @@
             $.ajax({
                 url : "[(@{'/admin/aproveUser/'})]"+id,
                 type : "GET",
+                beforeSend: function () {
+        	    	$("#loader").removeClass('hidden');
+        	        },
+        	    complete: function () {
+        	        $("#loader").addClass('hidden');
+        	        },
                 success : function(data) {
                 	 $('#' + id).remove();
                 },
@@ -20,9 +26,15 @@
             });
         }
         function deny(id) {
-            $.ajax({
+             $.ajax({
                 url : "[(@{'/admin/denyUser/'})]"+id,
                 type : "GET",
+                beforeSend: function () {
+        	    	$("#loader").removeClass('hidden');
+        	        },
+        	    complete: function () {
+        	        $("#loader").addClass('hidden');
+        	        },
                 success : function(data) {
                 	 $('#' + id).remove();
                 },
@@ -30,8 +42,48 @@
                     console.log("There was an error");
                 }
             });
+        	$("#loader").removeClass('hidden');
         }
     </script>
+    <style>
+   .lds-dual-ring.hidden {
+        display: none;
+    }
+
+    .overlay {
+        position: fixed;
+        top:  50%;
+    	left: 50%;
+    	transform: translate(-50%,-50%);
+        text-align: center;
+    }
+    
+    /*Spinner Styles*/
+    .lds-dual-ring {
+        display: inline-block;
+        width: 80px;
+        height: 80px;
+    }
+    .lds-dual-ring:after {
+        content: " ";
+        display: block;
+        width: 64px;
+        height: 64px;
+        border-radius: 50%;
+        border: 6px solid #000000;
+        border-color: #000000 transparent #000000 transparent;
+        animation: lds-dual-ring 1.2s linear infinite;
+        text-align: center;
+    }
+    @keyframes lds-dual-ring {
+        0% {
+            transform: rotate(0deg);
+        }
+        100% {
+            transform: rotate(360deg);
+        }
+    }
+    </style>
 </head>
 <body>
 
@@ -58,7 +110,8 @@
     <br>
     <br>
     <br>
-
+  	<div id="loader" class="lds-dual-ring hidden overlay">
+    </div>
 	<table class="table">
 	    <thead>
 	        <tr>
@@ -66,8 +119,8 @@
 	            <th scope="col">LastName</th>
 	            <th scope="col">Email</th>
 	            <th scope="col">Role</th>
-	            <th scope="col">Approve</th>
-	            <th scope="col">Deny</th>
+	            <th scope="col"></th>
+	            <th scope="col"></th>
 	        </tr>
 	    </thead>
 	    <tbody class="tableBody">
@@ -76,9 +129,9 @@
 	            <td>[[${user.lastName}]]</td>
 	            <td>[[${user.email}]]</td>
 	            <td>[[${user.role}]]</td>
-	            <td><button class="btn btn-primary"   
+	            <td><button class="btn btn-success"   
                         th:onclick="'approve(\''+${user.id}+ '\');'">Approve</button></td>
-                <td><button class="btn btn-primary" 
+                <td><button class="btn btn-danger" 
                 	th:onclick="'deny(\''+${user.id}+ '\');'">Deny</button></td>
 	        </tr>
 	    </tbody>
