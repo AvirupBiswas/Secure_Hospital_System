@@ -31,7 +31,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
-		http.authorizeRequests().antMatchers("/viewPDF/**").hasAnyAuthority("ADMIN","HOSPITALSTAFF").antMatchers("/")
+		http.authorizeRequests().antMatchers("/viewPDF/**").hasAnyAuthority("ADMIN","HOSPITALSTAFF")
+		.antMatchers("/admin/**").hasAnyAuthority("ADMIN").antMatchers("/")
 				.permitAll().and().formLogin().loginPage("/login") // Loginform all can access ..
 				.successHandler(myAuthenticationSuccessHandler())
 //                        .defaultSuccessUrl("/dashboard")

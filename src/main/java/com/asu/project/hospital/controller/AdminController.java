@@ -13,13 +13,14 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.asu.project.hospital.entity.AdminDecisionForUser;
+import com.asu.project.hospital.entity.User;
 import com.asu.project.hospital.repository.AdminDecisionForUserRepository;
 import com.asu.project.hospital.service.MailService;
 import com.asu.project.hospital.service.UserService;
 
 @Controller
 @RequestMapping("/admin")
-public class AdminDecisionController {
+public class AdminController {
 
 	@Autowired
 	private AdminDecisionForUserRepository adminDecisionForUserRepository;
@@ -29,13 +30,6 @@ public class AdminDecisionController {
 
 	@Autowired
 	private MailService emailService;
-
-	@GetMapping("/adminDecisionOnReg")
-	public String adminDecisionOnReg(Model model) {
-		List<AdminDecisionForUser> users = adminDecisionForUserRepository.findAll();
-		model.addAttribute("userList", users);
-		return "adminDecisionForUser";
-	}
 
 	@GetMapping("/aproveUser/{Id}")
 	public ResponseEntity<String> aproveUser(@PathVariable("Id") String Id) {
@@ -60,5 +54,15 @@ public class AdminDecisionController {
 					user.get().getLastName());
 		}
 		return new ResponseEntity<String>(HttpStatus.OK);
+	}
+
+	@GetMapping("/home")
+	public String adminHome(Model model) {
+		model.addAttribute("lastAccess", "Never");
+		User user = userService.getLoggedUser();
+		model.addAttribute("accountName", user.getFirstName());
+		List<AdminDecisionForUser> users = adminDecisionForUserRepository.findAll();
+		model.addAttribute("userList", users);
+		return "admin/home";
 	}
 }
