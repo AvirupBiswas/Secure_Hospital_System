@@ -24,14 +24,14 @@ public class UserService {
 
 	@Autowired
 	private UserRepository userRepository;
-	
+
 	@Autowired
 	private AdminDecisionForUserRepository adminDecisionForUserRepository;
 
-	public void registerUser(User user) {
+	public void registerUser(User user, String registeredBy) {
 		String role = user.getRole();
 		validateUserRole(role);
-		if (role.equals("PATIENT")) {
+		if ((registeredBy != null && registeredBy.equals("admin")) || role.equals("PATIENT")) {
 			validateUser(user);
 			User u = new User();
 			u.setFirstName(user.getFirstName());
@@ -41,8 +41,7 @@ public class UserService {
 			u.setPassword(passwordEncoder.encode(user.getPassword()));
 			u.setActive(true);
 			userRepository.save(u);
-		}
-		else {
+		} else {
 			validateUserBeforeAdminApproval(user);
 			AdminDecisionForUser u = new AdminDecisionForUser();
 			u.setFirstName(user.getFirstName());
@@ -53,8 +52,7 @@ public class UserService {
 			adminDecisionForUserRepository.save(u);
 		}
 	}
-	
-	
+
 	public void registerUserAfterAdminApproval(AdminDecisionForUser user) {
 		User u = new User();
 		u.setFirstName(user.getFirstName());
@@ -78,7 +76,7 @@ public class UserService {
 			}
 		});
 	}
-	
+
 	public void validateUserBeforeAdminApproval(User user) {
 		adminDecisionForUserRepository.findOneByEmailIgnoreCase(user.getEmail()).ifPresent(existing -> {
 			if (existing.getEmail().equalsIgnoreCase(user.getEmail())) {
@@ -93,13 +91,13 @@ public class UserService {
 			throw new RoleException();
 		}
 	}
-	
-	 public User getLoggedUser() {
-	        String loggedUserName = "";
-	        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-	        if (!(authentication instanceof AnonymousAuthenticationToken)) {
-	            loggedUserName = authentication.getName();
-	        }
-	        return userRepository.findByEmail(loggedUserName).orElse(null);
-	    }
+
+	public User getLoggedUser() {
+		String loggedUserName = "";
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		if (!(authentication instanceof AnonymousAuthenticationToken)) {
+			loggedUserName = authentication.getName();
+		}
+		return userRepository.findByEmail(loggedUserName).orElse(null);
+	}
 }

@@ -56,7 +56,8 @@
 </head>
 <body>
 <nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
-    <a th:href="@{/}" class="navbar-brand" href="#">Secure Hospital System</a>
+    <a th:if="${#strings.isEmpty(registeredBy)}" th:href="@{/login}" class="navbar-brand" href="#">Secure Hospital System</a>
+    <a th:unless="${#strings.isEmpty(registeredBy)}" th:href="@{/admin/home}" class="navbar-brand" href="#">Secure Hospital System</a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
     </button>
@@ -136,6 +137,7 @@
             <br>
             <button type="submit" class="btn btn-primary">Submit</button>
         </fieldset>
+        <input type="hidden" name="registeredBy" th:value="${registeredBy}"> 
     </form>
 </div>
 <br>

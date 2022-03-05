@@ -58,11 +58,17 @@ public class AdminController {
 
 	@GetMapping("/home")
 	public String adminHome(Model model) {
-		model.addAttribute("lastAccess", "Never");
+		User user = userService.getLoggedUser();
+		model.addAttribute("accountName", user.getFirstName());
+		return "admin/home";
+	}
+	
+	@GetMapping("/userAccPendingDecision")
+	public String pendingDecisionForUsereAccount(Model model) {
 		User user = userService.getLoggedUser();
 		model.addAttribute("accountName", user.getFirstName());
 		List<AdminDecisionForUser> users = adminDecisionForUserRepository.findAll();
 		model.addAttribute("userList", users);
-		return "admin/home";
+		return "admin/adminDecisionPending";
 	}
 }

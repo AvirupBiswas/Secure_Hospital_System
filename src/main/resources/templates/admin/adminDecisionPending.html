@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+   <title>Secure Hospital System</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"/>
+      <script th:inline="javascript">
+        function approve(id) {
+            $.ajax({
+                url : "[(@{'/admin/aproveUser/'})]"+id,
+                type : "GET",
+                beforeSend: function () {
+        	    	$("#loader").removeClass('hidden');
+        	        },
+        	    complete: function () {
+        	        $("#loader").addClass('hidden');
+        	        },
+                success : function(data) {
+                	 $('#' + id).remove();
+                },
+                error : function() {
+                    console.log("There was an error");
+                }
+            });
+        }
+        function deny(id) {
+             $.ajax({
+                url : "[(@{'/admin/denyUser/'})]"+id,
+                type : "GET",
+                beforeSend: function () {
+        	    	$("#loader").removeClass('hidden');
+        	        },
+        	    complete: function () {
+        	        $("#loader").addClass('hidden');
+        	        },
+                success : function(data) {
+                	 $('#' + id).remove();
+                },
+                error : function() {
+                    console.log("There was an error");
+                }
+            });
+        	$("#loader").removeClass('hidden');
+        }
+    </script>
+    <style>
+   .lds-dual-ring.hidden {
+        display: none;
+    }
+
+    .overlay {
+        position: fixed;
+        top:  50%;
+    	left: 50%;
+    	transform: translate(-50%,-50%);
+        text-align: center;
+    }
+    
+    /*Spinner Styles*/
+    .lds-dual-ring {
+        display: inline-block;
+        width: 80px;
+        height: 80px;
+    }
+    .lds-dual-ring:after {
+        content: " ";
+        display: block;
+        width: 64px;
+        height: 64px;
+        border-radius: 50%;
+        border: 6px solid #000000;
+        border-color: #000000 transparent #000000 transparent;
+        animation: lds-dual-ring 1.2s linear infinite;
+        text-align: center;
+    }
+    @keyframes lds-dual-ring {
+        0% {
+            transform: rotate(0deg);
+        }
+        100% {
+            transform: rotate(360deg);
+        }
+    }
+    </style>
+</head>
+<body>
+<div class="container">
+    <nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
+        <a th:href="@{/admin/home}" class="navbar-brand" href="#">Secure Hospital System</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+         <div class="collapse navbar-collapse" id="navbarsExampleDefault">
+	        <ul style="list-style: none; display:contents">
+		        <li class="nav-item active" style="padding-right: 20px;">
+	        		<div style="display: flex; align-items:center">
+				      	<div style="height: 10px; width: 10px; border-radius:50%; background-color: var(--success)"></div>
+				      	<em style="color:white; font-size: 15px; margin-left: 10px">logged in as <span th:text="${accountName}"></span></em>
+				    </div>
+			     </li>
+		        <li>
+		      	  <a th:href="@{/logout}" class="nav-link">Log Out</a>
+		        </li>
+	        </ul>
+    	</div>
+    <div>
+    </div>
+    </nav>
+    <br>
+    <br>
+    <br>
+    <br>
+     <div th:if="${#lists.isEmpty(userList)}">
+     <h2 style="text-align:center;">No Pending user account List </h2>
+     </div>
+    <br>
+    <input class="btn btn-primary" type="button" value="Go Back" onclick="history.back(-1)" />
+    <br>
+     <br>
+  	<div id="loader" class="lds-dual-ring hidden overlay">
+    </div>
+    <div th:unless="${#lists.isEmpty(userList)}">
+    <h2>Pending List ...</h2>
+    <hr style="height:1px;border:none;color:#333;background-color:#333;" />
+    <table class="table">
+	    <thead>
+	        <tr>
+	            <th scope="col">FirstName</th>
+	            <th scope="col">LastName</th>
+	            <th scope="col">Email</th>
+	            <th scope="col">Role</th>
+	            <th scope="col"></th>
+	            <th scope="col"></th>
+	        </tr>
+	    </thead>
+	    <tbody class="tableBody">
+	        <tr th:each="user: ${userList}" th:id="${user.id}">
+	            <td>[[${user.firstName}]]</td>
+	            <td>[[${user.lastName}]]</td>
+	            <td>[[${user.email}]]</td>
+	            <td>[[${user.role}]]</td>
+	            <td><button class="btn btn-success"   
+                        th:onclick="'approve(\''+${user.id}+ '\');'">Approve</button></td>
+                <td><button class="btn btn-danger" 
+                	th:onclick="'deny(\''+${user.id}+ '\');'">Deny</button></td>
+	        </tr>
+	    </tbody>
+	</table>
+    </div>
+</div>
+</body>
+</html>
