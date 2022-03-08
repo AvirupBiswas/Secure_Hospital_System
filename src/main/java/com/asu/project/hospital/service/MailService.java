@@ -69,4 +69,14 @@ public class MailService {
 	public void sendOTPMail(String email, String otp) {
 		sendEmail(email, "OTP for the transaction:", "<html><body>" + otp + "</body></html>", false, true);
 	}
+	
+	@Async
+	public void sendUserRegistrationAcceptanceMail(String email,String firstName,String lastName) {
+		sendEmail(email, "Registration approval", "<html><body>" + "Congraluation "+firstName+" "+lastName+ ".Your registration has been approved by admin.You can now login to Secure Hospital System with your email and password." + "</body></html>", false, true);
+	}
+	
+	@Async
+	public void sendUserRegistrationDenialMail(String email,String firstName,String lastName) {
+		sendEmail(email, "Registration rejection", "<html><body>" + "Sorry "+firstName+" "+lastName+ ".Your registration has been declined by admin.Please try again." + "</body></html>", false, true);
+	}
 }

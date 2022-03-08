@@ -4,14 +4,14 @@
     <title>Secure Hospital System</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="../static/bootstrap.css" />
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous"/>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/css/all.min.css">
 
-    <script type="text/javascript">
+    <script th:inline="javascript">
         function validatePassword() {
             var firstInput = document.getElementById("pwd").value;
             var secondInput = document.getElementById("confirmPassword").value;
-
             if (firstInput !== secondInput || firstInput === "" || secondInput === "") {
                 alert("Passwords do not match - Please make sure you confirm with the correct password!")
                 return false;
@@ -20,11 +20,44 @@
                 return true;
             }
         }
+        
+        function password_show_hide1() {
+    		var x = document.getElementById("pwd");
+    		var show_eye = document.getElementById("show_eye1");
+    		var hide_eye = document.getElementById("hide_eye1");
+    		hide_eye.classList.remove("d-none");
+    		if(x.type === "password") {
+    			x.type = "text";
+    			show_eye.style.display = "none";
+    			hide_eye.style.display = "block";
+    		} else {
+    			x.type = "password";
+    			show_eye.style.display = "block";
+    			hide_eye.style.display = "none";
+    		}
+    	}
+        
+        function password_show_hide2() {
+    		var x = document.getElementById("confirmPassword");
+    		var show_eye = document.getElementById("show_eye2");
+    		var hide_eye = document.getElementById("hide_eye2");
+    		hide_eye.classList.remove("d-none");
+    		if(x.type === "password") {
+    			x.type = "text";
+    			show_eye.style.display = "none";
+    			hide_eye.style.display = "block";
+    		} else {
+    			x.type = "password";
+    			show_eye.style.display = "block";
+    			hide_eye.style.display = "none";
+    		}
+    	}
     </script>
 </head>
 <body>
 <nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
-    <a th:href="@{/}" class="navbar-brand" href="#">Secure Hospital System</a>
+    <a th:if="${#strings.isEmpty(registeredBy)}" th:href="@{/login}" class="navbar-brand" href="#">Secure Hospital System</a>
+    <a th:unless="${#strings.isEmpty(registeredBy)}" th:href="@{/admin/home}" class="navbar-brand" href="#">Secure Hospital System</a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
     </button>
@@ -32,10 +65,10 @@
     <div class="collapse navbar-collapse" id="navbarsExampleDefault">
         <ul class="navbar-nav mr-auto">
             <li class="nav-item">
-                <a th:href="@{login}" class="nav-link">Login</a>
+                <a th:href="@{/login}" class="nav-link">Login</a>
             </li>
             <li class="nav-item">
-                <a th:href="@{register}" class="nav-link">Register</a>
+                <a th:href="@{/register}" class="nav-link">Register</a>
             </li>
         </ul>
     </div>
@@ -62,14 +95,32 @@
                 <input type="email" class="form-control" id="email" placeholder="Enter email" name="email" th:field="*{email}">
                 <span class="text-danger" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></span>
             </div>
-            <div class="form-group">
-                <label for="pwd">Password:</label>
-                <input type="password" class="form-control" id="pwd" placeholder="Enter password" name="pwd" th:field="*{password}">
-                <span class="text-danger" th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></span>
+             <label for="pwd">Password:</label><br>
+             <div class="input-group mb-3">
+	              <div class="input-group-prepend">
+	                <span class="input-group-text" id="basic-addon1"><i class="fas fa-lock"></i></span>
+	              </div>
+	              <input name="pwd" type="password"  class="input form-control" id="pwd" placeholder="Enter password" th:field="*{password}"/>
+	              <div class="input-group-append">
+	              <span class="text-danger" th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></span>
+	                <span class="input-group-text" onclick="password_show_hide1();">
+	                  <i class="fas fa-eye" id="show_eye1"></i>
+	                  <i class="fas fa-eye-slash d-none" id="hide_eye1"></i>
+	                </span>
+	              </div>
             </div>
-            <div class="form-group">
-                <label for="confirmPassword">Confirm Password:</label>
-                <input type="Password" class="form-control" id="confirmPassword" placeholder="Confirm Password" name="confirmPassword" >
+            <label for="confirmPassword">Confirm Password:</label><br>
+            <div class="input-group mb-3">
+	              <div class="input-group-prepend">
+	                <span class="input-group-text" id="basic-addon2"><i class="fas fa-lock"></i></span>
+	              </div>
+	              <input name="confirmPassword" type="password" class="input form-control" id="confirmPassword" placeholder="Confirm Password"/>
+	              <div class="input-group-append">
+	                <span class="input-group-text" onclick="password_show_hide2();">
+	                  <i class="fas fa-eye" id="show_eye2"></i>
+	                  <i class="fas fa-eye-slash d-none" id="hide_eye2"></i>
+	                </span>
+	              </div>
             </div>
             <div class="dropdown">
                 <label for="role">Role:</label>
@@ -86,6 +137,7 @@
             <br>
             <button type="submit" class="btn btn-primary">Submit</button>
         </fieldset>
+        <input type="hidden" name="registeredBy" th:value="${registeredBy}"> 
     </form>
 </div>
 <br>

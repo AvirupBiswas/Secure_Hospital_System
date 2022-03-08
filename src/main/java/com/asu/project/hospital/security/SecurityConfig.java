@@ -21,29 +21,35 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	@Qualifier("hospitalUserDetailsService")
 	@Autowired
 	UserDetailsService userDetailsService;
-	
+
 	@Override
-    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth
-                .userDetailsService(userDetailsService)
-                .passwordEncoder(getPasswordEncoder());
-    }
+	protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+		auth.userDetailsService(userDetailsService).passwordEncoder(getPasswordEncoder());
+	}
 
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
-		http.authorizeRequests().antMatchers("/viewPDF/**").hasAnyAuthority("ADMIN").antMatchers("/")
-				.permitAll().and().formLogin().loginPage("/login") // Loginform all can access ..
-				// .successHandler(myAuthenticationSuccessHandler())
-//                        .defaultSuccessUrl("/dashboard")
-				.failureUrl("/login?error").permitAll().and().logout()
-				.logoutRequestMatcher(new AntPathRequestMatcher("/logout")).logoutSuccessUrl("/login").and()
-				.exceptionHandling().and().sessionManagement().and().csrf()
-				.csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()).and().headers().frameOptions().and()
-				.defaultsDisabled().xssProtection();
-	}
+		 http
+	        .authorizeRequests()
+	        .antMatchers("/viewPDF/**").hasAnyAuthority("ADMIN", "HOSPITALSTAFF")
+	        .antMatchers("/admin/**").hasAuthority("ADMIN")
+	        .antMatchers("/").permitAll()
+	        .and().formLogin().loginPage("/login")
+	        .successHandler(myAuthenticationSuccessHandler())
+			.failureUrl("/login?error").permitAll().and().logout()
+			.logoutRequestMatcher(new AntPathRequestMatcher("/logout")).logoutSuccessUrl("/login").and()
+			.exceptionHandling().and().sessionManagement().and().csrf()
+			.csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()).and().headers().frameOptions().and()
+			.defaultsDisabled().xssProtection();
+		 }
 
 	@Bean
 	public PasswordEncoder getPasswordEncoder() {
 		return new BCryptPasswordEncoder();
+	}
+
+	@Bean
+	public AuthenticationSuccessHandler myAuthenticationSuccessHandler() {
+		return new UrlAuthenticationSuccessHandler();
 	}
 }
