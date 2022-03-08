@@ -1,5 +1,7 @@
 package com.asu.project.hospital.service;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
@@ -100,4 +102,16 @@ public class UserService {
 		}
 		return userRepository.findByEmail(loggedUserName).orElse(null);
 	}
+	
+	public List<User> findAll() {
+        return userRepository.findAll();
+    }
+	
+	public User findByUserId(String userId) {
+        return userRepository.findByUserId(userId);
+    }
+	
+	public void delete(User userEntity) {
+        userRepository.delete(userEntity);
+    }
 }
