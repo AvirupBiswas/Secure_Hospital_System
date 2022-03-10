@@ -9,11 +9,10 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
+import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
-import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
@@ -29,19 +28,20 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
-		 http
-	        .authorizeRequests()
-	        .antMatchers("/viewPDF/**").hasAnyAuthority("ADMIN", "HOSPITALSTAFF")
-	        .antMatchers("/admin/**").hasAuthority("ADMIN")
-	        .antMatchers("/").permitAll()
-	        .and().formLogin().loginPage("/login")
-	        .successHandler(myAuthenticationSuccessHandler())
-			.failureUrl("/login?error").permitAll().and().logout()
-			.logoutRequestMatcher(new AntPathRequestMatcher("/logout")).logoutSuccessUrl("/login").and()
-			.exceptionHandling().and().sessionManagement().and().csrf()
-			.csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()).and().headers().frameOptions().and()
-			.defaultsDisabled().xssProtection();
-		 }
+		http.authorizeRequests().antMatchers("/viewPDF/**")
+		.hasAnyAuthority("ADMIN", "HOSPITALSTAFF")
+				.antMatchers("/admin/**").hasAuthority("ADMIN").antMatchers("/").permitAll().and().formLogin()
+				.loginPage("/login").successHandler(myAuthenticationSuccessHandler())
+				.failureUrl("/login?error")
+				.permitAll().and().logout(logout -> logout
+						.logoutUrl("/logout")
+						.logoutSuccessUrl("/login")
+						.logoutSuccessHandler(logoutSuccessHandler())
+						.invalidateHttpSession(true) )
+				.exceptionHandling().and().sessionManagement().and().csrf()
+				.csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()).and().headers().frameOptions().and()
+				.defaultsDisabled().xssProtection();
+	}
 
 	@Bean
 	public PasswordEncoder getPasswordEncoder() {
@@ -51,5 +51,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	@Bean
 	public AuthenticationSuccessHandler myAuthenticationSuccessHandler() {
 		return new UrlAuthenticationSuccessHandler();
+	}
+
+	@Bean
+	public LogoutSuccessHandler logoutSuccessHandler() {
+		return new CustomLogoutSuccessHandler();
 	}
 }

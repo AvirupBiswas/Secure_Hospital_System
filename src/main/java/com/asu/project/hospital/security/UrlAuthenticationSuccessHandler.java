@@ -2,6 +2,7 @@ package com.asu.project.hospital.security;
 
 import java.io.IOException;
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -11,6 +12,7 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.juli.logging.Log;
 import org.apache.juli.logging.LogFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.web.DefaultRedirectStrategy;
@@ -18,7 +20,12 @@ import org.springframework.security.web.RedirectStrategy;
 import org.springframework.security.web.WebAttributes;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 
+import com.asu.project.hospital.model.LoginSingleTon;
+
 public class UrlAuthenticationSuccessHandler implements AuthenticationSuccessHandler {
+	
+	@Autowired
+	private LoginSingleTon loginSingleTon;
 
     protected Log logger= LogFactory.getLog(this.getClass());
 
@@ -45,7 +52,8 @@ public class UrlAuthenticationSuccessHandler implements AuthenticationSuccessHan
     }
 
     protected String determineTargetUrl(final Authentication authentication){
-
+    	
+    	loginSingleTon.setTimestamp(new Date());
         Map<String, String> roleTargetUrlMap = new HashMap<>();
         roleTargetUrlMap.put("ADMIN", "/admin/home");
 
