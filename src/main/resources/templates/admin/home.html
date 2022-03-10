@@ -104,7 +104,9 @@
 				    </div>
 			     </li>
 		        <li>
-		      	  <a th:href="@{/logout}" class="nav-link btn btn-outline-light">Log Out</a>
+    				<form sec:authorize="isAuthenticated()" th:action="@{/logout}" method="POST">
+		  				<button class="btn btn-outline-light" type="submit" title="Logout">Log Out</button>
+		         	</form>
 		        </li>
 	        </ul>
     	</div>
@@ -113,46 +115,13 @@
     <br>
     <br>
      <div class="jumbotron" style="background-color: #deecf9">
-     <!--    <h3 style="text-align:center;">Welcome to the Admin Dashboard</h3>
-       <hr style="height:5px;border:none;color:#333;background-color:#333;" /> -->
+       <hr style="height:5px;border:none;color:#333;background-color:#333;" />
        <h1 th:inline="text">Hello [[${accountName}]]</h1>
         <hr>
         <h3>Welcome to the Admin Dashboard</h3>
         <br>
     </div>
     <br>
-  	<div id="loader" class="lds-dual-ring hidden overlay">
-  	
-    </div>
-    <div th:unless="${#lists.isEmpty(userList)}">
-    <h4>Pending User Account Approval List</h4>
-    <hr style="height:1px;border:none;color:#333;background-color:#333;" />
-    <table class="table">
-	    <thead>
-	        <tr>
-	            <th scope="col">FirstName</th>
-	            <th scope="col">LastName</th>
-	            <th scope="col">Email</th>
-	            <th scope="col">Role</th>
-	            <th scope="col"></th>
-	            <th scope="col"></th>
-	        </tr>
-	    </thead>
-	    <tbody class="tableBody">
-	        <tr th:each="user: ${userList}" th:id="${user.id}">
-	            <td>[[${user.firstName}]]</td>
-	            <td>[[${user.lastName}]]</td>
-	            <td>[[${user.email}]]</td>
-	            <td>[[${user.role}]]</td>
-	            <td><button class="btn btn-success"   
-                        th:onclick="'approve(\''+${user.id}+ '\');'">Approve</button></td>
-                <td><button class="btn btn-danger" 
-                	th:onclick="'deny(\''+${user.id}+ '\');'">Deny</button></td>
-	        </tr>
-	    </tbody>
-	</table>
-    </div>
-    
     <div class="card-deck">
 <div class="card text-center">
   <div class="card-body">

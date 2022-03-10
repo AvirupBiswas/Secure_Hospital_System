@@ -35,7 +35,8 @@
     <div class="row" style="margin-top:20px">
         <span>Thank You [[${firstName}]] [[${lastName}]]. Your registration is pending with admin. Once decision is made an email will be sent at [[${email}]]</span>
     </div>
-    Go To Sign In Page. <a th:href="@{/login}"> Sign In Page </a> 
+    <input class="btn btn-primary" type="button" value="Go Back" onclick="history.back(-1)" />
+    <br>
 </div>
 
 <footer class="buttom-footer py-lg-4 py-md-3 py-sm-3 py-3 " style="color: #fff; background-color: #343a40; position: absolute; bottom: 0; width: 100%;">

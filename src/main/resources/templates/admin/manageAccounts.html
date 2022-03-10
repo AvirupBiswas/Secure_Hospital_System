@@ -2,9 +2,9 @@
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8" />
-    <title>Sparky's Bank</title>
-    <link rel="stylesheet" href="../../static/bootstrap.css" />
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous"/>
+    <title>Secure Hospital System</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 </head>
 <body>
   <nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
@@ -22,7 +22,9 @@
 				    </div>
 			     </li>
 		        <li>
-		      	  <a th:href="@{/logout}" class="nav-link btn btn-outline-light">Log Out</a>
+		      	  <form sec:authorize="isAuthenticated()" th:action="@{/logout}" method="POST">
+		  				<button class="btn btn-outline-light" type="submit" title="Logout">Log Out</button>
+		         	</form>
 		        </li>
 	        </ul>
     	</div>
@@ -51,8 +53,8 @@
                 <td th:text="${employee.getRole()}"></td>
                 <form action="#" th:action="@{/admin/manageAccount}" method="post">
                     <input type="hidden" name="userId" id="userId" th:value="${employee.getUserId()}" />
-                    <td><button type="submit" class="btn btn-primary" value="modify" name="action">Modify</button></td>
-                    <td><button type="submit" class="btn btn-danger" value="delete" name="action">Delete</button></td>
+                    <td><button data-toggle="tooltip" title="Edit Employee Details" data-placement="top" class="btn pill-btn" value="modify" name="action"><i value="modify" name="action" class="fa fa-pencil-square-o" aria-hidden="true" style="font-size:24px;color:brown;"></i></button></td>
+                    <td><button data-toggle="tooltip" title="Delete Employee Details" data-placement="top" class="btn pill-btn" value="delete" name="action"><i class="fa fa-trash-o" aria-hidden="true" style="font-size:24px;color:red;"></i></button></td>
                 </form>
             </tr>
         </table>

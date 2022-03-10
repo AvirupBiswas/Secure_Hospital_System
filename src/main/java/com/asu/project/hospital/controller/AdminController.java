@@ -17,8 +17,10 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.asu.project.hospital.entity.AdminDecisionForUser;
+import com.asu.project.hospital.entity.SignInHistory;
 import com.asu.project.hospital.entity.User;
 import com.asu.project.hospital.repository.AdminDecisionForUserRepository;
+import com.asu.project.hospital.repository.SignInHistoryRepository;
 import com.asu.project.hospital.repository.UserRepository;
 import com.asu.project.hospital.service.MailService;
 import com.asu.project.hospital.service.UserService;
@@ -38,6 +40,9 @@ public class AdminController {
 
 	@Autowired
 	UserRepository userRepository;
+	
+	@Autowired
+	private SignInHistoryRepository signInHistoryRepository;
 
 	@GetMapping("/aproveUser/{Id}")
 	public ResponseEntity<String> aproveUser(@PathVariable("Id") String Id) {
@@ -133,6 +138,15 @@ public class AdminController {
 		User user = userService.getLoggedUser();
 		model.addAttribute("accountName", user.getFirstName());
 		return "admin/error";
+	}
+	
+	@GetMapping("/signInHistory")
+	public String signInHistory(Model model) {
+		User user = userService.getLoggedUser();
+		model.addAttribute("accountName", user.getFirstName());
+		List<SignInHistory> signInHistoryList = signInHistoryRepository.findAll();
+		model.addAttribute("signInHistoryList", signInHistoryList);
+		return "admin/signInHistory";
 	}
 
 }
