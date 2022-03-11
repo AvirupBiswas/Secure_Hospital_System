@@ -5,6 +5,9 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -19,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import com.asu.project.hospital.entity.AdminDecisionForUser;
 import com.asu.project.hospital.entity.SignInHistory;
 import com.asu.project.hospital.entity.User;
+import com.asu.project.hospital.model.SignInhistorySearchResult;
 import com.asu.project.hospital.repository.AdminDecisionForUserRepository;
 import com.asu.project.hospital.repository.SignInHistoryRepository;
 import com.asu.project.hospital.repository.UserRepository;
@@ -40,7 +44,7 @@ public class AdminController {
 
 	@Autowired
 	UserRepository userRepository;
-	
+
 	@Autowired
 	private SignInHistoryRepository signInHistoryRepository;
 
@@ -139,14 +143,62 @@ public class AdminController {
 		model.addAttribute("accountName", user.getFirstName());
 		return "admin/error";
 	}
-	
+
+	/*
+	 * @GetMapping("/signInHistory") public String signInHistory(Model model) { User
+	 * user = userService.getLoggedUser(); model.addAttribute("accountName",
+	 * user.getFirstName()); List<SignInHistory> signInHistoryList =
+	 * signInHistoryRepository.findAll(); model.addAttribute("signInHistoryList",
+	 * signInHistoryList); return "admin/signInHistory"; }
+	 */
+
 	@GetMapping("/signInHistory")
-	public String signInHistory(Model model) {
+	public String signInHistoryDefaultPage(
+			@RequestParam(value = "pagenum", required = false, defaultValue = "1") String pagenum, Model model) {
 		User user = userService.getLoggedUser();
 		model.addAttribute("accountName", user.getFirstName());
-		List<SignInHistory> signInHistoryList = signInHistoryRepository.findAll();
-		model.addAttribute("signInHistoryList", signInHistoryList);
+		int pageNumber = Integer.parseInt(pagenum);
+		if (pageNumber < 1) {
+			pageNumber = 1;
+		}
+		Pageable requestedPage = PageRequest.of(pageNumber - 1, 5);// 10);
+		Page<SignInHistory> signInHistoryPage = signInHistoryRepository.findAll(requestedPage);
+		int totalPage = signInHistoryPage.getTotalPages();
+		if (pageNumber > totalPage) {
+			totalPage = totalPage == 0 ? 1 : totalPage;
+			requestedPage = PageRequest.of(totalPage - 1, 5);// 10);
+			signInHistoryPage = signInHistoryRepository.findAll(requestedPage);
+		}
+		model.addAttribute("currentPageNumber", pageNumber);
+		model.addAttribute("totalPages", totalPage);
+
+		model.addAttribute("signInHistoryList", signInHistoryPage.getContent());
 		return "admin/signInHistory";
+	}
+
+	@GetMapping("/signInHistory/pageWise")
+	public ResponseEntity<SignInhistorySearchResult> signInHistoryPageWise(
+			@RequestParam(value = "pagenum", required = false, defaultValue = "1") String pagenum, Model model) {
+		User user = userService.getLoggedUser();
+		model.addAttribute("accountName", user.getFirstName());
+		int pageNumber = Integer.parseInt(pagenum);
+		if (pageNumber < 1) {
+			pageNumber = 1;
+		}
+		Pageable requestedPage = PageRequest.of(pageNumber - 1, 5);//in one page 5 number
+		Page<SignInHistory> signInHistoryPage = signInHistoryRepository.findAll(requestedPage);
+		int totalPage = signInHistoryPage.getTotalPages();
+		if (pageNumber > totalPage) {
+			totalPage = totalPage == 0 ? 1 : totalPage;
+			requestedPage = PageRequest.of(totalPage - 1, 5);//in one page 5 number
+			signInHistoryPage = signInHistoryRepository.findAll(requestedPage);
+		}
+		model.addAttribute("currentPageNumber", pageNumber);
+		model.addAttribute("totalPages", totalPage);
+
+		SignInhistorySearchResult signInhistorySearchResult = new SignInhistorySearchResult();
+		signInhistorySearchResult.setSignInHistoryList(signInHistoryPage.getContent());
+		return new ResponseEntity<SignInhistorySearchResult>(signInhistorySearchResult, HttpStatus.OK);
 	}
 
 }

@@ -33,9 +33,6 @@ public class CustomLogoutSuccessHandler extends SimpleUrlLogoutSuccessHandler im
 	@Override
 	public void onLogoutSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication)
 			throws IOException, ServletException {
-
-		System.out.println("logged in time " + loginSingleTon.getTimestamp());
-		System.out.println("logged out time " + new Date());
 		Optional<User> user = userRepository.findOneByEmailIgnoreCase(authentication.getName());
 		if (user.isPresent()) {
 			SignInHistory signInHistory = new SignInHistory();
