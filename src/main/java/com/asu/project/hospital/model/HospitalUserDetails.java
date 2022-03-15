@@ -11,7 +11,8 @@ import java.util.Collection;
 import java.util.List;
 
 public class HospitalUserDetails implements UserDetails {
-
+	
+	private User user;
 	private String username;
 	private String password;
 	private List<GrantedAuthority> authorityList;
@@ -20,6 +21,7 @@ public class HospitalUserDetails implements UserDetails {
 		this.username = user.getUserName();
 		this.password = user.getPassword();
 		this.authorityList = Arrays.asList(new SimpleGrantedAuthority(user.getRole()));
+		this.user = user;
 	}
 
 	@Override
@@ -44,7 +46,7 @@ public class HospitalUserDetails implements UserDetails {
 
 	@Override
 	public boolean isAccountNonLocked() {
-		return true;
+		return !user.isAccountLocked();
 	}
 
 	@Override

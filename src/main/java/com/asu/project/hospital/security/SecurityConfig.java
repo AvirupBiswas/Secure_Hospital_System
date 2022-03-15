@@ -10,10 +10,10 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
-import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
@@ -21,7 +21,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	@Qualifier("hospitalUserDetailsService")
 	@Autowired
 	UserDetailsService userDetailsService;
-
+	
 	@Override
 	protected void configure(AuthenticationManagerBuilder auth) throws Exception {
 		auth.userDetailsService(userDetailsService).passwordEncoder(getPasswordEncoder());
@@ -29,23 +29,17 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
-		 http
-	        .authorizeRequests()
-	        .antMatchers("/viewPDF/**").hasAnyAuthority("ADMIN", "HOSPITALSTAFF")
-	        .antMatchers("/admin/**").hasAuthority("ADMIN")
-	        .antMatchers("/patient/**").hasAuthority("PATIENT")
-	        .antMatchers("/").permitAll()
-	        .and().formLogin().loginPage("/login")
-	        .successHandler(myAuthenticationSuccessHandler())
-			.failureUrl("/login?error").permitAll().and().logout(logout -> logout
-					.logoutUrl("/logout")
-					.logoutSuccessUrl("/login")
-					.logoutSuccessHandler(logoutSuccessHandler())
-					.invalidateHttpSession(true) )
-			.exceptionHandling().and().sessionManagement().and().csrf()
-			.csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()).and().headers().frameOptions().and()
-			.defaultsDisabled().xssProtection();
-		 }
+		http.authorizeRequests().antMatchers("/viewPDF/**").hasAnyAuthority("ADMIN", "HOSPITALSTAFF")
+				.antMatchers("/admin/**").hasAuthority("ADMIN").antMatchers("/patient/**").hasAuthority("PATIENT")
+				.antMatchers("/").permitAll().and().formLogin().loginPage("/login")
+				.failureHandler(handleAuthenticationFailure()).successHandler(myAuthenticationSuccessHandler())
+				.permitAll().and()
+				.logout(logout -> logout.logoutUrl("/logout").logoutSuccessUrl("/login")
+						.logoutSuccessHandler(logoutSuccessHandler()).invalidateHttpSession(true))
+				.exceptionHandling().and().sessionManagement().and().csrf()
+				.csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()).and().headers().frameOptions().and()
+				.defaultsDisabled().xssProtection();
+	}
 
 	@Bean
 	public PasswordEncoder getPasswordEncoder() {
@@ -57,6 +51,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 		return new UrlAuthenticationSuccessHandler();
 	}
 	
+	@Bean
+	public AuthenticationFailureHandler handleAuthenticationFailure() {
+		return new CustomLoginFailureHandler();
+	}
+
 	@Bean
 	public LogoutSuccessHandler logoutSuccessHandler() {
 		return new CustomLogoutSuccessHandler();

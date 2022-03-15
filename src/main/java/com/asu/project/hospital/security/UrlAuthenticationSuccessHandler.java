@@ -20,12 +20,20 @@ import org.springframework.security.web.RedirectStrategy;
 import org.springframework.security.web.WebAttributes;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 
+import com.asu.project.hospital.entity.User;
 import com.asu.project.hospital.model.LoginSingleTon;
+import com.asu.project.hospital.repository.UserRepository;
 
 public class UrlAuthenticationSuccessHandler implements AuthenticationSuccessHandler {
 	
 	@Autowired
 	private LoginSingleTon loginSingleTon;
+	
+	@Autowired
+	private UserServiceToCheckFailedLogin userServiceToCheckFailedLogin;
+	
+	@Autowired
+	private UserRepository userRepository;
 
     protected Log logger= LogFactory.getLog(this.getClass());
 
@@ -34,7 +42,11 @@ public class UrlAuthenticationSuccessHandler implements AuthenticationSuccessHan
     @Override
     public void onAuthenticationSuccess(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, Authentication authentication)
             throws IOException {
-
+    	
+		User user = userRepository.findByEmail(authentication.getName()).orElse(null);
+		if (user.getFailedAttempt() > 0) {
+			userServiceToCheckFailedLogin.resetFailedAttempts(user.getEmail());
+		}
         handle(httpServletRequest, httpServletResponse, authentication);
         clearAuthenticationAttributes(httpServletRequest);
     }

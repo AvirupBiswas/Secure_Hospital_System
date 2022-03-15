@@ -94,7 +94,7 @@ public class AdminDecisionForUser {
 	}
 
 	public void setRole(String role) {
-		this.role = role;//
+		this.role = role;
 	}
 
 	public void setPassword(String password) {
