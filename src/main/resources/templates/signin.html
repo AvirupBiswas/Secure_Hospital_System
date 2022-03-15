@@ -48,7 +48,7 @@
 					<fieldset>
 						<h1>Please Sign In</h1>
 						<div th:if="${param.error}">
-							<div class="alert alert-danger"> Invalid username and password. </div>
+							<div class="alert alert-danger">[[${session.SPRING_SECURITY_LAST_EXCEPTION.message}]]</div>
 						</div>
 						<div th:if="${param.logout}">
 							<div class="alert alert-info"> You have been logged out. </div>

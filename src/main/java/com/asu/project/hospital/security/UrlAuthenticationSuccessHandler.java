@@ -20,59 +20,77 @@ import org.springframework.security.web.RedirectStrategy;
 import org.springframework.security.web.WebAttributes;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 
+import com.asu.project.hospital.entity.User;
 import com.asu.project.hospital.model.LoginSingleTon;
+import com.asu.project.hospital.repository.UserRepository;
+import com.asu.project.hospital.service.UserService;
 
 public class UrlAuthenticationSuccessHandler implements AuthenticationSuccessHandler {
-	
+
 	@Autowired
 	private LoginSingleTon loginSingleTon;
 
-    protected Log logger= LogFactory.getLog(this.getClass());
+	@Autowired
+	private UserRepository userRepository;
 
-    private RedirectStrategy redirectStrategy=new DefaultRedirectStrategy();
+	@Autowired
+	private UserService userService;
+	
+	@Autowired
+	private UserServiceToCheckFailedLogin userServiceToCheckFailedLogin;
 
-    @Override
-    public void onAuthenticationSuccess(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, Authentication authentication)
-            throws IOException {
+	protected Log logger = LogFactory.getLog(this.getClass());
 
-        handle(httpServletRequest, httpServletResponse, authentication);
-        clearAuthenticationAttributes(httpServletRequest);
-    }
+	private RedirectStrategy redirectStrategy = new DefaultRedirectStrategy();
 
-    protected void handle(HttpServletRequest request, HttpServletResponse response, Authentication authentication)
-            throws IOException{
+	@Override
+	public void onAuthenticationSuccess(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse,
+			Authentication authentication) throws IOException {
 
-        String targetUrl = determineTargetUrl(authentication);
+		String email = httpServletRequest.getParameter("username");
+		System.out.println("sucess email " + email);
+		User user = userRepository.findByEmail(authentication.getName()).orElse(null);
+		if (user.getFailedAttempt() > 0) {
+			userServiceToCheckFailedLogin.resetFailedAttempts(user.getEmail());
+		}
+		handle(httpServletRequest, httpServletResponse, authentication);
+		clearAuthenticationAttributes(httpServletRequest);
+	}
 
-        if(response.isCommitted()){
-            logger.debug("Response is already committed. Unable to redirect to" + targetUrl);
-            return;
-        }
-        redirectStrategy.sendRedirect(request,response,targetUrl);
-    }
+	protected void handle(HttpServletRequest request, HttpServletResponse response, Authentication authentication)
+			throws IOException {
 
-    protected String determineTargetUrl(final Authentication authentication){
-    	
-    	loginSingleTon.setTimestamp(new Date());
-        Map<String, String> roleTargetUrlMap = new HashMap<>();
-        roleTargetUrlMap.put("ADMIN", "/admin/home");
+		String targetUrl = determineTargetUrl(authentication);
 
-        final Collection<? extends GrantedAuthority> authorities=authentication.getAuthorities();
+		if (response.isCommitted()) {
+			logger.debug("Response is already committed. Unable to redirect to" + targetUrl);
+			return;
+		}
+		redirectStrategy.sendRedirect(request, response, targetUrl);
+	}
 
-        for(final GrantedAuthority grantedAuthority : authorities){
-            String authorityName=grantedAuthority.getAuthority();
-            if(roleTargetUrlMap.containsKey(authorityName)){
-                return roleTargetUrlMap.get(authorityName);
-            }
-        }
-        throw new IllegalStateException();
-    }
+	protected String determineTargetUrl(final Authentication authentication) {
 
-    protected void clearAuthenticationAttributes(HttpServletRequest request){
-        HttpSession httpSession=request.getSession(false);
-        if(httpSession==null){
-            return;
-        }
-        httpSession.removeAttribute(WebAttributes.AUTHENTICATION_EXCEPTION);
-    }
+		loginSingleTon.setTimestamp(new Date());
+		Map<String, String> roleTargetUrlMap = new HashMap<>();
+		roleTargetUrlMap.put("ADMIN", "/admin/home");
+
+		final Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
+
+		for (final GrantedAuthority grantedAuthority : authorities) {
+			String authorityName = grantedAuthority.getAuthority();
+			if (roleTargetUrlMap.containsKey(authorityName)) {
+				return roleTargetUrlMap.get(authorityName);
+			}
+		}
+		throw new IllegalStateException();
+	}
+
+	protected void clearAuthenticationAttributes(HttpServletRequest request) {
+		HttpSession httpSession = request.getSession(false);
+		if (httpSession == null) {
+			return;
+		}
+		httpSession.removeAttribute(WebAttributes.AUTHENTICATION_EXCEPTION);
+	}
 }
