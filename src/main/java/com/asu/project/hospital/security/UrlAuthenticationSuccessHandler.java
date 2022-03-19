@@ -2,6 +2,7 @@ package com.asu.project.hospital.security;
 
 import java.io.IOException;
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -11,6 +12,7 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.juli.logging.Log;
 import org.apache.juli.logging.LogFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.web.DefaultRedirectStrategy;
@@ -18,7 +20,20 @@ import org.springframework.security.web.RedirectStrategy;
 import org.springframework.security.web.WebAttributes;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 
+import com.asu.project.hospital.entity.User;
+import com.asu.project.hospital.model.LoginSingleTon;
+import com.asu.project.hospital.repository.UserRepository;
+
 public class UrlAuthenticationSuccessHandler implements AuthenticationSuccessHandler {
+	
+	@Autowired
+	private LoginSingleTon loginSingleTon;
+	
+	@Autowired
+	private UserServiceToCheckFailedLogin userServiceToCheckFailedLogin;
+	
+	@Autowired
+	private UserRepository userRepository;
 
     protected Log logger= LogFactory.getLog(this.getClass());
 
@@ -27,7 +42,11 @@ public class UrlAuthenticationSuccessHandler implements AuthenticationSuccessHan
     @Override
     public void onAuthenticationSuccess(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, Authentication authentication)
             throws IOException {
-
+    	
+		User user = userRepository.findByEmail(authentication.getName()).orElse(null);
+		if (user.getFailedAttempt() > 0) {
+			userServiceToCheckFailedLogin.resetFailedAttempts(user.getEmail());
+		}
         handle(httpServletRequest, httpServletResponse, authentication);
         clearAuthenticationAttributes(httpServletRequest);
     }
@@ -45,9 +64,11 @@ public class UrlAuthenticationSuccessHandler implements AuthenticationSuccessHan
     }
 
     protected String determineTargetUrl(final Authentication authentication){
-
+    	
+    	loginSingleTon.setTimestamp(new Date());
         Map<String, String> roleTargetUrlMap = new HashMap<>();
         roleTargetUrlMap.put("ADMIN", "/admin/home");
+        roleTargetUrlMap.put("PATIENT", "/patient/home");
 
         final Collection<? extends GrantedAuthority> authorities=authentication.getAuthorities();
 

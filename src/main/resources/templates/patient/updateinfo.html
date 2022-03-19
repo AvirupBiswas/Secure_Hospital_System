@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Secure Hospital System</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/css/all.min.css">
+
+    
+</head>
+<body>
+
+<br>
+<br>
+<br>
+<div class="content-section col-md-8">
+    <h2>Update Patient Information</h2>
+    <form action="#" th:action="@{/patient/updateinformation}" th:object="${patient}" method="post">
+        <fieldset class="form-group">
+            <div class="form-group">
+                <label for="Height">Height:</label>
+                <input type="number" class="form-control" id="height" placeholder="Enter height in cm" name="Height" th:field="*{height}">
+                <span class="text-danger" th:if="${#fields.hasErrors('height')}" th:errors="*{height}"></span>
+            </div>
+            <div class="form-group">
+                <label for="Weight">Weight:</label>
+                <input type="number" class="form-control" id="Weight" placeholder="Enter Weight in pounds" name="Weight" th:field="*{weight}">
+                <span class="text-danger" th:if="${#fields.hasErrors('weight')}" th:errors="*{weight}"></span>
+            </div>
+            <div class="form-group">
+                <label for="Age">Age:</label>
+                <input type="number" class="form-control" id="age" placeholder="Enter age" name="age" th:field="*{age}">
+                <span class="text-danger" th:if="${#fields.hasErrors('age')}" th:errors="*{age}"></span>
+            </div>
+            <div class="form-group">
+                <label for="Address">Address:</label>
+                <input type="textarea" class="form-control" id="address" placeholder="Enter address" name="address" th:field="*{address}">
+                <span class="text-danger" th:if="${#fields.hasErrors('address')}" th:errors="*{address}"></span>
+            </div>
+            <div class="dropdown">
+                <label for="Gender">Gender:</label>
+                <select id="gender" placeholder="" name="gender" th:field="*{gender}" class="form-control">
+                    <option th:value="null" th:text="Select">Select</option>
+                    <option th:value="Female" th:text="Female">Female</option>
+                    <option th:value="Male" th:text="Male">Male</option>
+                    <option th:value="Do_not_Specify" th:text="Do_not_Specify">Do notnspecify</option>
+                </select>
+                <span class="text-danger" th:if="${#fields.hasErrors('gender')}" th:errors="*{gender}"></span>
+            </div>
+            <br>
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </fieldset>
+    </form>
+</div>
+<br>
+<footer class="buttom-footer py-lg-4 py-md-3 py-sm-3 py-3 " style="color: #fff; background-color: #343a40; bottom: 0; width: 100%;">
+    <div class="copy-agile-right text-center">
+        <h2 class="my-3">Secure Hospital System</h2>
+        <p>
+            © Secure Hospital System
+        </p>
+    </div>
+</footer>
+</body>
+</html>

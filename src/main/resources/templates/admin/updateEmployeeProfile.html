@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <title>Secure Hospital System</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="css/screen.css">
+    <link rel="stylesheet" href="css/styles.css">
+    <script src="http://code.jquery.com/jquery-2.1.1.min.js"></script>
+    <script src="js/jquery.validate.js"></script>
+
+    <script type="text/javascript">
+        $().ready(function() {
+            $('#profileForm').validate({
+                rules: {
+                    firstName: {
+                        required: true,
+                        minLength: 2,
+                        maxLength: 30
+                    },
+                    lastName: {
+                        required: true,
+                        minLength: 2,
+                        maxLength: 30
+                    }
+                }
+            })
+        })
+    </script>
+</head>
+<body>
+  <nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
+        <a th:href="@{/admin/home}" class="navbar-brand" href="#">Secure Hospital System</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+          
+          <div class="collapse navbar-collapse justify-content-end" id="navbarsExampleDefault">
+	        <ul style="list-style: none; display:contents">
+		        <li class="nav-item active" style="padding-right: 20px;">
+	        		<div style="display: flex; align-items:center">
+				      	<div style="height: 10px; width: 10px; border-radius:50%; background-color: var(--success)"></div>
+				      	<em style="color:white; font-size: 15px; margin-left: 10px">logged in as <span th:text="${accountName}"></span></em>
+				    </div>
+			     </li>
+		        <li>
+		      	  <form sec:authorize="isAuthenticated()" th:action="@{/logout}" method="POST">
+		  				<button class="btn btn-outline-light" type="submit" title="Logout">Log Out</button>
+		         	</form>
+		        </li>
+	        </ul>
+    	</div>
+    </nav>	
+<br>
+<br>
+<br>
+<div class="container">
+    <div class="starter-template">
+        <h1>Manage Employee Accounts</h1>
+
+        <form class="profileForm" id="profileForm" action="#" th:action="@{/admin/updateEmployeeProfile}" method="post">
+            <fieldset class="form-group">
+                <div class="form-group">
+                    <label for="firstName"><b>First Name:</b> (Must be 2-30 characters)</label>
+                    <input type="text" class="form-control" id="firstName" placeholder="First Name" name="firstName" th:value="${user.getFirstName()}">
+                </div>
+                <div class="form-group">
+                    <label for="email"><b>Last Name:</b> (Must be 2-30 characters)</label>
+                    <input type="text" class="form-control" id="lastName" placeholder="Last Name" name="lastName" th:value="${user.getLastName()}">
+                </div>
+                <div class="form-group">
+                    <label for="email"><b>Email:</b></label>
+                    <input readonly="readonly" type="email" class="form-control" id="email" placeholder="e.g. abc@gmail.com" name="email" th:value="${user.getEmail()}">
+                </div>
+                <input type="hidden" name="userId" id="userId" th:value="${user.getUserId()}" />
+                <br>
+                <button type="submit" class="btn btn-primary">Update Changes</button>
+            </fieldset>
+        </form>
+
+    </div>
+</div>
+
+</body>
+</html>

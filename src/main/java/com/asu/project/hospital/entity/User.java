@@ -1,5 +1,7 @@
 package com.asu.project.hospital.entity;
 
+import java.util.Date;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -54,16 +56,26 @@ public class User {
 	@Size(min = 6, max = 60, message = "Password must be at least 6 characters long")
 	private String password;
 
+	private boolean active;
+
+	@Column(name = "account_locked")
+	private boolean accountLocked;
+
+	@Column(name = "failed_attempt")
+	private int failedAttempt;
+
+	@Column(name = "lock_time")
+	private Date lockTime;
+
 	public boolean isActive() {
 		return active;
 	}
 
-	private boolean active;
-
 	public User(@JsonProperty("userId") String userId, @JsonProperty("firstName") String firstName,
 			@JsonProperty("lastName") String lastName, @JsonProperty("email") String email,
 			@JsonProperty("role") String role, @JsonProperty("password") String password,
-			@JsonProperty("active") boolean active) {
+			@JsonProperty("active") boolean active, @JsonProperty("accountLocked") boolean accountLocked,
+			@JsonProperty("failedAttempt") int failedAttempt, @JsonProperty("lockTime") Date lockTime) {
 		this.userId = userId;
 		this.firstName = firstName;
 		this.lastName = lastName;
@@ -71,7 +83,9 @@ public class User {
 		this.role = role;
 		this.password = password;
 		this.active = true;
-
+		this.accountLocked = accountLocked;
+		this.failedAttempt = failedAttempt;
+		this.lockTime = lockTime;
 	}
 
 	public User() {
@@ -136,6 +150,30 @@ public class User {
 
 	public void setActive(boolean active) {
 		this.active = active;
+	}
+
+	public boolean isAccountLocked() {
+		return accountLocked;
+	}
+
+	public void setAccountLocked(boolean accountLocked) {
+		this.accountLocked = accountLocked;
+	}
+
+	public int getFailedAttempt() {
+		return failedAttempt;
+	}
+
+	public void setFailedAttempt(int failedAttempt) {
+		this.failedAttempt = failedAttempt;
+	}
+
+	public Date getLockTime() {
+		return lockTime;
+	}
+
+	public void setLockTime(Date lockTime) {
+		this.lockTime = lockTime;
 	}
 
 }

@@ -1,5 +1,7 @@
 package com.asu.project.hospital.controller;
 
+import java.util.Date;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
@@ -18,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.asu.project.hospital.entity.User;
+import com.asu.project.hospital.model.LoginSingleTon;
 import com.asu.project.hospital.service.OtpService;
 import com.asu.project.hospital.service.UserService;
 
@@ -32,6 +35,11 @@ public class ViewController {
 
 	@GetMapping("/login")
 	public String login() {
+		return "signin";
+	}
+	
+	@GetMapping("/")
+	public String defaultlogin() {
 		return "signin";
 	}
 
@@ -66,17 +74,5 @@ public class ViewController {
 		} catch (Exception e) {
 			return e.getMessage();
 		}
-	}
-
-	@GetMapping(value = "/logout")
-	public @ResponseBody String logout(HttpServletRequest request, HttpServletResponse response) {
-		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-		if (auth != null) {
-			String username = auth.getName();
-			// Remove the recently used OTP from server.
-			otpService.clearOTP(username);
-			new SecurityContextLogoutHandler().logout(request, response, auth);
-		}
-		return "redirect:/login?logout";
 	}
 }
