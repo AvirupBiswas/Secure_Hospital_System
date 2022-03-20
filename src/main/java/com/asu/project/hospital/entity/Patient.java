@@ -25,6 +25,11 @@ public class Patient {
 	@Column(name="height")
 	private double height;
 	
+	@Column(name="phonenumber")
+	private long phoneNumber;
+	
+	
+
 	@Column(name="weight")
 	private double weight;
 	
@@ -65,6 +70,14 @@ public class Patient {
 
 	public void setHeight(double height) {
 		this.height = height;
+	}
+	
+	public long getPhoneNumber() {
+		return phoneNumber;
+	}
+
+	public void setPhoneNumber(long phoneNumber) {
+		this.phoneNumber = phoneNumber;
 	}
 
 	public double getWeight() {

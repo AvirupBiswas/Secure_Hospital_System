@@ -12,8 +12,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.asu.project.hospital.entity.Appointment;
 import com.asu.project.hospital.entity.Patient;
 import com.asu.project.hospital.entity.User;
+import com.asu.project.hospital.service.AppointmentService;
 import com.asu.project.hospital.service.PatientService;
 import com.asu.project.hospital.service.UserService;
 
@@ -26,6 +28,9 @@ public class PatientController {
 	
 	@Autowired
 	private PatientService patientService;
+	
+	@Autowired
+	private AppointmentService appointmentService;
 	
 	@GetMapping("/home")
 	public String adminHome(Model model) {
@@ -53,11 +58,26 @@ public class PatientController {
 			model.addAttribute("age", userForm.getAge());
 			model.addAttribute("address",userForm.getAddress());
 			model.addAttribute("gender", userForm.getGender());
+			model.addAttribute("phoneNumber", userForm.getPhoneNumber());
 			patientService.updatePatientInfo(userForm);
 		} catch (Exception e) {
 			return e.getMessage();
 		}
 		return "patient/patienthome";
+	}
+	
+	@GetMapping("/bookappointment")
+	public String bookAppointment(Model model) {
+		model.addAttribute("Appointment", new Appointment());
+		return "patient/bookappointment";
+	}
+	
+	@PostMapping("/createappointment")
+	public String createAppointment(@ModelAttribute("scheduleApp") Appointment appointment, @RequestParam("date") String date, @RequestParam("time") String time) throws Exception {
+        User user = userService.getLoggedUser();
+        System.out.println(user.getUserId());
+        appointmentService.createAppointment(user, appointment, date, time);
+        return "patient/patienthome";
 	}
 	
 

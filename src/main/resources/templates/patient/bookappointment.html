@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+   <title>Secure Hospital System</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"/>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+    <style>
+   
+    </style>
+</head>
+<body>
+< class="container">
+    <nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
+        <a th:href="@{/patient/home}" class="navbar-brand" href="#">Secure Hospital System</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+          
+          <div class="collapse navbar-collapse justify-content-end" id="navbarsExampleDefault">
+	        <ul style="list-style: none; display:contents">
+		        <li class="nav-item active" style="padding-right: 20px;">
+	        		<div style="display: flex; align-items:center">
+				      	<div style="height: 10px; width: 10px; border-radius:50%; background-color: var(--success)"></div>
+				      	<em style="color:white; font-size: 15px; margin-left: 10px">logged in as</span></em>
+				    </div>
+			     </li>
+		        <li>
+		      	  <a th:href="@{/logout}" class="nav-link btn btn-outline-light">Log Out</a>
+		        </li>
+	        </ul>
+    	</div>
+    </nav>
+    <br>
+    <br>
+    <br>
+	<form action="#" th:action="@{/patient/createappointment}" id="appointmentid" method="POST" accept-charset="UTF-8" class="content-section col-md-8">
+	<br>
+	<br>
+	<h2>Book Appointment</h2>
+	<br>
+	<div class="form-group">
+		<label>
+	      Description 
+	      </label>
+	      <input type="textarea" class="form-control" id="description" placeholder="Enter the reason for your appointment " name="description">
+	 
+      </div>
+      <div class="form-group">
+	      <label>
+	        Phone number
+	        </label>
+	        <input type="number" class="form-control" id="phoneNumber" name="phoneNumber">
+
+      </div>
+      <div class="form-group">
+	      <label>
+	        Date
+	        </label>
+	        <input class="form-control" type="date" id = "date" name="date" required>
+	      
+      </div>
+      <div class="form-group">
+	      <label class="dropdown">
+	      Time 
+	      </label>
+	      <select id="time" name="time" class="form-control">
+	                        <option th:value="null" th:text="Select"></option>
+	                        <option th:value="'9:00:00'" th:text="'9:00 AM'"></option>
+	                        <option th:value="'9:30:00'" th:text="'9:30 AM'"></option>
+	                        <option th:value="'10:00:00'" th:text="'10:00 AM'"></option>
+	                        <option th:value="'10:30:00'" th:text="'10:30 AM'"></option>
+	                        <option th:value="'11:00:00'" th:text="'11:00 AM'"></option>
+	                        <option th:value="'11:30:00'" th:text="'11:30 AM'"></option>
+	                        <option th:value="'12:00:00'" th:text="'12:00 PM'"></option>
+	                        <option th:value="'12:30:00'" th:text="'12:30 PM'"></option>
+	                        <option th:value="'13:00:00'" th:text="'1:00 PM'"></option>
+	                        <option th:value="'13:30:00'" th:text="'1:30 PM'"></option>
+	                        <option th:value="'14:00:00'" th:text="'2:00 PM'"></option>
+	                        <option th:value="'14:30:00'" th:text="'2:30 PM'"></option>
+	                        <option th:value="'15:00:00'" th:text="'3:00 PM'"></option>
+	                        <option th:value="'15:30:00'" th:text="'3:30 PM'"></option>
+	                        <option th:value="'16:00:00'" th:text="'4:00 PM'"></option>
+	                    </select>
+	      
+      </div>
+      <br>
+    <button type="submit" class="btn btn-primary">Submit</button>
+</form>
+</div>
+</body>
+</html>
