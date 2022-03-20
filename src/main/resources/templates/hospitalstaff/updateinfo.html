@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Secure Hospital System</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/css/all.min.css">
+
+    
+</head>
+<body>
+
+<br>
+<br>
+<br>
+<div class="content-section col-md-8">
+    <h2>Update Hospital Staff Information</h2>
+    <form action="#" th:action="@{/hospitalstaff/updateinformation}" th:object="${hospitalstaff}" method="post">
+        <fieldset class="form-group">
+            <div class="form-group">
+                <label for="PhoneNumber">PhoneNumber:</label>
+                <input type="number" class="form-control" id="phoneNumber" placeholder="Enter phoneNumber" name="phoneNumber" th:field="*{phoneNumber}">
+                <span class="text-danger" th:if="${#fields.hasErrors('phoneNumber')}" th:errors="*{phoneNumber}"></span>
+            </div>
+            <div class="form-group">
+                <label for="Address">Address:</label>
+                <input type="textarea" class="form-control" id="address" placeholder="Enter address" name="address" th:field="*{address}">
+                <span class="text-danger" th:if="${#fields.hasErrors('address')}" th:errors="*{address}"></span>
+            </div>
+            <br>
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </fieldset>
+    </form>
+</div>
+<br>
+<footer class="buttom-footer py-lg-4 py-md-3 py-sm-3 py-3 " style="color: #fff; background-color: #343a40; bottom: 0; width: 100%;">
+    <div class="copy-agile-right text-center">
+        <h2 class="my-3">Secure Hospital System</h2>
+        <p>
+            © Secure Hospital System
+        </p>
+    </div>
+</footer>
+</body>
+</html>
