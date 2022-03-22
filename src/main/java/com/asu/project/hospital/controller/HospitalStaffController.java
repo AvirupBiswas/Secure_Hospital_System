@@ -18,9 +18,11 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.asu.project.hospital.entity.AdminDecisionForUser;
+import com.asu.project.hospital.entity.Appointment;
 import com.asu.project.hospital.entity.Patient;
 import com.asu.project.hospital.entity.User;
 import com.asu.project.hospital.repository.AdminDecisionForUserRepository;
+import com.asu.project.hospital.repository.HospitalStaffDecisionForUserRepository;
 import com.asu.project.hospital.service.MailService;
 import com.asu.project.hospital.service.PatientService;
 import com.asu.project.hospital.service.UserService;
@@ -35,7 +37,13 @@ public class HospitalStaffController {
 	private UserService userService;
 	
 	@Autowired
+	private MailService emailService;
+	
+	@Autowired
 	private HospitalStaffService hospitalStaffService;
+	
+	@Autowired
+	private HospitalStaffDecisionForUserRepository hospitalStaffDecisionForUserRepository;
 
 
 	@GetMapping("/home")
@@ -67,5 +75,38 @@ public class HospitalStaffController {
 		}
 		return "hospitalstaff/home";
 	}
+	
+	@GetMapping("/aproveUser/{Id}")
+	public ResponseEntity<String> aproveUser(@PathVariable("Id") String Id) {
+		Long id = Long.parseLong(Id);
+		Appointment user = hospitalStaffDecisionForUserRepository.findByAppId(id);
+		if (user != null) {
+			user.setStatus("Approved");
+			hospitalStaffDecisionForUserRepository.save(user);
+			emailService.sendUserAppointmentAcceptanceMail(user.getUser().getEmail(),user.getUser().getFirstName(), user.getStartTime());
+		}
+		return new ResponseEntity<String>(HttpStatus.OK);
+	}
+
+	@GetMapping("/denyUser/{Id}")
+	public ResponseEntity<String> denyUser(@PathVariable("Id") String Id) {
+		Long id = Long.parseLong(Id);
+		Appointment user = hospitalStaffDecisionForUserRepository.findByAppId(id);
+		if (user != null) {
+			hospitalStaffDecisionForUserRepository.delete(user);
+			emailService.sendUserAppointmentDenialMail(user.getUser().getEmail(),user.getUser().getFirstName(), user.getStartTime());
+		}
+		return new ResponseEntity<String>(HttpStatus.OK);
+	}
+	
+	@GetMapping("/userAppPendingDecision")
+	public String pendingDecisionForUsereAppointment(Model model) {
+		User user = userService.getLoggedUser();
+		model.addAttribute("accountName", user.getFirstName());
+		List<Appointment> users = hospitalStaffDecisionForUserRepository.findByStatus("Pending");
+		model.addAttribute("userList", users);
+		return "hospitalstaff/hospitalstaffDecisionPending";
+	}
+
 
 }
