@@ -3,8 +3,12 @@ package com.asu.project.hospital.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.asu.project.hospital.entity.InsuranceClaims;
+import com.asu.project.hospital.entity.InsuranceDetails;
 import com.asu.project.hospital.entity.Patient;
 import com.asu.project.hospital.entity.User;
+import com.asu.project.hospital.repository.InsuranceClaimsRepository;
+import com.asu.project.hospital.repository.InsuranceDetailsRepository;
 import com.asu.project.hospital.repository.PatientRepository;
 
 @Service
@@ -14,12 +18,37 @@ public class PatientService {
 	PatientRepository patientRepository;
 	
 	@Autowired
+	InsuranceDetailsRepository insuranceDetailsRepository;
+	
+	@Autowired
+	InsuranceClaimsRepository insuranceClaimRepository;
+	
+	@Autowired
 	UserService userService;
 	
 	public void updatePatientInfo(Patient patient) {
 		User user= userService.getLoggedUser();
 		patient.setUser(user);
 		patientRepository.save(patient);
+	}
+	
+	public void addInsuranceDetails(InsuranceDetails insuranceDetails) {
+		User user= userService.getLoggedUser();
+		insuranceDetails.setUser(user);
+		insuranceDetailsRepository.save(insuranceDetails);
+		
+	}
+	
+	public void addInsuranceClaimRequest(InsuranceClaims claim) {
+		User user= userService.getLoggedUser();
+		InsuranceDetails details=insuranceDetailsRepository.findByUser(user);
+		claim.setInsuranceDetails(details);
+		claim.setUser(user);
+		insuranceClaimRepository.save(claim);
+	}
+	
+	public InsuranceDetails getInsuranceDetails(User user) {
+		return insuranceDetailsRepository.findByUser(user);
 	}
 
 }
