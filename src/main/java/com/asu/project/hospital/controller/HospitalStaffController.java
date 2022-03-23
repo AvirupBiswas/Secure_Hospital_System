@@ -1,5 +1,6 @@
 package com.asu.project.hospital.controller;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
@@ -16,16 +17,20 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import com.asu.project.hospital.entity.AdminDecisionForUser;
 import com.asu.project.hospital.entity.Appointment;
 import com.asu.project.hospital.entity.Patient;
+import com.asu.project.hospital.entity.PatientPayment;
 import com.asu.project.hospital.entity.User;
 import com.asu.project.hospital.repository.AdminDecisionForUserRepository;
 import com.asu.project.hospital.repository.HospitalStaffDecisionForUserRepository;
+import com.asu.project.hospital.repository.PatientPaymentRepository;
 import com.asu.project.hospital.service.MailService;
 import com.asu.project.hospital.service.PatientService;
 import com.asu.project.hospital.service.UserService;
+import com.asu.project.hospital.service.AppointmentService;
 import com.asu.project.hospital.service.HospitalStaffService;
 import com.asu.project.hospital.entity.HospitalStaff;
 
@@ -40,14 +45,19 @@ public class HospitalStaffController {
 	private MailService emailService;
 	
 	@Autowired
+	private AppointmentService appointmentService;
+	
+	@Autowired
 	private HospitalStaffService hospitalStaffService;
 	
 	@Autowired
 	private HospitalStaffDecisionForUserRepository hospitalStaffDecisionForUserRepository;
-
+	
+	@Autowired
+	private PatientPaymentRepository patientPaymentRepository;
 
 	@GetMapping("/home")
-	public String adminHome(Model model) {
+	public String hospitalStaffHome(Model model) {
 		User user = userService.getLoggedUser();
 		model.addAttribute("accountName", user.getFirstName());
 		return "hospitalstaff/home";
@@ -77,7 +87,7 @@ public class HospitalStaffController {
 	}
 	
 	@GetMapping("/aproveUser/{Id}")
-	public ResponseEntity<String> aproveUser(@PathVariable("Id") String Id) {
+	public ResponseEntity<String>  aproveUser(@PathVariable("Id") String Id) {
 		Long id = Long.parseLong(Id);
 		Appointment user = hospitalStaffDecisionForUserRepository.findByAppId(id);
 		if (user != null) {
@@ -87,7 +97,7 @@ public class HospitalStaffController {
 		}
 		return new ResponseEntity<String>(HttpStatus.OK);
 	}
-
+	
 	@GetMapping("/denyUser/{Id}")
 	public ResponseEntity<String> denyUser(@PathVariable("Id") String Id) {
 		Long id = Long.parseLong(Id);
@@ -107,6 +117,27 @@ public class HospitalStaffController {
 		model.addAttribute("userList", users);
 		return "hospitalstaff/hospitalstaffDecisionPending";
 	}
-
+	
+	@GetMapping("/updateTransaction/{Id}")
+	public String  updateTransaction(@PathVariable("Id") String Id, Model model) {
+		Long id = Long.parseLong(Id);
+		Appointment app = hospitalStaffDecisionForUserRepository.findByAppId(id);
+		model.addAttribute("app", app);
+		return "hospitalstaff/createTransaction";
+	}
+	
+	@GetMapping("/createTransaction/{Id}")
+	public ResponseEntity<String>  createTransaction(@PathVariable("Id") String Id) {
+		Long id = Long.parseLong(Id);
+		BigDecimal amount=new BigDecimal(100);
+		Appointment App = hospitalStaffDecisionForUserRepository.findByAppId(id);
+		PatientPayment patientPayment=new PatientPayment();
+		patientPayment.setAmount(amount);
+		patientPayment.setStatus("Pending");
+		patientPayment.setUser(App.getUser());
+		patientPaymentRepository.save(patientPayment);
+	
+		return new ResponseEntity<String>(HttpStatus.OK);
+	}
 
 }

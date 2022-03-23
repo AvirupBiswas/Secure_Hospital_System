@@ -7,9 +7,9 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"/>
       <script th:inline="javascript">
-        function approve(id) {
+        function createTransaction(id) {
             $.ajax({
-                url : "[(@{'/hospitalstaff/aproveUser/'})]"+id,
+                url : "[(@{'/hospitalstaff/createTransaction/'})]"+id,
                 type : "GET",
                 beforeSend: function () {
         	    	$("#loader").removeClass('hidden');
@@ -18,32 +18,12 @@
         	        $("#loader").addClass('hidden');
         	        },
                 success : function(data) {
-                	 $('#' + id).remove();
-                	 window.location='updateTransaction/'+id
+                	
                 },
                 error : function() {
                     console.log("There was an error");
                 }
             });
-        }
-        function deny(id) {
-             $.ajax({
-                url : "[(@{'/hospitalstaff/denyUser/'})]"+id,
-                type : "GET",
-                beforeSend: function () {
-        	    	$("#loader").removeClass('hidden');
-        	        },
-        	    complete: function () {
-        	        $("#loader").addClass('hidden');
-        	        },
-                success : function(data) {
-                	 $('#' + id).remove();
-                },
-                error : function() {
-                    console.log("There was an error");
-                }
-            });
-        	$("#loader").removeClass('hidden');
         }
     </script>
     <style>
@@ -113,43 +93,35 @@
     <br>
     <br>
     <br>
-     <div th:if="${#lists.isEmpty(userList)}">
-     <h2 style="text-align:center;">No Pending user account List </h2>
-     </div>
-    <br>
     <input class="btn btn-primary" type="button" value="Go Back" onclick="history.back(-1)" />
     <br>
      <br>
   	<div id="loader" class="lds-dual-ring hidden overlay">
     </div>
-    <div th:unless="${#lists.isEmpty(userList)}">
-    <h2>Pending List ...</h2>
+    <div>
     <hr style="height:1px;border:none;color:#333;background-color:#333;" />
     <table class="table">
 	    <thead>
 	        <tr>
 	            <th scope="col">Name</th>
-	            <th scope="col">StartTime</th>
-	            <th scope="col">EndTime</th>
 	            <th scope="col">Type</th>
+	            <th scope="col">Amount</th>
 	            <th scope="col"></th>
 	            <th scope="col"></th>
 	        </tr>
 	    </thead>
 	    <tbody class="tableBody">
-	        <tr th:each="user: ${userList}" th:id="${user.appId}">
-	        	<td>[[${user.user.firstName}]]</td>
-	            <td>[[${user.startTime}]]</td>
-	            <td>[[${user.endTime}]]</td>
-	            <td>[[${user.type}]]</td>
-	            <td><button class="btn btn-success"   
-                        th:onclick="'approve(\''+${user.appId}+ '\');'">Approve</button></td>
-                <td><button class="btn btn-danger" 
-                	th:onclick="'deny(\''+${user.appId}+ '\');'">Deny</button></td>
+	        <tr th:${app} th:id="${app.appId}">
+	        	<td>[[${app.user.firstName}]]</td>
+	            <td>[[${app.type}]]</td>
+	            <td>100</td>
+                <td><button class="btn btn-success"   
+                        th:onclick="'createTransaction(\''+${app.appId}+ '\');'">Create Transaction</button></td>
 	        </tr>
 	    </tbody>
 	</table>
     </div>
+    
 </div>
 </body>
 </html>
