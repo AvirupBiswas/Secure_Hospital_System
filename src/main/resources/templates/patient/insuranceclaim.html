@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+   <title>Secure Hospital System</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"/>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<style>
+#editbtn {
+  margin-left: 560px;
+}
+#savebtn {
+  margin-left: 595px;
+}
+</style>
+</head>
+<body>
+<div class="container">
+    <nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
+        <a th:href="@{/patient/home}" class="navbar-brand" href="#">Secure Hospital System</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+          
+          <div class="collapse navbar-collapse justify-content-end" id="navbarsExampleDefault">
+	        <ul style="list-style: none; display:contents">
+		        <li class="nav-item active" style="padding-right: 20px;">
+	        		<div style="display: flex; align-items:center">
+				      	<div style="height: 10px; width: 10px; border-radius:50%; background-color: var(--success)"></div>
+				      	<em style="color:white; font-size: 15px; margin-left: 10px">logged in as</span></em>
+				    </div>
+			     </li>
+		        <li>
+		      	  <a th:href="@{/logout}" class="nav-link btn btn-outline-light">Log Out</a>
+		        </li>
+	        </ul>
+    	</div>
+    </nav>
+    <br>
+    <br>
+    <br>
+    <div>
+    <form action="#" th:action="@{/patient/getInsuranceDetails}" id="insurancedetails" method="POST" accept-charset="UTF-8" class="content-section col-md-8">
+	<br>
+	<br>
+	<h2>Raise an Insurance Claim</h2>
+	<br>
+	<div class="form-group">
+		<label>
+	      Insurance ID
+	      <button type="button" id="editbtn" class="btn btn-outline-primary btn-default btn-sm text-right">
+          <span class="glyphicon glyphicon-pencil"><i class="fa fa-pencil-square-o" aria-hidden="true" style="font-size:1rem;"></i>edit</span> 
+        </button>
+	      </label>
+	      <input type="text" class="form-control" id="insuranceId" placeholder="Enter your Insurance ID" name="insuranceId">
+      </div>
+      <div class="form-group">
+	      <label>
+	        Insurance Type/Name
+	        </label>
+	        <input type="text" class="form-control" id="insuranceName" placeholder="Enter your Type of Insurance" name="insuranceName">
+      </div>
+      <div class="form-group">
+	      <label>
+	        Insurance Provider 
+	        </label>
+	        <input type="text" class="form-control" id="provider" placeholder="Enter your Insurance Provider Name" name="provider">
+      </div>
+      <button type="submit" id = "savebtn" class="btn btn-outline-primary btn-sm">Save my details</button>
+</form>
+    </div>
+    
+    <div>
+    <form action="#" th:action="@{/patient/addClaimDetails}" id="insuranceamount" method="POST" accept-charset="UTF-8" class="content-section col-md-8">
+	<div class="form-group">
+		<label>
+	      Amount
+	      </label>
+	      <input type="number" class="form-control" id="amount" placeholder="Enter the amount you want to claim" name="amount">
+      </div>
+      <div class="form-group">
+	      <label>
+	        Purpose for Insurance Claim
+	        </label>
+	        <input type="text" class="form-control" id="purpose" placeholder="Enter your Type of Insurance" name="purpose">
+      </div>
+      <button type="submit" class="btn btn-primary">Submit</button>
+</form>
+    </div>
+	
+</div>
+</body>
+</html>

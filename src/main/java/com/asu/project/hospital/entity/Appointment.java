@@ -8,7 +8,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.OneToOne;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
@@ -24,7 +24,7 @@ public class Appointment {
     //userID (Foreign Key)
     @JoinColumn(name = "userId", nullable=false)
     @NotNull
-    @OneToOne
+    @ManyToOne
     private User user;
     
     @Column(name="type")
