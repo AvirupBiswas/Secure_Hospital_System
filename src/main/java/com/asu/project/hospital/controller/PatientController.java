@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.asu.project.hospital.entity.Appointment;
+import com.asu.project.hospital.entity.InsuranceClaims;
+import com.asu.project.hospital.entity.InsuranceDetails;
 import com.asu.project.hospital.entity.Patient;
 import com.asu.project.hospital.entity.User;
 import com.asu.project.hospital.service.AppointmentService;
@@ -72,13 +74,43 @@ public class PatientController {
 		return "patient/bookappointment";
 	}
 	
+	@GetMapping("/claiminsurance")
+	public String claimInsurance(Model model) {
+		model.addAttribute("InsuranceDetails", new InsuranceDetails());
+		return "patient/insuranceclaim";
+	}
+	
 	@PostMapping("/createappointment")
 	public String createAppointment(@ModelAttribute("scheduleApp") Appointment appointment, @RequestParam("date") String date, @RequestParam("time") String time) throws Exception {
         User user = userService.getLoggedUser();
         System.out.println(user.getUserId());
+        appointment.setStatus("Pending");
         appointmentService.createAppointment(user, appointment, date, time);
         return "patient/patienthome";
 	}
+	
+	@PostMapping("/addInsuranceDetails")
+	public String addInsuranceDetails(@ModelAttribute("insurance") InsuranceDetails insuranceDetails) {
+		User user = userService.getLoggedUser();
+		patientService.addInsuranceDetails(insuranceDetails);
+		return "patient/insuranceclaim";
+	}
+	
+	@PostMapping("/addClaimDetails")
+	public String addInsuranceClaims(@ModelAttribute("claim") InsuranceClaims insuranceClaim) {
+		insuranceClaim.setStatus("Pending");
+		patientService.addInsuranceClaimRequest(insuranceClaim);
+		return "patient/patienthome";
+	}
+	
+	@PostMapping("/getInsuranceDetails")
+	public String getInsuranceDetails(Model model) {
+		User user=userService.getLoggedUser();
+		InsuranceDetails details=patientService.getInsuranceDetails(user);
+		model.addAttribute(details);
+		return "patien/insuranceclaim";
+	}
+	
 	
 
 }
