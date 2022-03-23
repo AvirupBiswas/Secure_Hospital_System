@@ -1,6 +1,7 @@
 package com.asu.project.hospital.service;
 
 import java.nio.charset.StandardCharsets;
+import java.util.Date;
 import java.util.Properties;
 
 import javax.mail.MessagingException;
@@ -78,5 +79,15 @@ public class MailService {
 	@Async
 	public void sendUserRegistrationDenialMail(String email,String firstName,String lastName) {
 		sendEmail(email, "Registration rejection", "<html><body>" + "Sorry "+firstName+" "+lastName+ ".Your registration has been declined by admin.Please try again." + "</body></html>", false, true);
+	}
+	
+	@Async
+	public void sendUserAppointmentAcceptanceMail(String email,String firstName,Date startTime) {
+		sendEmail(email, "Appointment approval", "<html><body>" + "Congraluation "+firstName+ ".Your Appointment has been approved by admin.You can visit Doctor at "+startTime + "</body></html>", false, true);
+	}
+	
+	@Async
+	public void sendUserAppointmentDenialMail(String email,String firstName,Date startTime) {
+		sendEmail(email, "Appointment rejection", "<html><body>" + "Congraluation "+firstName+ ".Your Appointment has been declined by admin. Please try again."+"</body></html>", false, true);
 	}
 }
