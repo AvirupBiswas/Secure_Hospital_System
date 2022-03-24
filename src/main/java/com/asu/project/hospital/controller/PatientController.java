@@ -1,5 +1,7 @@
 package com.asu.project.hospital.controller;
 
+import java.util.List;
+
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -74,10 +76,10 @@ public class PatientController {
 		return "patient/bookappointment";
 	}
 	
-	@GetMapping("/claiminsurance")
+	@GetMapping("/editinsurance")
 	public String claimInsurance(Model model) {
 		model.addAttribute("InsuranceDetails", new InsuranceDetails());
-		return "patient/insuranceclaim";
+		return "patient/editinsurance";
 	}
 	
 	@PostMapping("/createappointment")
@@ -103,12 +105,26 @@ public class PatientController {
 		return "patient/patienthome";
 	}
 	
-	@PostMapping("/getInsuranceDetails")
+	@RequestMapping("/getInsuranceDetails")
 	public String getInsuranceDetails(Model model) {
 		User user=userService.getLoggedUser();
 		InsuranceDetails details=patientService.getInsuranceDetails(user);
-		model.addAttribute(details);
-		return "patien/insuranceclaim";
+		model.addAttribute("insurancedetails",details);
+		return "patient/insuranceclaim";
+	}
+	
+	public String getClaimsHistory(Model model) {
+		User user=userService.getLoggedUser();
+		List<InsuranceClaims> claims=patientService.findAllClaims(user);
+		model.addAttribute("insuranceClaims", claims);
+		return "patient/viewclaims";
+	}
+	
+	public String getAppointmentHistory(Model model) {
+		User user=userService.getLoggedUser();
+		List<Appointment> appointment=patientService.findAllAppointments(user);
+		model.addAttribute("appointments", appointment);
+		return "patient/viewappointments";
 	}
 	
 	

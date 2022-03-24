@@ -1,12 +1,16 @@
 package com.asu.project.hospital.service;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.asu.project.hospital.entity.Appointment;
 import com.asu.project.hospital.entity.InsuranceClaims;
 import com.asu.project.hospital.entity.InsuranceDetails;
 import com.asu.project.hospital.entity.Patient;
 import com.asu.project.hospital.entity.User;
+import com.asu.project.hospital.repository.AppointmentRepository;
 import com.asu.project.hospital.repository.InsuranceClaimsRepository;
 import com.asu.project.hospital.repository.InsuranceDetailsRepository;
 import com.asu.project.hospital.repository.PatientRepository;
@@ -22,6 +26,9 @@ public class PatientService {
 	
 	@Autowired
 	InsuranceClaimsRepository insuranceClaimRepository;
+	
+	@Autowired
+	AppointmentRepository appointmentRepository;
 	
 	@Autowired
 	UserService userService;
@@ -49,6 +56,14 @@ public class PatientService {
 	
 	public InsuranceDetails getInsuranceDetails(User user) {
 		return insuranceDetailsRepository.findByUser(user);
+	}
+	
+	public List<InsuranceClaims> findAllClaims(User user){
+		return insuranceClaimRepository.findByUser(user);
+	}
+	
+	public List<Appointment> findAllAppointments(User user){
+		return appointmentRepository.findByUser(user);
 	}
 
 }
