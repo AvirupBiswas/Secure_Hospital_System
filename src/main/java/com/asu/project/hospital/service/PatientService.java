@@ -43,7 +43,15 @@ public class PatientService {
 		User user= userService.getLoggedUser();
 		insuranceDetails.setUser(user);
 		insuranceDetailsRepository.save(insuranceDetails);
-		
+	}
+	
+	public void editInsuranceDetails(InsuranceDetails insuranceDetails) {
+		User user= userService.getLoggedUser();
+		InsuranceDetails details=insuranceDetailsRepository.findByUser(user);
+		details.setInsuranceId(insuranceDetails.getInsuranceId());
+		details.setInsuranceName(insuranceDetails.getInsuranceName());
+		details.setProvider(insuranceDetails.provider);
+		insuranceDetailsRepository.save(details);
 	}
 	
 	public void addInsuranceClaimRequest(InsuranceClaims claim) {

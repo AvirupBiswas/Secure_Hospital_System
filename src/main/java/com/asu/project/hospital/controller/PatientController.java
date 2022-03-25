@@ -98,6 +98,13 @@ public class PatientController {
 		return "patient/insuranceclaim";
 	}
 	
+	@PostMapping("/editInsuranceDetails")
+	public String editInsuranceDetails(@ModelAttribute("insurance") InsuranceDetails insuranceDetails) {
+		User user = userService.getLoggedUser();
+		patientService.editInsuranceDetails(insuranceDetails);
+		return "patient/insuranceclaim";
+	}
+	
 	@PostMapping("/addClaimDetails")
 	public String addInsuranceClaims(@ModelAttribute("claim") InsuranceClaims insuranceClaim) {
 		insuranceClaim.setStatus("Pending");
@@ -113,6 +120,7 @@ public class PatientController {
 		return "patient/insuranceclaim";
 	}
 	
+	@GetMapping("/viewClaimHistory")
 	public String getClaimsHistory(Model model) {
 		User user=userService.getLoggedUser();
 		List<InsuranceClaims> claims=patientService.findAllClaims(user);
@@ -120,6 +128,7 @@ public class PatientController {
 		return "patient/viewclaims";
 	}
 	
+	@GetMapping("/viewAppointmentHistory")
 	public String getAppointmentHistory(Model model) {
 		User user=userService.getLoggedUser();
 		List<Appointment> appointment=patientService.findAllAppointments(user);
