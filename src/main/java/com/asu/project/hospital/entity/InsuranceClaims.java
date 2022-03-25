@@ -17,8 +17,8 @@ import javax.persistence.Table;
 @Table(name="insuranceclaims")
 public class InsuranceClaims {
 	
+	@Column(name="claimId", nullable=false)
 	@Id
-	@Column(name="claimId")
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private long claimId;
 	
@@ -98,6 +98,8 @@ public class InsuranceClaims {
 		this.status = status;
 	}
 
+	public InsuranceClaims() {
+	}
 	
 	
 
