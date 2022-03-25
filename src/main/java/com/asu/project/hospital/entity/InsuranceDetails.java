@@ -2,6 +2,7 @@ package com.asu.project.hospital.entity;
 
 import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -35,7 +36,7 @@ public class InsuranceDetails {
 	@Column(name="provider")
 	public String provider;
 	
-	@OneToOne
+	@OneToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name="userId", nullable=false)
 	public User user;
 	

@@ -42,41 +42,11 @@
     <br>
     <br>
     <br>
-    <div th:if="${insurancedetails}">
-  	<div class="content-section col-md-8" id="insurancedetailsfromdb">
+  	<div>
+    <form action="#" th:action="@{/patient/editInsuranceDetails}" id="insurancedetails" method="POST" accept-charset="UTF-8" class="content-section col-md-8">
 	<br>
 	<br>
-	<h2>Raise an Insurance Claim</h2>
-	<br>
-	<div class="form-group">
-		<label>
-	      Insurance ID
-	      <a id="editbtn" class="btn btn-outline-primary btn-default btn-sm text-right" th:href="@{/patient/editinsurance}">
-          <span class="glyphicon glyphicon-pencil"><i class="fa fa-pencil-square-o" aria-hidden="true" style="font-size:1rem;"></i>edit</span> 
-        </a>
-	      </label>
-	      <input type="text" readonly="readonly" class="form-control" id="insuranceId" placeholder="Enter your Insurance ID" name="insuranceId" th:value="${insurancedetails.insuranceId}">
-      </div>
-      <div class="form-group">
-	      <label>
-	        Insurance Type/Name
-	        </label>
-	        <input type="text" readonly="readonly" class="form-control" id="insuranceName" placeholder="Enter your Type of Insurance" name="insuranceName" th:value="${insurancedetails.insuranceName}">
-      </div>
-      <div class="form-group">
-	      <label>
-	        Insurance Provider 
-	        </label>
-	        <input type="text" readonly="readonly" class="form-control" id="provider" placeholder="Enter your Insurance Provider Name" name="provider" th:value="${insurancedetails.provider}">
-      </div>
-    </div>
-	</div>
-	<div th:unless="${insurancedetails}">
-  	<div id="editinsurancedetails">
-    <form action="#" th:action="@{/patient/addInsuranceDetails}" id="insurancedetails" method="POST" accept-charset="UTF-8" class="content-section col-md-8">
-	<br>
-	<br>
-	<h2>Raise an Insurance Claim</h2>
+	<h2>Edit Insurance Details</h2>
 	<br>
 	<div class="form-group">
 		<label>
@@ -99,25 +69,7 @@
       <button type="submit" id = "savebtn" class="btn btn-outline-primary btn-sm">Save my details</button>
 </form>
     </div>
-	</div>
     
-    <div>
-    <form action="#" th:action="@{/patient/addClaimDetails}" id="insuranceamount" method="POST" accept-charset="UTF-8" class="content-section col-md-8">
-	<div class="form-group">
-		<label>
-	      Amount
-	      </label>
-	      <input type="number" class="form-control" id="amount" placeholder="Enter the amount you want to claim" name="amount">
-      </div>
-      <div class="form-group">
-	      <label>
-	        Purpose for Insurance Claim
-	        </label>
-	        <input type="text" class="form-control" id="purpose" placeholder="Enter your Type of Insurance" name="purpose">
-      </div>
-      <button type="submit" class="btn btn-primary">Submit</button>
-</form>
-    </div>
 	
 </div>
 </body>
