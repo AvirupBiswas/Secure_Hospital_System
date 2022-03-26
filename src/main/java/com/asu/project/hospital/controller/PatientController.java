@@ -106,9 +106,9 @@ public class PatientController {
 	}
 	
 	@PostMapping("/addClaimDetails")
-	public String addInsuranceClaims(@ModelAttribute("claim") InsuranceClaims insuranceClaim) {
-		insuranceClaim.setStatus("Pending");
-		patientService.addInsuranceClaimRequest(insuranceClaim);
+	public String addInsuranceClaims(@ModelAttribute("insuranceclaim") InsuranceClaims insuranceclaim) {
+		insuranceclaim.setStatus("Pending");
+		patientService.addInsuranceClaimRequest(insuranceclaim);
 		return "patient/patienthome";
 	}
 	
@@ -125,7 +125,7 @@ public class PatientController {
 		User user=userService.getLoggedUser();
 		List<InsuranceClaims> claims=patientService.findAllClaims(user);
 		model.addAttribute("insuranceClaims", claims);
-		return "patient/viewclaims";
+		return "patient/viewClaimHistory";
 	}
 	
 	@GetMapping("/viewAppointmentHistory")
@@ -133,7 +133,7 @@ public class PatientController {
 		User user=userService.getLoggedUser();
 		List<Appointment> appointment=patientService.findAllAppointments(user);
 		model.addAttribute("appointments", appointment);
-		return "patient/viewappointments";
+		return "patient/viewAppointmentHistory";
 	}
 	
 	
