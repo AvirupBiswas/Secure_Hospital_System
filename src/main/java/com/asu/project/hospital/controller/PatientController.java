@@ -39,7 +39,7 @@ public class PatientController {
 	@GetMapping("/home")
 	public String adminHome(Model model) {
 		User user = userService.getLoggedUser();
-		// model.addAttribute("accountName", user.getFirstName());
+		model.addAttribute("accountName", user.getFirstName());
 		return "patient/patienthome";
 	}
 	
