@@ -30,9 +30,6 @@ public class ViewController {
 	@Autowired
 	private UserService userService;
 
-	@Autowired
-	private OtpService otpService;
-
 	@GetMapping("/login")
 	public String login() {
 		return "signin";
@@ -47,6 +44,10 @@ public class ViewController {
 	public String register(Model model, @RequestParam(name = "registeredBy", required = false) String registeredBy) {
 		model.addAttribute("user", new User());
 		model.addAttribute("registeredBy", registeredBy);
+		User user = userService.getLoggedUser();
+		if(user!=null) {
+		model.addAttribute("accountName", user.getFirstName());
+		}
 		return "register";
 	}
 

@@ -14,7 +14,7 @@
     	   $('.page-selection').bootpag({
     	    	total: [[${totalPages}]],
     	    	page: [[${currentPageNumber}]],
-    	    	maxVisible: 5,
+    	    	maxVisible: 10,
     	    	leaps: true,
     	    	firstLastUse: true,
     	    	first: '|<',
@@ -27,7 +27,6 @@
     	    	lastClass: 'last',
     	    	firstClass: 'first'
     	    	}).on("page", function(event, num){
-    	    		console.log("hii");
     	    	$.ajax({
     	            url: "[(@{'/admin/signInHistory/pageWise'})]"+'?'+"pagenum="+num,
     	    		type: 'GET',
@@ -180,6 +179,8 @@ a.nav-link.active.show {
             </tr>
         </table>
     </div>
+    <br>
+    <div class="page-selection"></div><br>
 </div>
 
 </body>

@@ -92,7 +92,7 @@ public class AdminController {
 	@RequestMapping("/manageAccounts")
 	public String manageAccounts(Model model) {
 		List<User> employeeList = userService.findAll().stream()
-				.filter(e -> !e.getRole().equals("ADMIN") && !e.getRole().equals("PATIENT"))
+				.filter(e -> e.getActive() && !e.getRole().equals("ADMIN") && !e.getRole().equals("PATIENT"))
 				.collect(Collectors.toList());
 		model.addAttribute("employees", employeeList);
 		User user = userService.getLoggedUser();
@@ -161,12 +161,12 @@ public class AdminController {
 		if (pageNumber < 1) {
 			pageNumber = 1;
 		}
-		Pageable requestedPage = PageRequest.of(pageNumber - 1, 5);// 10);
+		Pageable requestedPage = PageRequest.of(pageNumber - 1, 10);// 10);
 		Page<SignInHistory> signInHistoryPage = signInHistoryRepository.findAll(requestedPage);
 		int totalPage = signInHistoryPage.getTotalPages();
 		if (pageNumber > totalPage) {
 			totalPage = totalPage == 0 ? 1 : totalPage;
-			requestedPage = PageRequest.of(totalPage - 1, 5);// 10);
+			requestedPage = PageRequest.of(totalPage - 1, 10);// 10);
 			signInHistoryPage = signInHistoryRepository.findAll(requestedPage);
 		}
 		model.addAttribute("currentPageNumber", pageNumber);
@@ -185,12 +185,12 @@ public class AdminController {
 		if (pageNumber < 1) {
 			pageNumber = 1;
 		}
-		Pageable requestedPage = PageRequest.of(pageNumber - 1, 5);//in one page 5 number
+		Pageable requestedPage = PageRequest.of(pageNumber - 1, 10);//in one page there are 10 entries
 		Page<SignInHistory> signInHistoryPage = signInHistoryRepository.findAll(requestedPage);
 		int totalPage = signInHistoryPage.getTotalPages();
 		if (pageNumber > totalPage) {
 			totalPage = totalPage == 0 ? 1 : totalPage;
-			requestedPage = PageRequest.of(totalPage - 1, 5);//in one page 5 number
+			requestedPage = PageRequest.of(totalPage - 1, 10);//in one page there are 10 entries
 			signInHistoryPage = signInHistoryRepository.findAll(requestedPage);
 		}
 		model.addAttribute("currentPageNumber", pageNumber);
