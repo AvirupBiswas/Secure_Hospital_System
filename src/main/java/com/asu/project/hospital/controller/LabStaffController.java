@@ -2,8 +2,8 @@ package com.asu.project.hospital.controller;
 
 import javax.validation.Valid;
 
-import com.asu.project.hospital.entity.HospitalStaff;
 import com.asu.project.hospital.repository.LabStaffRepository;
+import com.asu.project.hospital.repository.LabTestRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -30,6 +30,9 @@ public class LabStaffController {
 
 	@Autowired
 	private LabStaffRepository labStaffRepository;
+
+	@Autowired
+	private LabTestRepository labTestRepository;
 
 	@GetMapping("/home")
 	public String labStaffHome(Model model) {
@@ -85,4 +88,15 @@ public class LabStaffController {
 		}
 		return "labstaff/labstaffhome";
 	}
+
+	@GetMapping("/getLabTestRequests")
+	public String getLabTestRequests(Model model) {
+		User user = userService.getLoggedUser();
+//		System.out.println("user obj:" + user);
+		model.addAttribute("accountName", user.getFirstName());
+//		model.addAttribute("user", user);
+		model.addAttribute("allLabTests", labStaffService.getAllLabTests());
+		return "labstaff/labtestrequests";
+	}
+
 }
