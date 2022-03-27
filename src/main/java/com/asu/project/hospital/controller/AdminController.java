@@ -1,5 +1,6 @@
 package com.asu.project.hospital.controller;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -21,10 +22,13 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.asu.project.hospital.entity.AdminDecisionForUser;
 import com.asu.project.hospital.entity.SignInHistory;
+import com.asu.project.hospital.entity.SystemLog;
 import com.asu.project.hospital.entity.User;
 import com.asu.project.hospital.model.SignInhistorySearchResult;
+import com.asu.project.hospital.model.SystemLogsSearchResult;
 import com.asu.project.hospital.repository.AdminDecisionForUserRepository;
 import com.asu.project.hospital.repository.SignInHistoryRepository;
+import com.asu.project.hospital.repository.SystemLogRepository;
 import com.asu.project.hospital.repository.UserRepository;
 import com.asu.project.hospital.service.MailService;
 import com.asu.project.hospital.service.UserService;
@@ -48,6 +52,9 @@ public class AdminController {
 	@Autowired
 	private SignInHistoryRepository signInHistoryRepository;
 
+	@Autowired
+	private SystemLogRepository systemLogRepository;
+
 	@GetMapping("/aproveUser/{Id}")
 	public ResponseEntity<String> aproveUser(@PathVariable("Id") String Id) {
 		Long id = Long.parseLong(Id);
@@ -58,6 +65,10 @@ public class AdminController {
 			emailService.sendUserRegistrationAcceptanceMail(user.get().getEmail(), user.get().getFirstName(),
 					user.get().getLastName());
 		}
+		SystemLog systemLog = new SystemLog();
+		systemLog.setMessage(user.get().getEmail() +" account creation approved By admin "+userService.getLoggedUser().getEmail());
+		systemLog.setTimestamp(new Date());
+		systemLogRepository.save(systemLog);
 		return new ResponseEntity<String>(HttpStatus.OK);
 	}
 
@@ -70,6 +81,10 @@ public class AdminController {
 			emailService.sendUserRegistrationDenialMail(user.get().getEmail(), user.get().getFirstName(),
 					user.get().getLastName());
 		}
+		SystemLog systemLog = new SystemLog();
+		systemLog.setMessage(user.get().getEmail() +" account creation denied By admin "+userService.getLoggedUser().getEmail());
+		systemLog.setTimestamp(new Date());
+		systemLogRepository.save(systemLog);
 		return new ResponseEntity<String>(HttpStatus.OK);
 	}
 
@@ -185,12 +200,12 @@ public class AdminController {
 		if (pageNumber < 1) {
 			pageNumber = 1;
 		}
-		Pageable requestedPage = PageRequest.of(pageNumber - 1, 10);//in one page there are 10 entries
+		Pageable requestedPage = PageRequest.of(pageNumber - 1, 10);// in one page there are 10 entries
 		Page<SignInHistory> signInHistoryPage = signInHistoryRepository.findAll(requestedPage);
 		int totalPage = signInHistoryPage.getTotalPages();
 		if (pageNumber > totalPage) {
 			totalPage = totalPage == 0 ? 1 : totalPage;
-			requestedPage = PageRequest.of(totalPage - 1, 10);//in one page there are 10 entries
+			requestedPage = PageRequest.of(totalPage - 1, 10);// in one page there are 10 entries
 			signInHistoryPage = signInHistoryRepository.findAll(requestedPage);
 		}
 		model.addAttribute("currentPageNumber", pageNumber);
@@ -199,6 +214,56 @@ public class AdminController {
 		SignInhistorySearchResult signInhistorySearchResult = new SignInhistorySearchResult();
 		signInhistorySearchResult.setSignInHistoryList(signInHistoryPage.getContent());
 		return new ResponseEntity<SignInhistorySearchResult>(signInhistorySearchResult, HttpStatus.OK);
+	}
+
+	@RequestMapping("/logs")
+	public String systemLogsDefaultPage(
+			@RequestParam(value = "pagenum", required = false, defaultValue = "1") String pagenum, Model model) {
+		User user = userService.getLoggedUser();
+		model.addAttribute("accountName", user.getFirstName());
+		int pageNumber = Integer.parseInt(pagenum);
+		if (pageNumber < 1) {
+			pageNumber = 1;
+		}
+		Pageable requestedPage = PageRequest.of(pageNumber - 1, 2);// 10);
+		Page<SystemLog> systemLogPage = systemLogRepository.findAll(requestedPage);
+		int totalPage = systemLogPage.getTotalPages();
+		if (pageNumber > totalPage) {
+			totalPage = totalPage == 0 ? 1 : totalPage;
+			requestedPage = PageRequest.of(totalPage - 1, 2);// 10);
+			systemLogPage = systemLogRepository.findAll(requestedPage);
+		}
+		model.addAttribute("currentPageNumber", pageNumber);
+		model.addAttribute("totalPages", totalPage);
+
+		model.addAttribute("systemLogList", systemLogPage.getContent());
+
+		return "admin/logs";
+	}
+
+	@GetMapping("/systemLogs/pageWise")
+	public ResponseEntity<SystemLogsSearchResult> systemLogsPageWise(
+			@RequestParam(value = "pagenum", required = false, defaultValue = "1") String pagenum, Model model) {
+		User user = userService.getLoggedUser();
+		model.addAttribute("accountName", user.getFirstName());
+		int pageNumber = Integer.parseInt(pagenum);
+		if (pageNumber < 1) {
+			pageNumber = 1;
+		}
+		Pageable requestedPage = PageRequest.of(pageNumber - 1, 2);// in one page there are 10 entries
+		Page<SystemLog> systemLogPage = systemLogRepository.findAll(requestedPage);
+		int totalPage = systemLogPage.getTotalPages();
+		if (pageNumber > totalPage) {
+			totalPage = totalPage == 0 ? 1 : totalPage;
+			requestedPage = PageRequest.of(totalPage - 1, 2);// in one page there are 10 entries
+			systemLogPage = systemLogRepository.findAll(requestedPage);
+		}
+		model.addAttribute("currentPageNumber", pageNumber);
+		model.addAttribute("totalPages", totalPage);
+
+		SystemLogsSearchResult systemLogsSearchResult = new SystemLogsSearchResult();
+		systemLogsSearchResult.setSystemLogsList(systemLogPage.getContent());
+		return new ResponseEntity<SystemLogsSearchResult>(systemLogsSearchResult, HttpStatus.OK);
 	}
 
 }
