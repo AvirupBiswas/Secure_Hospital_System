@@ -1,17 +1,15 @@
 <!DOCTYPE html>
-<html lang="en" x mlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
    <title>Secure Hospital System</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"/>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-
-<script th:inline="javascript">
+      <script th:inline="javascript">
         function approve(id) {
             $.ajax({
-                url : "[(@{'/labstaff/aproveUser/'})]"+id,
+                url : "[(@{'/labstaff/approvelabtest/'})]"+id,
                 type : "GET",
                 beforeSend: function () {
         	    	$("#loader").removeClass('hidden');
@@ -29,7 +27,7 @@
         }
         function deny(id) {
              $.ajax({
-                url : "[(@{'/labstaff/denyUser/'})]"+id,
+                url : "[(@{'/labstaff/denylabtest/'})]"+id,
                 type : "GET",
                 beforeSend: function () {
         	    	$("#loader").removeClass('hidden');
@@ -94,8 +92,7 @@
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
-          
-          <div class="collapse navbar-collapse justify-content-end" id="navbarsExampleDefault">
+       <div class="collapse navbar-collapse justify-content-end" id="navbarsExampleDefault">
 	        <ul style="list-style: none; display:contents">
 		        <li class="nav-item active" style="padding-right: 20px;">
 	        		<div style="display: flex; align-items:center">
@@ -104,74 +101,58 @@
 				    </div>
 			     </li>
 		        <li>
-    				<form sec:authorize="isAuthenticated()" th:action="@{/logout}" method="POST">
+		      	  <form sec:authorize="isAuthenticated()" th:action="@{/logout}" method="POST">
 		  				<button class="btn btn-outline-light" type="submit" title="Logout">Log Out</button>
 		         	</form>
 		        </li>
 	        </ul>
     	</div>
+    <div>
+    </div>
     </nav>
     <br>
     <br>
     <br>
-     <div class="jumbotron" style="background-color: #deecf9">
-     <!--    <h3 style="text-align:center;">Welcome to the Hospital Staff Dashboard</h3>
-       <hr style="height:5px;border:none;color:#333;background-color:#333;" /> -->
-       <h1 th:inline="text">Hello [[${accountName}]]</h1>
-        <hr>
-        <h3>Welcome to the Lab Staff Dashboard</h3>
-        <br>
-    </div>
     <br>
+     <div th:if="${#lists.isEmpty(allLabTests)}">
+     <h2 style="text-align:center;">No Pending user account List </h2>
+     </div>
+    <br>
+    <input class="btn btn-primary" type="button" value="Go Back" onclick="history.back(-1)" />
+    <br>
+     <br>
   	<div id="loader" class="lds-dual-ring hidden overlay">
-  	
     </div>
-    
-    <div class="card-deck">
-<div class="card text-center">
-  <div class="card-body">
-    <h5 class="card-title">Update Lab Staff Information</h5>
-       <hr>
-       <i class="fa fa-pencil-square-o" aria-hidden="true" style="font-size:8rem;"></i>
-    <a th:href="@{/labstaff/updateinfo}" class="btn btn-dark">Update Lab Staff Information</a>
-  </div>
-</div>
-<div class="card text-center">
-  <div class="card-body">
-    <h5 class="card-title">View Lab Test Requests</h5>
-    <hr>
-    <i class="fa fa-list-alt" aria-hidden="true" style="font-size:8rem;"></i>
-    <a th:href="@{/labstaff/getLabTestRequests(status='Requested')}" class="btn btn-dark">View Lab Test Requests</a>
-  </div>
-</div>
-<div class="card text-center">
-  <div class="card-body">
-    <h5 class="card-title">Create Lab Test Report</h5>
-    <hr>
-    <i class="fa fa-list-alt" aria-hidden="true" style="font-size:8rem;"></i>
-    <a th:href="@{/labstaff/getLabTestRequests(status='Generate')}" class="btn btn-dark">Create Lab Test Reports</a>
-  </div>
-</div>
-<div class="card text-center">
-  <div class="card-body">
-    <h5 class="card-title">View/Update Lab Test Report</h5>
-    <hr>
-    <i class="fa fa-address-card-o"  aria-hidden="true" style="font-size:8rem;"></i>
-<!--    <a th:href="/" class="btn btn-dark">View/Update Lab Test Report</a>-->
-  </div>
-</div>
-<div class="card text-center">
-  <div class="card-body">
-    <h5 class="card-title">View Lab reports</h5>
-    <hr>
-    <i class="fa fa-history" aria-hidden="true" style="font-size:8rem;"></i>
-    <br><br>
-    <!--<a th:href="#" class="btn btn-dark">Lab Reports</a>-->
-  </div>
-</div>
-</div>
-<br>
-<br>
+    <div th:unless="${#lists.isEmpty(allLabTests)}">
+    <h2>Pending List ...</h2>
+    <hr style="height:1px;border:none;color:#333;background-color:#333;" />
+    <table class="table table table-striped table-bordered">
+	    <thead>
+	        <tr>
+                <th scope="col">Patient Name</th>
+                <th scope="col">Patient Email</th>
+	            <th scope="col">Test Name</th>
+	            <th scope="col">Description</th>
+                <th scope="col"></th>
+	            <th scope="col"></th>
+	            <th scope="col"></th>
+	        </tr>
+	    </thead>
+	    <tbody class="tableBody">
+	        <tr th:each="labTest: ${allLabTests}" th:id="${labTest.labTestId}">
+                <td>[[${labTest.user.firstName}]] [[${labTest.user.lastName}]]</td>
+                <td>[[${labTest.user.email}]]</td>
+	            <td>[[${labTest.testName}]]</td>
+	            <td>[[${labTest.description}]]</td>
+                <td><button class="btn btn-info">Doctor's Diagnosis</button></td>
+	            <td><button class="btn btn-success"   
+                        th:onclick="'approve(\''+${labTest.labTestId}+ '\');'">Approve</button></td>
+                <td><button class="btn btn-danger" 
+                	th:onclick="'deny(\''+${labTest.labTestId}+ '\');'">Deny</button></td>
+	        </tr>
+	    </tbody>
+	</table>
+    </div>
 </div>
 </body>
 </html>

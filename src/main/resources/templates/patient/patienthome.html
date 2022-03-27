@@ -56,19 +56,19 @@
             <span class="navbar-toggler-icon"></span>
         </button>
           
-        <div class="collapse navbar-collapse justify-content-end" id="navbarsExampleDefault">
+          <div class="collapse navbar-collapse justify-content-end" id="navbarsExampleDefault">
 	        <ul style="list-style: none; display:contents">
 		        <li class="nav-item active" style="padding-right: 20px;">
 	        		<div style="display: flex; align-items:center">
 				      	<div style="height: 10px; width: 10px; border-radius:50%; background-color: var(--success)"></div>
-				      	<em style="color:white; font-size: 15px; margin-left: 10px">logged in as <span th:text="${accountName}"></span></em>
+				      	<em style="color:white; font-size: 15px; margin-left: 10px">logged in aslogged in as <span th:text="${accountName}"></span></em>
 				    </div>
 			     </li>
-		        <li>
-    				<form sec:authorize="isAuthenticated()" th:action="@{/logout}" method="POST">
-		  				<button class="btn btn-outline-light" type="submit" title="Logout">Log Out</button>
-		         	</form>
-		        </li>
+				<li>
+					<form sec:authorize="isAuthenticated()" th:action="@{/logout}" method="POST">
+						<button class="btn btn-outline-light" type="submit" title="Logout">Log Out</button>
+					</form>
+				</li>
 	        </ul>
     	</div>
     </nav>
@@ -180,7 +180,7 @@
 	    <hr>
 	    <i class="fa fa-address-card-o" aria-hidden="true" style="font-size:8rem;"></i>
 	    <br><br>
-	    <a th:href="@{/patient/viewClaimHistory}" class="btn btn-dark">Request lab tests</a>
+	    <a th:href="@{/patient/labrequest}" class="btn btn-dark">Request lab tests</a>
 	  </div>
 	</div>
 </div>
