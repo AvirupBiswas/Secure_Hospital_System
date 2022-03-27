@@ -26,6 +26,7 @@ import com.asu.project.hospital.entity.PatientPayment;
 import com.asu.project.hospital.entity.User;
 import com.asu.project.hospital.repository.AdminDecisionForUserRepository;
 import com.asu.project.hospital.repository.HospitalStaffDecisionForUserRepository;
+import com.asu.project.hospital.repository.HospitalStaffRepository;
 import com.asu.project.hospital.repository.PatientPaymentRepository;
 import com.asu.project.hospital.service.MailService;
 import com.asu.project.hospital.service.PatientService;
@@ -51,6 +52,9 @@ public class HospitalStaffController {
 	private HospitalStaffService hospitalStaffService;
 	
 	@Autowired
+	private HospitalStaffRepository hospitalStaffRepository;
+	
+	@Autowired
 	private HospitalStaffDecisionForUserRepository hospitalStaffDecisionForUserRepository;
 	
 	@Autowired
@@ -64,13 +68,16 @@ public class HospitalStaffController {
 	}
 	
 	@GetMapping("/updateinfo")
-	public String register(Model model) {
+	public String updateInfo(Model model) {
+		User user = userService.getLoggedUser();
+		HospitalStaff hStaff=hospitalStaffRepository.findByUser(user);
 		model.addAttribute("hospitalstaff", new HospitalStaff());
+		model.addAttribute("hospitalstaffdetails", hStaff);
 		return "hospitalstaff/updateinfo";
 	}
 	
 	@PostMapping("/updateinformation")
-	public String register(@Valid @ModelAttribute("hospitalstaff") HospitalStaff userForm, BindingResult result, Model model) {
+	public String updateInformation(@Valid @ModelAttribute("hospitalstaff") HospitalStaff userForm, BindingResult result, Model model) {
 
 		if (result.hasErrors()) {
 			return "hospitalstaff/updateinfo";
@@ -80,6 +87,26 @@ public class HospitalStaffController {
 			model.addAttribute("phoneNumber", userForm.getPhoneNumber());
 			model.addAttribute("address",userForm.getAddress());
 			hospitalStaffService.updateHospitalStaffInfo(userForm);
+		} catch (Exception e) {
+			return e.getMessage();
+		}
+		return "hospitalstaff/home";
+	}
+	
+	@PostMapping("/editinformation")
+	public String editInformation(@Valid @ModelAttribute("hospitalstaff") HospitalStaff userForm, BindingResult result, Model model) {
+
+		if (result.hasErrors()) {
+			return "hospitalstaff/updateinfo";
+		}
+		try {
+			User user=userService.getLoggedUser();
+			HospitalStaff hospitalStaff=hospitalStaffRepository.findByUser(user);
+			hospitalStaff.setPhoneNumber(userForm.getPhoneNumber());
+			hospitalStaff.setAddress(userForm.getAddress());
+			model.addAttribute("phoneNumber", userForm.getPhoneNumber());
+			model.addAttribute("address",userForm.getAddress());
+			hospitalStaffService.updateHospitalStaffInfo(hospitalStaff);
 		} catch (Exception e) {
 			return e.getMessage();
 		}
