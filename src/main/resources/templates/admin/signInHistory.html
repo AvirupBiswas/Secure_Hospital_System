@@ -56,14 +56,31 @@
     	    					+'<td>' +  userList[i].firstName + '</td>'
     	    					+'<td>' +  userList[i].lastName + '</td>'
     	    					+'<td>' +  userList[i].role + '</td>'
-    	    					+'<td>' +  userList[i].loginTimeStamp + '</td>'
-    	    					+'<td>' +  userList[i].logoutTimeStamp + '</td>'+'</tr>');
+    	    					+'<td>' +  formatDate(new Date(userList[i].loginTimeStamp)) + '</td>'
+    	    					+'<td>' +  formatDate(new Date(userList[i].logoutTimeStamp)) + '</td>'+'</tr>');
     	    		}
     	    		$("#resultDisplay").append(tabletag);
     	      }
     	    });
     	    });
     	});
+    
+    function formatDate(d)
+    {
+     date = new Date(d)
+     var dd = date.getDate(); 
+     var mm = date.getMonth()+1;
+     var yyyy = date.getFullYear(); 
+     var hr = date.getHours();
+     var min = date.getMinutes();
+     var sec = date.getSeconds();
+     if(dd<10){dd='0'+dd} 
+     if(mm<10){mm='0'+mm}
+     if(hr<10){hr='0'+hr}
+     if(min<10){min='0'+min}
+     if(sec<10){sec='0'+sec} ;
+     return d = dd+'-'+mm+'-'+yyyy+" "+hr+":"+min+":"+sec
+   }
     </script>
     <style>
 .pagination>li>a {
@@ -166,16 +183,16 @@ a.nav-link.active.show {
                 <th scope="col">First Name</th>
                 <th scope="col">Last Name</th>
                 <th scope="col">Role</th>
-                <th scope="col">Login TimeStamp</th>
-	            <th scope="col">Logout TimeStamp</th>
+                <th scope="col">Login TimeStamp in format(dd-MM-yyyy HH:mm:ss)</th>
+	            <th scope="col">Logout TimeStamp in format(dd-MM-yyyy HH:mm:ss)</th>
             </tr>
             <tr th:each = "user: ${signInHistoryList}">
                 <td th:text="${user.getEmail()}"></td>
                 <td th:text="${user.getFirstName()}"></td>
                 <td th:text="${user.getLastName()}"></td>
                 <td th:text="${user.getRole()}"></td>
-                <td th:text="${user.getLoginTimeStamp()}"></td>
-                <td th:text="${user.getLogoutTimeStamp()}"></td>
+                <td th:text="${#dates.format(user.getLoginTimeStamp(), 'dd-MM-yyyy HH:mm:ss')}"></td>
+                <td th:text="${#dates.format(user.getLogoutTimeStamp(), 'dd-MM-yyyy HH:mm:ss')}"></td>
             </tr>
         </table>
     </div>

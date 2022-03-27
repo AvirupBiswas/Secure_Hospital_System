@@ -225,12 +225,12 @@ public class AdminController {
 		if (pageNumber < 1) {
 			pageNumber = 1;
 		}
-		Pageable requestedPage = PageRequest.of(pageNumber - 1, 2);// 10);
+		Pageable requestedPage = PageRequest.of(pageNumber - 1, 10);
 		Page<SystemLog> systemLogPage = systemLogRepository.findAll(requestedPage);
 		int totalPage = systemLogPage.getTotalPages();
 		if (pageNumber > totalPage) {
 			totalPage = totalPage == 0 ? 1 : totalPage;
-			requestedPage = PageRequest.of(totalPage - 1, 2);// 10);
+			requestedPage = PageRequest.of(totalPage - 1, 10);
 			systemLogPage = systemLogRepository.findAll(requestedPage);
 		}
 		model.addAttribute("currentPageNumber", pageNumber);
@@ -250,12 +250,12 @@ public class AdminController {
 		if (pageNumber < 1) {
 			pageNumber = 1;
 		}
-		Pageable requestedPage = PageRequest.of(pageNumber - 1, 2);// in one page there are 10 entries
+		Pageable requestedPage = PageRequest.of(pageNumber - 1, 10);// in one page there are 10 entries
 		Page<SystemLog> systemLogPage = systemLogRepository.findAll(requestedPage);
 		int totalPage = systemLogPage.getTotalPages();
 		if (pageNumber > totalPage) {
 			totalPage = totalPage == 0 ? 1 : totalPage;
-			requestedPage = PageRequest.of(totalPage - 1, 2);// in one page there are 10 entries
+			requestedPage = PageRequest.of(totalPage - 1, 10);// in one page there are 10 entries
 			systemLogPage = systemLogRepository.findAll(requestedPage);
 		}
 		model.addAttribute("currentPageNumber", pageNumber);
