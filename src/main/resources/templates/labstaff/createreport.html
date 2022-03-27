@@ -7,9 +7,9 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"/>
       <script th:inline="javascript">
-        function approve(id) {
+        function createReport(id) {
             $.ajax({
-                url : "[(@{'/labstaff/approvelabtest/'})]"+id,
+                url : "[(@{'/labstaff/createReport/'})]"+id,
                 type : "GET",
                 beforeSend: function () {
         	    	$("#loader").removeClass('hidden');
@@ -25,25 +25,7 @@
                 }
             });
         }
-        function deny(id) {
-             $.ajax({
-                url : "[(@{'/labstaff/denylabtest/'})]"+id,
-                type : "GET",
-                beforeSend: function () {
-        	    	$("#loader").removeClass('hidden');
-        	        },
-        	    complete: function () {
-        	        $("#loader").addClass('hidden');
-        	        },
-                success : function(data) {
-                	 $('#' + id).remove();
-                },
-                error : function() {
-                    console.log("There was an error");
-                }
-            });
-        	$("#loader").removeClass('hidden');
-        }
+
     </script>
     <style>
    .lds-dual-ring.hidden {
@@ -134,8 +116,6 @@
 	            <th scope="col">Test Name</th>
 	            <th scope="col">Description</th>
                 <th scope="col"></th>
-	            <th scope="col"></th>
-	            <th scope="col"></th>
 	        </tr>
 	    </thead>
 	    <tbody class="tableBody">
@@ -144,11 +124,9 @@
                 <td>[[${labTest.user.email}]]</td>
 	            <td>[[${labTest.testName}]]</td>
 	            <td>[[${labTest.description}]]</td>
-                <td><button class="btn btn-info">Doctor's Diagnosis</button></td>
-	            <td><button class="btn btn-success"   
-                        th:onclick="'approve(\''+${labTest.labTestId}+ '\');'">Approve</button></td>
-                <td><button class="btn btn-danger" 
-                	th:onclick="'deny(\''+${labTest.labTestId}+ '\');'">Deny</button></td>
+
+	            <td><button class="btn btn-primary"
+                        th:onclick="'createReport(\''+${labTest.labTestId}+ '\');'">Create Report</button></td>
 	        </tr>
 	    </tbody>
 	</table>

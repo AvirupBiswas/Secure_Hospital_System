@@ -90,4 +90,15 @@ public class MailService {
 	public void sendUserAppointmentDenialMail(String email,String firstName,Date startTime) {
 		sendEmail(email, "Appointment rejection", "<html><body>" + "Congraluation "+firstName+ ".Your Appointment has been declined by admin. Please try again."+"</body></html>", false, true);
 	}
+
+	// For lab test approval
+	@Async
+	public void sendLabTestApprovalMail(String email,String firstName,String lastName, String testName) {
+		sendEmail(email, "Lab test request for " + testName + " approved!", "<html><body>" + "Congraluation "+firstName+" "+lastName+ ".Your lab test "+ testName +" request has been approved by lab staff." + "</body></html>", false, true);
+	}
+
+	@Async
+	public void sendLabTestDenyMail(String email,String firstName,String lastName, String testName) {
+		sendEmail(email, "Lab test request for " + testName + " has been denied!", "<html><body>" + "Sorry "+firstName+" "+lastName+ ".Your lab test " + testName +" request has been denied by lab staff." + "</body></html>", false, true);
+	}
 }

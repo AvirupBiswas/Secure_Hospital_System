@@ -141,23 +141,23 @@
     <h5 class="card-title">View Lab Test Requests</h5>
     <hr>
     <i class="fa fa-list-alt" aria-hidden="true" style="font-size:8rem;"></i>
-    <a th:href="@{/labstaff/getLabTestRequests}" class="btn btn-dark">View Lab Test Requests</a>
+    <a th:href="@{/labstaff/getLabTestRequests(status='Requested')}" class="btn btn-dark">View Lab Test Requests</a>
   </div>
 </div>
 <div class="card text-center">
   <div class="card-body">
-    <h5 class="card-title">View Lab Test Reports</h5>
+    <h5 class="card-title">Create Lab Test Report</h5>
     <hr>
     <i class="fa fa-list-alt" aria-hidden="true" style="font-size:8rem;"></i>
-    <!--<a th:href="#" class="btn btn-dark">Create Transactions</a>-->
+    <a th:href="@{/labstaff/getLabTestRequests(status='Generate')}" class="btn btn-dark">Create Lab Test Reports</a>
   </div>
 </div>
 <div class="card text-center">
   <div class="card-body">
-    <h5 class="card-title">View diagnosis Report</h5>
+    <h5 class="card-title">View/Update Lab Test Report</h5>
     <hr>
     <i class="fa fa-address-card-o"  aria-hidden="true" style="font-size:8rem;"></i>
-    <!--<a th:href="#" class="btn btn-dark">View diagnosis Report</a>-->
+<!--    <a th:href="/" class="btn btn-dark">View/Update Lab Test Report</a>-->
   </div>
 </div>
 <div class="card text-center">
