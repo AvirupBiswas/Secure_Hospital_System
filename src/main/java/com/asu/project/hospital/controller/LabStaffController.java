@@ -2,6 +2,8 @@ package com.asu.project.hospital.controller;
 
 import javax.validation.Valid;
 
+import com.asu.project.hospital.entity.HospitalStaff;
+import com.asu.project.hospital.repository.LabStaffRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -26,6 +28,9 @@ public class LabStaffController {
 	@Autowired
 	private LabStaffService labStaffService;
 
+	@Autowired
+	private LabStaffRepository labStaffRepository;
+
 	@GetMapping("/home")
 	public String labStaffHome(Model model) {
 		User user = userService.getLoggedUser();
@@ -37,7 +42,10 @@ public class LabStaffController {
 
 	@GetMapping("/updateinfo")
 	public String register(Model model) {
+		User user = userService.getLoggedUser();
+		LabStaff labStaffUser = labStaffRepository.findByUser(user);
 		model.addAttribute("labstaff", new LabStaff());
+		model.addAttribute("userInfo", labStaffUser);
 		return "labstaff/updateinfo";
 	}
 
@@ -58,20 +66,23 @@ public class LabStaffController {
 		return "labstaff/labstaffhome";
 	}
 
-//	@PostMapping("/updateinformation")
-//	public String register(@Valid @ModelAttribute("labstaff") LabStaff userForm, BindingResult result, Model model) {
-//
-//		if (result.hasErrors()) {
-//			return "labstaff/updateinfo";
-//		}
-//		try {
-//			model.addAttribute("phoneNumber", userForm.getPhoneNumber());
-//			model.addAttribute("address",userForm.getAddress());
-//			labStaffService.updateLabStaffInfo(userForm);
-//		} catch (Exception e) {
-//			return e.getMessage();
-//		}
-//		return "labstaff/labstaffhome";
-//	}
+	@PostMapping("/editinformation")
+	public String editInformation(@Valid @ModelAttribute("labstaff") LabStaff userForm, BindingResult result, Model model) {
 
+		if (result.hasErrors()) {
+			return "labstaff/updateinfo";
+		}
+		try {
+			User user=userService.getLoggedUser();
+			LabStaff labStaffUser=labStaffRepository.findByUser(user);
+			labStaffUser.setPhoneNumber(userForm.getPhoneNumber());
+			labStaffUser.setAddress(userForm.getAddress());
+			model.addAttribute("phoneNumber", userForm.getPhoneNumber());
+			model.addAttribute("address",userForm.getAddress());
+			labStaffService.updateLabStaffInfo(labStaffUser);
+		} catch (Exception e) {
+			return e.getMessage();
+		}
+		return "labstaff/labstaffhome";
+	}
 }
