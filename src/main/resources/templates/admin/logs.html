@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <title>Secure Hospital System</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <script src="/bootpag.min.js"></script>
+    <script th:inline="javascript">
+    $(document).ready(function(){
+    	   $('.page-selection').bootpag({
+    	    	total: [[${totalPages}]],
+    	    	page: [[${currentPageNumber}]],
+    	    	maxVisible: 10,
+    	    	leaps: true,
+    	    	firstLastUse: true,
+    	    	first: '|<',
+    	    	last: '>|',
+    	    	wrapClass: 'pagination',
+    	    	activeClass: 'active',
+    	    	disabledClass: 'disabled',
+    	    	nextClass: 'next',
+    	    	prevClass: 'prev',
+    	    	lastClass: 'last',
+    	    	firstClass: 'first'
+    	    	}).on("page", function(event, num){
+    	    	$.ajax({
+    	            url: "[(@{'/admin/systemLogs/pageWise'})]"+'?'+"pagenum="+num,
+    	    		type: 'GET',
+    	    	    cache : false,
+    	    		contentType : false,
+    	    		processData : false,
+	    		 	beforeSend: function () {
+	        	    	$("#loader").removeClass('hidden');
+	        	        },
+	        	    complete: function () {
+	        	        $("#loader").addClass('hidden');
+	        	        },
+    	    		success: function(data) {
+    	    		logList = data['systemLogsList'];
+    	    		$("#resultDisplay").empty();
+    	    		var tabletag = $("<table></table>");
+    	    		tabletag.attr('class',"table table-striped table-bordered");
+    	    		tabletag.append($("<tbody></tbody>"));
+    	    		tabletag.append('<tr>'+'<th scope="col">Log Message</th>'
+    	    				+'<th scope="col">	Timestamp</th>'
+    	    				+'</tr>');
+    	    		for(let i=0;i<logList.length;i++) {
+    	    			tabletag.append('<tr>'+ '<td>' +  logList[i].message + '</td>'
+    	    					+'<td>' + formatDate(new Date(logList[i].timestamp)) + '</td>'
+    	    					+'</tr>');
+    	    		}
+    	    		$("#resultDisplay").append(tabletag);
+    	      }
+    	    });
+    	    });
+    	});
+    
+    function formatDate(d)
+    {
+     date = new Date(d)
+     var dd = date.getDate(); 
+     var mm = date.getMonth()+1;
+     var yyyy = date.getFullYear(); 
+     var hr = date.getHours();
+     var min = date.getMinutes();
+     var sec = date.getSeconds();
+     if(dd<10){dd='0'+dd} 
+     if(mm<10){mm='0'+mm}
+     if(hr<10){hr='0'+hr}
+     if(min<10){min='0'+min}
+     if(sec<10){sec='0'+sec} ;
+     return d = dd+'-'+mm+'-'+yyyy+" "+hr+":"+min+":"+sec
+   }
+    </script>
+    <style>
+.pagination>li>a {
+	border: 1px solid #A55941;
+	padding: 5px;
+	color: #A55941;
+	font-size: 15px;
+}
+
+.pagination>li.active>a {
+	background: #A55941;
+	color: #fff;
+	font-size: 15px;
+}
+
+a.nav-link.active.show {
+	border-color: transparent;
+	border-bottom: 4px solid var(--primary);
+	color: var(--primary) !important;
+	background: transparent;
+	font-weight: 600;
+}
+
+ .lds-dual-ring.hidden {
+        display: none;
+    }
+
+    .overlay {
+        position: fixed;
+        top:  50%;
+    	left: 50%;
+    	transform: translate(-50%,-50%);
+        text-align: center;
+    }
+    
+    /*Spinner Styles*/
+    .lds-dual-ring {
+        display: inline-block;
+        width: 80px;
+        height: 80px;
+    }
+    .lds-dual-ring:after {
+        content: " ";
+        display: block;
+        width: 64px;
+        height: 64px;
+        border-radius: 50%;
+        border: 6px solid #000000;
+        border-color: #000000 transparent #000000 transparent;
+        animation: lds-dual-ring 1.2s linear infinite;
+        text-align: center;
+    }
+    @keyframes lds-dual-ring {
+        0% {
+            transform: rotate(0deg);
+        }
+        100% {
+            transform: rotate(360deg);
+        }
+    }
+</style>
+</head>
+<body>
+  <nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
+        <a th:href="@{/admin/home}" class="navbar-brand" href="#">Secure Hospital System</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+          
+          <div class="collapse navbar-collapse justify-content-end" id="navbarsExampleDefault">
+	        <ul style="list-style: none; display:contents">
+		        <li class="nav-item active" style="padding-right: 20px;">
+	        		<div style="display: flex; align-items:center">
+				      	<div style="height: 10px; width: 10px; border-radius:50%; background-color: var(--success)"></div>
+				      	<em style="color:white; font-size: 15px; margin-left: 10px">logged in as <span th:text="${accountName}"></span></em>
+				    </div>
+			     </li>
+		        <li>
+		      	  <form sec:authorize="isAuthenticated()" th:action="@{/logout}" method="POST">
+		  				<button class="btn btn-outline-light" type="submit" title="Logout">Log Out</button>
+		         	</form>
+		        </li>
+	        </ul>
+    	</div>
+    </nav>
+<br>
+<br>
+<br>
+<div class="container">
+<div id="loader" class="lds-dual-ring hidden overlay">
+</div>
+<div class="page-selection"></div>
+ <h1>System Logs</h1>
+         <hr style="height:5px;border:none;color:#333;background-color:#333;" />
+        <br>
+    <div id="resultDisplay" class="starter-template">
+        <table class="table table-striped table-bordered">
+           <tr>
+                <th>Log Message</th>
+                <th>Timestamp in format(dd-MM-yyyy HH:mm:ss)</th>
+            </tr>
+            <tr th:each = "log: ${systemLogList}">
+                <td th:text="${log.getMessage()}"></td>
+                <td th:text="${#dates.format(log.getTimestamp(), 'dd-MM-yyyy HH:mm:ss')}"></td>
+            </tr>
+        </table>
+    </div>
+    <br>
+    <div class="page-selection"></div><br>
+</div>
+
+</body>
+</html>

@@ -19,7 +19,7 @@
         	        },
                 success : function(data) {
                 	 $('#' + id).remove();
-                	 window.location='updateTransaction/'+id
+                	 window.location="history.back(-1)"
                 },
                 error : function() {
                     console.log("There was an error");

@@ -114,6 +114,8 @@ public class UserService {
     }
 	
 	public void delete(User userEntity) {
-        userRepository.delete(userEntity);
+		userEntity.setActive(false);
+        //userRepository.delete(userEntity);
+		userRepository.save(userEntity);
     }
 }

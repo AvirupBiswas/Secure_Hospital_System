@@ -50,4 +50,11 @@ public class CustomLoginFailureHandler extends SimpleUrlAuthenticationFailureHan
 		super.onAuthenticationFailure(request, response, exception);
 
 	}
+	
+	void doNotProceed(HttpServletRequest request, HttpServletResponse response,
+			AuthenticationException exception) throws IOException, ServletException
+	{
+		super.setDefaultFailureUrl("/login?error");
+		super.onAuthenticationFailure(request, response, exception);
+	}
 }
