@@ -61,7 +61,7 @@
 		        <li class="nav-item active" style="padding-right: 20px;">
 	        		<div style="display: flex; align-items:center">
 				      	<div style="height: 10px; width: 10px; border-radius:50%; background-color: var(--success)"></div>
-				      	<em style="color:white; font-size: 15px; margin-left: 10px">logged in as</span></em>
+				      	<em style="color:white; font-size: 15px; margin-left: 10px">logged in aslogged in as <span th:text="${accountName}"></span></em>
 				    </div>
 			     </li>
 		        <li>
@@ -178,7 +178,7 @@
 	    <hr>
 	    <i class="fa fa-address-card-o" aria-hidden="true" style="font-size:8rem;"></i>
 	    <br><br>
-	    <a th:href="@{/patient/viewClaimHistory}" class="btn btn-dark">Request lab tests</a>
+	    <a th:href="@{/patient/labrequest}" class="btn btn-dark">Request lab tests</a>
 	  </div>
 	</div>
 </div>

@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import com.asu.project.hospital.entity.Appointment;
 import com.asu.project.hospital.entity.InsuranceClaims;
 import com.asu.project.hospital.entity.InsuranceDetails;
+import com.asu.project.hospital.entity.LabTest;
 import com.asu.project.hospital.entity.Patient;
 import com.asu.project.hospital.entity.User;
 import com.asu.project.hospital.service.AppointmentService;
@@ -39,7 +40,7 @@ public class PatientController {
 	@GetMapping("/home")
 	public String adminHome(Model model) {
 		User user = userService.getLoggedUser();
-		// model.addAttribute("accountName", user.getFirstName());
+		model.addAttribute("accountName", user.getFirstName());
 		return "patient/patienthome";
 	}
 	
@@ -80,6 +81,12 @@ public class PatientController {
 	public String claimInsurance(Model model) {
 		model.addAttribute("InsuranceDetails", new InsuranceDetails());
 		return "patient/editinsurance";
+	}
+	
+	@GetMapping("/labrequest")
+	public String labRequest(Model model) {
+		model.addAttribute("labTest", new LabTest());
+		return "patient/requestlabtest";
 	}
 	
 	@PostMapping("/createappointment")
@@ -134,6 +141,13 @@ public class PatientController {
 		List<Appointment> appointment=patientService.findAllAppointments(user);
 		model.addAttribute("appointments", appointment);
 		return "patient/viewAppointmentHistory";
+	}
+	
+	
+	@PostMapping("/createLabRequest")
+	public String createLabTestRequest(@ModelAttribute LabTest labTest) {
+		patientService.createLabRequest(labTest);
+		return "patient/patienthome";
 	}
 	
 	
