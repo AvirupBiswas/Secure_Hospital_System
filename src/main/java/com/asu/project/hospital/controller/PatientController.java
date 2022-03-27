@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import com.asu.project.hospital.entity.Appointment;
 import com.asu.project.hospital.entity.InsuranceClaims;
 import com.asu.project.hospital.entity.InsuranceDetails;
+import com.asu.project.hospital.entity.LabTest;
 import com.asu.project.hospital.entity.Patient;
 import com.asu.project.hospital.entity.User;
 import com.asu.project.hospital.service.AppointmentService;
@@ -82,6 +83,12 @@ public class PatientController {
 		return "patient/editinsurance";
 	}
 	
+	@GetMapping("/labrequest")
+	public String labRequest(Model model) {
+		model.addAttribute("labTest", new LabTest());
+		return "patient/requestlabtest";
+	}
+	
 	@PostMapping("/createappointment")
 	public String createAppointment(@ModelAttribute("scheduleApp") Appointment appointment, @RequestParam("date") String date, @RequestParam("time") String time) throws Exception {
         User user = userService.getLoggedUser();
@@ -134,6 +141,13 @@ public class PatientController {
 		List<Appointment> appointment=patientService.findAllAppointments(user);
 		model.addAttribute("appointments", appointment);
 		return "patient/viewAppointmentHistory";
+	}
+	
+	
+	@PostMapping("/createLabRequest")
+	public String createLabTestRequest(@ModelAttribute LabTest labTest) {
+		patientService.createLabRequest(labTest);
+		return "patient/patienthome";
 	}
 	
 	
