@@ -31,6 +31,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	protected void configure(HttpSecurity http) throws Exception {
 		http.authorizeRequests().antMatchers("/viewPDF/**").hasAnyAuthority("ADMIN", "HOSPITALSTAFF")
 				.antMatchers("/admin/**").hasAuthority("ADMIN").antMatchers("/patient/**").hasAuthority("PATIENT").antMatchers("/hospitalstaff/**").hasAuthority("HOSPITALSTAFF")
+				.antMatchers("/labstaff/**").hasAuthority("LABSTAFF")
 				.antMatchers("/").permitAll().and().formLogin().loginPage("/login")
 				.failureHandler(handleAuthenticationFailure()).successHandler(myAuthenticationSuccessHandler())
 				.permitAll().and()

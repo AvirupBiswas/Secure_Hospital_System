@@ -28,7 +28,7 @@ public class LabTest {
 	private String description;
 	
 	@Column(name="status")
-	private String Status;
+	private String status;
 	
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name="userId")
@@ -62,11 +62,11 @@ public class LabTest {
 	}
 
 	public String getStatus() {
-		return Status;
+		return status;
 	}
 
 	public void setStatus(String status) {
-		Status = status;
+		this.status = status;
 	}
 
 	public User getUser() {
@@ -89,7 +89,7 @@ public class LabTest {
 		this.labTestId = labTestId;
 		this.testName = testName;
 		this.description = description;
-		Status = status;
+		this.status = status;
 		this.user = user;
 		this.price = price;
 	}
