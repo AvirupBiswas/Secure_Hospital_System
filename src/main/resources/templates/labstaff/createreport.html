@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"/>
       <script th:inline="javascript">
         function createReport(id) {
-            $.ajax({
+          /*   $.ajax({
                 url : "[(@{'/labstaff/createReport/'})]"+id,
                 type : "GET",
                 beforeSend: function () {
@@ -23,7 +23,8 @@
                 error : function() {
                     console.log("There was an error");
                 }
-            });
+            }); */
+        	window.location= '/labstaff/createReport/'+id;
         }
 
     </script>

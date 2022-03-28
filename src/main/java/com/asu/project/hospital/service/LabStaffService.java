@@ -1,6 +1,7 @@
 package com.asu.project.hospital.service;
 
 import com.asu.project.hospital.entity.LabTest;
+import com.asu.project.hospital.entity.LabTestReport;
 import com.asu.project.hospital.repository.LabTestRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -8,6 +9,7 @@ import org.springframework.stereotype.Service;
 import com.asu.project.hospital.entity.LabStaff;
 import com.asu.project.hospital.entity.User;
 import com.asu.project.hospital.repository.LabStaffRepository;
+import com.asu.project.hospital.repository.LabTestReportRepository;
 
 import java.util.List;
 import java.util.Optional;
@@ -22,6 +24,9 @@ public class LabStaffService {
 
 	@Autowired
 	UserService userService;
+	
+	@Autowired
+	LabTestReportRepository labTestReportRepository;
 	
 	public void updateLabStaffInfo(LabStaff labStaff) {
 		User user = userService.getLoggedUser();
@@ -49,9 +54,13 @@ public class LabStaffService {
 		}
 		return null;
 	}
+	
+	public void createLabTestReport(LabTestReport labTestReport,LabTest labtest) {
+		labtest.setStatus("Reported");
+		labTestRepository.save(labtest);
+		labTestReport.setLabTest(labtest);
+		labTestReportRepository.save(labTestReport);
+	}
 
 
-//	public void getPendingLabRequests(Patient patient) {
-//		
-//	}
 }

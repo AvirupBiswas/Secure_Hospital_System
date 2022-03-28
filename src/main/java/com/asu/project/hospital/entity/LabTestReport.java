@@ -1,8 +1,13 @@
 package com.asu.project.hospital.entity;
 
-import java.math.BigDecimal;
-
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
 
 @Entity
 @Table(name="LabTestReport")
@@ -23,9 +28,6 @@ public class LabTestReport {
     @JoinColumn(name="testId",nullable = false)
     private LabTest labTest;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="userId")
-    private User user;
 
     public int getLabTestReportId() {
         return labTestReportId;
@@ -59,20 +61,12 @@ public class LabTestReport {
         this.labTest = labTest;
     }
 
-    public User getUser() {
-        return user;
-    }
 
-    public void setUser(User user) {
-        this.user = user;
-    }
-
-    public LabTestReport(int labTestReportId, String testName, String testResult, LabTest labTest, User user) {
+    public LabTestReport(int labTestReportId, String testName, String testResult, LabTest labTest) {
         this.labTestReportId = labTestReportId;
         this.testName = testName;
         this.testResult = testResult;
         this.labTest = labTest;
-        this.user = user;
     }
 
     public LabTestReport() {

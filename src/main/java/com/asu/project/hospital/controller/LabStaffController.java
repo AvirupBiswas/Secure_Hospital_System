@@ -1,11 +1,15 @@
 package com.asu.project.hospital.controller;
 
+import java.util.Date;
+
 import javax.validation.Valid;
 
 import com.asu.project.hospital.entity.LabTest;
 import com.asu.project.hospital.entity.LabTestReport;
+import com.asu.project.hospital.entity.SystemLog;
 import com.asu.project.hospital.repository.LabStaffRepository;
 import com.asu.project.hospital.repository.LabTestRepository;
+import com.asu.project.hospital.repository.SystemLogRepository;
 import com.asu.project.hospital.service.MailService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -36,6 +40,9 @@ public class LabStaffController {
 
 	@Autowired
 	private LabTestRepository labTestRepository;
+	
+	@Autowired
+	private SystemLogRepository systemLogRepository;
 
 	@GetMapping("/home")
 	public String labStaffHome(Model model) {
@@ -120,6 +127,10 @@ public class LabStaffController {
 		User user = labStaffService.updateLabTestStatus("Approved", Integer.parseInt(labTestId));
 		LabTest labTestObj = labStaffService.getLabTest(Integer.parseInt(labTestId));
 		emailService.sendLabTestApprovalMail(user.getEmail(), user.getFirstName(),user.getLastName(), labTestObj.getTestName());
+		SystemLog systemLog = new SystemLog();
+		systemLog.setMessage(user.getEmail() +" lab report request for Test Name: " +labTestObj.getTestName()+ " approved by  labstaff "+userService.getLoggedUser().getEmail());
+		systemLog.setTimestamp(new Date());
+		systemLogRepository.save(systemLog);
 		return "labstaff/labtestrequests";
 	}
 
@@ -128,19 +139,30 @@ public class LabStaffController {
 		User user = labStaffService.updateLabTestStatus("Denied", Integer.parseInt(labTestId));
 		LabTest labTestObj = labStaffService.getLabTest(Integer.parseInt(labTestId));
 		emailService.sendLabTestDenyMail(user.getEmail(), user.getFirstName(), user.getLastName(), labTestObj.getTestName());
+		SystemLog systemLog = new SystemLog();
+		systemLog.setMessage(user.getEmail() +" lab report request for Test Name: " +labTestObj.getTestName()+ " denied by  labstaff "+userService.getLoggedUser().getEmail());
+		systemLog.setTimestamp(new Date());
+		systemLogRepository.save(systemLog);
 		return "labstaff/labtestrequests";
 	}
 
-//	createReport
-
 	@GetMapping("/createReport/{labTestId}")
-	public String createReport(@Valid @ModelAttribute("labTestReport") LabTestReport userForm, BindingResult result, @PathVariable("labTestId") String labTestId, Model model) {
+	public String openCreateLabTestReportPage(@PathVariable("labTestId") String labTestId, Model model) {
 		User user = userService.getLoggedUser();
 		model.addAttribute("accountName", user.getFirstName());
 		LabTest labTestObj = labStaffService.getLabTest(Integer.parseInt(labTestId));
-
-		model.addAttribute("labTest", labTestObj);
+		model.addAttribute("labTest",labTestObj);
+		model.addAttribute("labTestId", labTestObj.getLabTestId());
 		return "labstaff/createUserReport";
+	}
+	
+	@PostMapping("/createReport/{labTestId}")
+	public String createLabTestReport(@ModelAttribute("labTestReport") LabTestReport labTestReport, @PathVariable("labTestId") String labTestId, Model model) {
+		User user = userService.getLoggedUser();
+		model.addAttribute("accountName", user.getFirstName());
+		LabTest labTestObj = labStaffService.getLabTest(Integer.parseInt(labTestId));
+		labStaffService.createLabTestReport(labTestReport,labTestObj);
+		return "labstaff/labstaffhome";
 	}
 
 }
