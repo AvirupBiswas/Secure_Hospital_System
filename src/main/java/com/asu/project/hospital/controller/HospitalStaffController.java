@@ -28,6 +28,7 @@ import com.asu.project.hospital.repository.AdminDecisionForUserRepository;
 import com.asu.project.hospital.repository.HospitalStaffDecisionForUserRepository;
 import com.asu.project.hospital.repository.HospitalStaffRepository;
 import com.asu.project.hospital.repository.PatientPaymentRepository;
+import com.asu.project.hospital.repository.PatientRepository;
 import com.asu.project.hospital.service.MailService;
 import com.asu.project.hospital.service.PatientService;
 import com.asu.project.hospital.service.UserService;
@@ -53,6 +54,9 @@ public class HospitalStaffController {
 	
 	@Autowired
 	private HospitalStaffRepository hospitalStaffRepository;
+	
+	@Autowired
+	PatientRepository patientRepository;
 	
 	@Autowired
 	private HospitalStaffDecisionForUserRepository hospitalStaffDecisionForUserRepository;
@@ -166,5 +170,42 @@ public class HospitalStaffController {
 	
 		return new ResponseEntity<String>(HttpStatus.OK);
 	}
+	
+	@GetMapping("/viewpatients")
+	public String viewPatients(Model model) {
+		List<User> allPatients=hospitalStaffService.getAllPatients();
+		model.addAttribute("patient",allPatients);
+		return "hospitalstaff/viewpatients";
+	}
+	
+	
+	@PostMapping("/updatepatientinfo")
+	public String updatePatientInfo(@RequestParam("userId") String userId, Model model) {
+		User user = userService.findByUserId(userId);
+		model.addAttribute("user",user);
+		model.addAttribute("patient", new Patient());
+		return "hospitalstaff/updatepatientinfo";
+	}
+	
+	@PostMapping("/updatepatientinformation")
+	public String updatePatientInformation(@Valid @ModelAttribute("patient") Patient userForm, BindingResult result, Model model) {
 
+		if (result.hasErrors()) {
+			return "hospitalstaff/updatepatientinfo";
+		}
+		try {
+			User user=userService.getLoggedUser();
+			model.addAttribute("height", userForm.getHeight());
+			model.addAttribute("weight", userForm.getWeight());
+			model.addAttribute("age", userForm.getAge());
+			model.addAttribute("address",userForm.getAddress());
+			model.addAttribute("gender", userForm.getGender());
+			model.addAttribute("phoneNumber", userForm.getPhoneNumber());
+			patientRepository.save(userForm);
+		} catch (Exception e) {
+			return e.getMessage();
+		}
+		return "hospitalstaff/home";
+	}
+	
 }
