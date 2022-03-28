@@ -24,22 +24,23 @@ public class LabStaffService {
 
 	@Autowired
 	UserService userService;
-	
+
 	@Autowired
 	LabTestReportRepository labTestReportRepository;
-	
+
 	public void updateLabStaffInfo(LabStaff labStaff) {
 		User user = userService.getLoggedUser();
 		labStaff.setUser(user);
 		labStaffRepository.save(labStaff);
 	}
+
 	public List<LabTest> getLabTestsByStatus(String status) {
 		return labTestRepository.findByStatus(status);
 	}
 
-	public User updateLabTestStatus(String status, Integer labTestId ){
+	public User updateLabTestStatus(String status, Integer labTestId) {
 		Optional<LabTest> labTestObj = labTestRepository.findById(labTestId);
-		if (labTestObj.isPresent()){
+		if (labTestObj.isPresent()) {
 			labTestObj.get().setStatus(status);
 			labTestRepository.save(labTestObj.get());
 			return labTestObj.get().getUser();
@@ -47,20 +48,48 @@ public class LabStaffService {
 		return null;
 	}
 
-	public LabTest getLabTest(Integer labTestId){
+	public LabTest getLabTest(Integer labTestId) {
 		Optional<LabTest> labTestObj = labTestRepository.findById(labTestId);
-		if (labTestObj.isPresent()){
+		if (labTestObj.isPresent()) {
 			return labTestObj.get();
 		}
 		return null;
 	}
-	
-	public void createLabTestReport(LabTestReport labTestReport,LabTest labtest) {
+
+	public void createLabTestReport(LabTestReport labTestReport, LabTest labtest) {
 		labtest.setStatus("Reported");
 		labTestRepository.save(labtest);
 		labTestReport.setLabTest(labtest);
 		labTestReportRepository.save(labTestReport);
 	}
 
+	public void deleteLabTestReport(Integer labTestReportId) {
+		Optional<LabTestReport> labTestReport = labTestReportRepository.findById(labTestReportId);
+		if (labTestReport.isPresent()) {
+			LabTest labtest = labTestReport.get().getLabTest();
+			labtest.setStatus("Archived");
+			labTestRepository.save(labtest);
+			labTestReportRepository.delete(labTestReport.get());
+		}
 
+	}
+
+	public void UpdateLabTestReport(LabTestReport labTestReport, Integer labTestReportId) {
+		Optional<LabTestReport> labTestReportObj = labTestReportRepository.findById(labTestReportId);
+		if (labTestReportObj.isPresent()) {
+			LabTestReport labTestReportObjVal = labTestReportObj.get();
+			labTestReportObjVal.setTestResult(labTestReport.getTestResult());
+			labTestReportRepository.save(labTestReportObjVal);
+		}
+
+	}
+
+	public List<LabTestReport> getAllLabTestReports() {
+		return labTestReportRepository.findAll();
+	}
+
+	public LabTestReport getLabTestReport(int parseInt) {
+		Optional<LabTestReport> optionalLabTestReport = labTestReportRepository.findById(parseInt);
+		return optionalLabTestReport.isPresent()?optionalLabTestReport.get():null;
+	}
 }

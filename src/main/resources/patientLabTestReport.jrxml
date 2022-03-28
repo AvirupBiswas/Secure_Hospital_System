@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.10.0.final using JasperReports Library version 6.10.0-unknown  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="patientLabTestReport" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="4b642d37-8cc4-4fe0-a1e1-c9c9670bb4df">
+	<queryString>
+		<![CDATA[]]>
+	</queryString>
+	<field name="patientName" class="java.lang.String"/>
+	<field name="testName" class="java.lang.String"/>
+	<field name="testResult" class="java.lang.String"/>
+	<field name="price" class="java.math.BigDecimal"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="40" splitType="Stretch">
+			<textField>
+				<reportElement x="230" y="10" width="100" height="30" uuid="b75c0309-d115-497a-a185-1cf807731de6"/>
+				<textElement>
+					<font size="12" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Lab Test Report "]]></textFieldExpression>
+			</textField>
+		</band>
+	</title>
+	<detail>
+		<band height="139" splitType="Stretch">
+			<textField>
+				<reportElement x="10" y="4" width="100" height="24" uuid="e5bbe9a1-9e40-463f-b4fe-e553921d3946"/>
+				<textElement>
+					<font size="12" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Patient Name: "]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="10" y="48" width="100" height="24" uuid="52402af1-6040-4e41-9dca-890e81d7d085"/>
+				<textElement>
+					<font size="12" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Test Name: "]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="10" y="80" width="100" height="24" uuid="e31f9e94-3f29-44b7-92ca-9c1f0b2cbb7e"/>
+				<textElement>
+					<font size="12" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Test Result:  "]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="350" y="115" width="80" height="24" uuid="8704e3ad-0c82-41d8-ba39-a7d1a6df5f75"/>
+				<textElement>
+					<font size="12" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Test Price:  "]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="110" y="4" width="439" height="24" uuid="c723f82e-ed28-41c5-8543-2b1aaae2300f"/>
+				<textFieldExpression><![CDATA[$F{patientName}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="110" y="48" width="439" height="24" uuid="3d25addb-a3b2-44ab-bb25-46b20d361284">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textFieldExpression><![CDATA[$F{testName}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="430" y="115" width="120" height="24" uuid="ef08fd67-9fc8-4da0-aaa4-50526a6a272b">
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textFieldExpression><![CDATA[$F{price}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="110" y="80" width="439" height="24" uuid="7bc8d954-b527-494c-b96e-e2ccdec13c22">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+				</reportElement>
+				<textFieldExpression><![CDATA[$F{testResult}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<summary>
+		<band height="29" splitType="Stretch">
+			<textField>
+				<reportElement x="230" y="10" width="100" height="19" uuid="f7c2b7b1-9e4c-4ef5-994f-842c080e306a"/>
+				<textElement>
+					<font size="12" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["End Of Report "]]></textFieldExpression>
+			</textField>
+		</band>
+	</summary>
+</jasperReport>

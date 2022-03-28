@@ -39,9 +39,6 @@ public class LabStaffController {
 	private LabStaffRepository labStaffRepository;
 
 	@Autowired
-	private LabTestRepository labTestRepository;
-	
-	@Autowired
 	private SystemLogRepository systemLogRepository;
 
 	@GetMapping("/home")
@@ -69,9 +66,9 @@ public class LabStaffController {
 			return "labstaff/updateinfo";
 		}
 		try {
-			User user=userService.getLoggedUser();
+			User user = userService.getLoggedUser();
 			model.addAttribute("phoneNumber", userForm.getPhoneNumber());
-			model.addAttribute("address",userForm.getAddress());
+			model.addAttribute("address", userForm.getAddress());
 			labStaffService.updateLabStaffInfo(userForm);
 		} catch (Exception e) {
 			return e.getMessage();
@@ -80,18 +77,19 @@ public class LabStaffController {
 	}
 
 	@PostMapping("/editinformation")
-	public String editInformation(@Valid @ModelAttribute("labstaff") LabStaff userForm, BindingResult result, Model model) {
+	public String editInformation(@Valid @ModelAttribute("labstaff") LabStaff userForm, BindingResult result,
+			Model model) {
 
 		if (result.hasErrors()) {
 			return "labstaff/updateinfo";
 		}
 		try {
-			User user=userService.getLoggedUser();
-			LabStaff labStaffUser=labStaffRepository.findByUser(user);
+			User user = userService.getLoggedUser();
+			LabStaff labStaffUser = labStaffRepository.findByUser(user);
 			labStaffUser.setPhoneNumber(userForm.getPhoneNumber());
 			labStaffUser.setAddress(userForm.getAddress());
 			model.addAttribute("phoneNumber", userForm.getPhoneNumber());
-			model.addAttribute("address",userForm.getAddress());
+			model.addAttribute("address", userForm.getAddress());
 			labStaffService.updateLabStaffInfo(labStaffUser);
 		} catch (Exception e) {
 			return e.getMessage();
@@ -100,24 +98,30 @@ public class LabStaffController {
 	}
 
 	@GetMapping("/getLabTestRequests")
-	public String getLabTestRequests(Model model, @RequestParam(name="status") String status) {
+	public String getLabTestRequests(Model model, @RequestParam(name = "status") String status) {
 		User user = userService.getLoggedUser();
 //		System.out.println("user obj:" + user);
 		model.addAttribute("accountName", user.getFirstName());
 //		model.addAttribute("user", user);
 
-		if (status.equals("Requested")){
+		if (status.equals("Requested")) {
 			model.addAttribute("allLabTests", labStaffService.getLabTestsByStatus(status));
 			return "labstaff/labtestrequests";
-		}
-		else if (status.equals("Generate")){
+		} else if (status.equals("Generate")) {
 			model.addAttribute("allLabTests", labStaffService.getLabTestsByStatus(status));
 			return "labstaff/createreport";
-		}
-		else {
+		} else {
 			return "labstaff/labstaffhome";
 		}
 
+	}
+
+	@GetMapping("/ViewOrUpdateOrDeleteLabTest")
+	public String ViewOrUpdateOrDeleteLabTest(Model model) {
+		User user = userService.getLoggedUser();
+		model.addAttribute("accountName", user.getFirstName());
+		model.addAttribute("allLabTestReports", labStaffService.getAllLabTestReports());
+		return "labstaff/ViewOrUpdateOrDeleteLabTest";
 	}
 
 //	approvelabtest
@@ -126,9 +130,11 @@ public class LabStaffController {
 	public String approveLabTest(@PathVariable("labTestId") String labTestId, Model model) {
 		User user = labStaffService.updateLabTestStatus("Approved", Integer.parseInt(labTestId));
 		LabTest labTestObj = labStaffService.getLabTest(Integer.parseInt(labTestId));
-		emailService.sendLabTestApprovalMail(user.getEmail(), user.getFirstName(),user.getLastName(), labTestObj.getTestName());
+		emailService.sendLabTestApprovalMail(user.getEmail(), user.getFirstName(), user.getLastName(),
+				labTestObj.getTestName());
 		SystemLog systemLog = new SystemLog();
-		systemLog.setMessage(user.getEmail() +" lab report request for Test Name: " +labTestObj.getTestName()+ " approved by  labstaff "+userService.getLoggedUser().getEmail());
+		systemLog.setMessage(user.getEmail() + " lab report request for Test Name: " + labTestObj.getTestName()
+				+ " approved by  labstaff " + userService.getLoggedUser().getEmail());
 		systemLog.setTimestamp(new Date());
 		systemLogRepository.save(systemLog);
 		return "labstaff/labtestrequests";
@@ -138,9 +144,11 @@ public class LabStaffController {
 	public String denyLabTest(@PathVariable("labTestId") String labTestId, Model model) {
 		User user = labStaffService.updateLabTestStatus("Denied", Integer.parseInt(labTestId));
 		LabTest labTestObj = labStaffService.getLabTest(Integer.parseInt(labTestId));
-		emailService.sendLabTestDenyMail(user.getEmail(), user.getFirstName(), user.getLastName(), labTestObj.getTestName());
+		emailService.sendLabTestDenyMail(user.getEmail(), user.getFirstName(), user.getLastName(),
+				labTestObj.getTestName());
 		SystemLog systemLog = new SystemLog();
-		systemLog.setMessage(user.getEmail() +" lab report request for Test Name: " +labTestObj.getTestName()+ " denied by  labstaff "+userService.getLoggedUser().getEmail());
+		systemLog.setMessage(user.getEmail() + " lab report request for Test Name: " + labTestObj.getTestName()
+				+ " denied by  labstaff " + userService.getLoggedUser().getEmail());
 		systemLog.setTimestamp(new Date());
 		systemLogRepository.save(systemLog);
 		return "labstaff/labtestrequests";
@@ -151,18 +159,45 @@ public class LabStaffController {
 		User user = userService.getLoggedUser();
 		model.addAttribute("accountName", user.getFirstName());
 		LabTest labTestObj = labStaffService.getLabTest(Integer.parseInt(labTestId));
-		model.addAttribute("labTest",labTestObj);
+		model.addAttribute("labTest", labTestObj);
 		model.addAttribute("labTestId", labTestObj.getLabTestId());
 		return "labstaff/createUserReport";
 	}
-	
+
 	@PostMapping("/createReport/{labTestId}")
-	public String createLabTestReport(@ModelAttribute("labTestReport") LabTestReport labTestReport, @PathVariable("labTestId") String labTestId, Model model) {
+	public String createLabTestReport(@ModelAttribute("labTestReport") LabTestReport labTestReport,
+			@PathVariable("labTestId") String labTestId, Model model) {
 		User user = userService.getLoggedUser();
 		model.addAttribute("accountName", user.getFirstName());
 		LabTest labTestObj = labStaffService.getLabTest(Integer.parseInt(labTestId));
-		labStaffService.createLabTestReport(labTestReport,labTestObj);
-		return "labstaff/labstaffhome";
+		labStaffService.createLabTestReport(labTestReport, labTestObj);
+		return "redirect:/labstaff/getLabTestRequests?status=Generate";
+	}
+
+	@PostMapping("/manageLabTestReport")
+	public String manageAccount(@RequestParam("labTestReportId") String labTestReportId,@RequestParam("action") String action,Model model) {
+		if (action.equals("modify")) {
+			LabTestReport labTestReport= labStaffService.getLabTestReport(Integer.parseInt(labTestReportId));
+			model.addAttribute("labTestReport",labTestReport);
+			return "labstaff/UpdateLabTestReport";
+		} else if (action.equals("delete")) {
+			labStaffService.deleteLabTestReport(Integer.parseInt(labTestReportId));
+			return "redirect:/labstaff/ViewOrUpdateOrDeleteLabTest";
+		}
+		return "redirect:/labstaff/ViewOrUpdateOrDeleteLabTest";
+	}
+	
+	@GetMapping("/manageLabTestReport/view/{labTestReportId}")
+	public String ViewLabTestReport(Model model,@PathVariable("labTestReportId") String labTestReportId) {
+		return "redirect:/viewPDF/labstaff/reportView/"+labTestReportId;
+	}
+
+	@PostMapping("/UpdateLabTestReport/{labTestReportId}")
+	public String UpdateLabTestReport(@ModelAttribute("labTestReport") LabTestReport labTestReport,@PathVariable("labTestReportId") String labTestReportId, Model model) {
+		User user = userService.getLoggedUser();
+		model.addAttribute("accountName", user.getFirstName());
+		labStaffService.UpdateLabTestReport(labTestReport, Integer.parseInt(labTestReportId));
+		return "redirect:/labstaff/ViewOrUpdateOrDeleteLabTest";
 	}
 
 }
