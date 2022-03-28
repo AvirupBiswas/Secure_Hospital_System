@@ -32,6 +32,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 		http.authorizeRequests().antMatchers("/viewPDF/**").hasAnyAuthority("ADMIN", "HOSPITALSTAFF","PATIENT","LABSTAFF","DOCTOR","INSURANCESTAFF")
 				.antMatchers("/admin/**").hasAuthority("ADMIN").antMatchers("/patient/**").hasAuthority("PATIENT").antMatchers("/hospitalstaff/**").hasAuthority("HOSPITALSTAFF")
 				.antMatchers("/labstaff/**").hasAuthority("LABSTAFF")
+				.antMatchers("/doctor/**").hasAuthority("DOCTOR")
 				.antMatchers("/").permitAll().and().formLogin().loginPage("/login")
 				.failureHandler(handleAuthenticationFailure()).successHandler(myAuthenticationSuccessHandler())
 				.permitAll().and()

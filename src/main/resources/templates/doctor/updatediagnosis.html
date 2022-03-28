@@ -79,41 +79,41 @@
     	</div>
     </nav>
 <div class="content-section col-md-8">
-    <h2>Create Diagnosis</h2>
-    <form th:action="@{/doctor/createDiagnosis}" id="diagnosis" method="POST" accept-charset="UTF-8" class="content-section col-md-8">
+    <h2>Update Diagnosis</h2>
+    <form th:action="@{/doctor/editDiagnosis}" id="diagnosis" method="POST" accept-charset="UTF-8" class="content-section col-md-8">
         <fieldset class="form-group">
-        	<input type="hidden" name="userId" id="userId" th:value="${user.getUserId()}" />
+        <input type="hidden" name="diagnosisId" id="diagnosisId" th:value="${diagnosis.getDiagnosisID()}" />
         	<div class="form-group">
                 <label for="patientname">Patient Name:</label>
-                <input type="text" readonly="readonly" class="form-control" id="firstname" name="firstname" th:value="${user.getFirstName()}">
+                <input type="text" class="form-control" id="firstname" name="firstname" th:value="${diagnosis.getUser().getFirstName()}">
                 <span class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label for="problem">Problem:</label>
-                <input type="textarea" class="form-control" id="problem" placeholder="Enter details" name="problem">
+                <input type="text" class="form-control" id="problem" name="problem" th:value="${diagnosis.getProblem()}">
                 <span class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label for="symptoms">Symptoms:</label>
-                <input type="textarea" class="form-control" id="symptoms" placeholder="Enter details" name="symptoms">
+                <input type="text" class="form-control" id="symptoms" name="symptoms" th:value="${diagnosis.getSymptoms()}">
                 <span class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label for="Prescription">Prescription:</label>
-                <input type="textarea" class="form-control" id="prescription" placeholder="Enter prescription" name="prescription">
+                <input type="text" class="form-control" id="prescription" name="prescription" th:value="${diagnosis.getPrescription()}">
                 <span class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label for="LabTestsNeeded">Is Lab Test needed?</label><br>
-                <input type="radio" id="Yes" name="labtestsneeeded" value="True">
+                <input type="radio" id="Yes" name="labtestsneeeded" value="Yes">
                 <label for="Yes">Yes</label><br>
-                <input type="radio" id="No" name="labtestsneeeded" value="False">
+                <input type="radio" id="No" name="labtestsneeeded" value="No">
                 <label for="No">No</label><br>
                 <span class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label for="LabTests">If yes, please select the name of the Lab Test</label>
-                <input type="textarea" class="form-control" id="labtests" placeholder="Lab Tests recommended" name="labtests">
+                <input type="text" class="form-control" id="labtests" name="labtests" th:value="${diagnosis.getLabtests()}">                
                 <span class="text-danger"></span>
             </div>
             <br>

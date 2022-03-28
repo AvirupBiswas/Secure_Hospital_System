@@ -1,6 +1,7 @@
 package com.asu.project.hospital.service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,14 +40,20 @@ public class DoctorService {
 	}
 	
 	public void createDiagnosis(Diagnosis diagnosis) {
-		User user = userService.getLoggedUser();
-		diagnosis.setDoctor(doctorRepository.findByUser(user));
 		diagnosisRepository.save(diagnosis);
 	}
 	
 	public List<User> getAllPatients(){
 		List <User> users = userRepository.findAll().stream().filter(e->e.getRole().equals("PATIENT")).collect(Collectors.toList());
 		return users;
+	}
+	
+	public List<Diagnosis> getAllDiagnosis(User user){
+		return diagnosisRepository.findByUser(user);
+	}
+	
+	public Diagnosis findByDiagnosis(int diagnosisId) {
+		return diagnosisRepository.findByDiagnosisID(diagnosisId);
 	}
 
 }
