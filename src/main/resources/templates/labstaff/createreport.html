@@ -8,22 +8,6 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"/>
       <script th:inline="javascript">
         function createReport(id) {
-          /*   $.ajax({
-                url : "[(@{'/labstaff/createReport/'})]"+id,
-                type : "GET",
-                beforeSend: function () {
-        	    	$("#loader").removeClass('hidden');
-        	        },
-        	    complete: function () {
-        	        $("#loader").addClass('hidden');
-        	        },
-                success : function(data) {
-                	 $('#' + id).remove();
-                },
-                error : function() {
-                    console.log("There was an error");
-                }
-            }); */
         	window.location= '/labstaff/createReport/'+id;
         }
 
@@ -98,7 +82,7 @@
     <br>
     <br>
      <div th:if="${#lists.isEmpty(allLabTests)}">
-     <h2 style="text-align:center;">No Pending user account List </h2>
+     <h2 style="text-align:center;">No Pending Lab Test to Create </h2>
      </div>
     <br>
     <input class="btn btn-primary" type="button" value="Go Back" onclick="history.back(-1)" />
