@@ -101,5 +101,6 @@ public class PatientService {
 		labTest.setPrice(new BigDecimal(100));
 		labTestRepository.save(labTest);
 	}
+	
 
 }

@@ -31,16 +31,51 @@ public class PatientPayment {
 	
 	@Column(name="amount")
 	private BigDecimal amount;
+	
+	@Column(name="purpose")
+	private String purpose;
+	
+	@Column(name="paymentType")
+	private String paymentType;
 
-	public PatientPayment(User user, BigDecimal amount, String status) {
-		super();
+	
+	
+	public PatientPayment(Long paymentID, User user, String status, BigDecimal amount, String purpose,
+			InsuranceClaims insuranceClaims, String paymentType) {
+		this.paymentID = paymentID;
 		this.user = user;
 		this.status = status;
 		this.amount = amount;
+		this.purpose = purpose;
+		this.paymentType = paymentType;
 	}
 
 	public PatientPayment() {
 		super();
+	}
+
+	public Long getPaymentID() {
+		return paymentID;
+	}
+
+	public void setPaymentID(Long paymentID) {
+		this.paymentID = paymentID;
+	}
+
+	public String getPurpose() {
+		return purpose;
+	}
+
+	public void setPurpose(String purpose) {
+		this.purpose = purpose;
+	}
+
+	public String getPaymentType() {
+		return paymentType;
+	}
+
+	public void setPaymentType(String paymentType) {
+		this.paymentType = paymentType;
 	}
 
 	public User getUser() {

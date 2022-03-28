@@ -107,7 +107,7 @@
                 <td th:text="${employee.getEmail()}"></td>
                 <td th:text="${employee.getFirstName()}"></td>
                 <td th:text="${employee.getLastName()}"></td>
-                <form action="#" th:action="@{/doctor/doctorhome}" method="post">
+                <form action="#" th:action="@{/doctor/diagnosis}" method="post">
                     <input type="hidden" name="userId" id="userId" th:value="${employee.getUserId()}" />
                     <td><button data-toggle="tooltip" title="View Patient" data-placement="top" class="btn pill-btn" value="modify" name="action"><i value="modify" name="action" class="fa fa-pencil-square-o" aria-hidden="true" style="font-size:24px;color:brown;"></i></button></td>
                 </form>

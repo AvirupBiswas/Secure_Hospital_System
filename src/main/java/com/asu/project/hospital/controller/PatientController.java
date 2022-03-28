@@ -19,6 +19,7 @@ import com.asu.project.hospital.entity.InsuranceClaims;
 import com.asu.project.hospital.entity.InsuranceDetails;
 import com.asu.project.hospital.entity.LabTest;
 import com.asu.project.hospital.entity.Patient;
+import com.asu.project.hospital.entity.PatientPayment;
 import com.asu.project.hospital.entity.User;
 import com.asu.project.hospital.service.AppointmentService;
 import com.asu.project.hospital.service.PatientService;
@@ -148,6 +149,14 @@ public class PatientController {
 	public String createLabTestRequest(@ModelAttribute LabTest labTest) {
 		patientService.createLabRequest(labTest);
 		return "patient/patienthome";
+	}
+	
+	@GetMapping("/viewPendingPayments")
+	public String getPendingPayments(Model model) {
+		User user=userService.getLoggedUser();
+		List<PatientPayment> patientPayments=patientService.findAllPaymentsByStatus();
+		model.addAttribute("patientPayments", patientPayments);
+		return "patient/viewPendingPayments";		
 	}
 	
 	
