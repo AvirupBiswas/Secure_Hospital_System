@@ -51,16 +51,13 @@
 <body>
 <div class="container">
     <nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
-        <a th:href="@{/patient/home}" class="navbar-brand" href="#">Secure Hospital System</a>
+        <a th:href="@{/hospitalstaff/home}" class="navbar-brand" href="#">Secure Hospital System</a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
           
-           <div class="collapse navbar-collapse justify-content-end" id="navbarsExampleDefault">
+          <div class="collapse navbar-collapse justify-content-end" id="navbarsExampleDefault">
 	        <ul style="list-style: none; display:contents">
-	         <li>
-		  		<a th:href="@{/doctor/updateinfo}"><i style ="color:white;font-size:2rem;" class="fa fa-user" title="profile"></i></a>
-		        </li>&nbsp&nbsp
 		        <li class="nav-item active" style="padding-right: 20px;">
 	        		<div style="display: flex; align-items:center">
 				      	<div style="height: 10px; width: 10px; border-radius:50%; background-color: var(--success)"></div>
@@ -79,12 +76,11 @@
     <br>
     <br>
      <div class="jumbotron" style="background-color: #deecf9">
-     <!--    <h3 style="text-align:center;">Welcome to the Admin Dashboard</h3>
+     <!--    <h3 style="text-align:center;">Welcome to the Hospital Staff Dashboard</h3>
        <hr style="height:5px;border:none;color:#333;background-color:#333;" /> -->
        <h1 th:inline="text">Hello</h1>
         <hr>
-        <h3>Welcome to the Doctor Dashboard</h3>
-        <h3 th:inline="text">Hello</h3>
+        <h3>Welcome to the Hospital Staff Dashboard</h3>
         <br>
     </div>
     <br>
@@ -92,35 +88,32 @@
   	
     </div>
     
-    <div class="card-deck">
-<div class="card text-center">
-  <div class="card-body">
-    <h5 class="card-title">Create/Update Diagnosis</h5>
-    <hr>
-   <i class="fa fa-file-o" aria-hidden="true" style="font-size:8rem;"></i>
-   <br><br><br>
-    <a th:href="@{/doctor/viewpatients}" class="btn btn-dark">Create/Update Diagnosis</a>
-  </div>
+<div class="container">
+    <div class="starter-template">
+        <h1>View Patients</h1>
+
+
+        <table class="table table-striped table-bordered">
+            <tr>
+                <th scope="col">Email ID</th>
+                <th scope="col">First Name</th>
+                <th scope="col">Last Name</th>
+                <th scope="col"></th>
+            </tr>
+            <tr th:each = "employee: ${patient}">
+                <td th:text="${employee.getEmail()}"></td>
+                <td th:text="${employee.getFirstName()}"></td>
+                <td th:text="${employee.getLastName()}"></td>
+                <form action="#" th:action="@{/hospitalstaff/updatepatientinfo/}" method="post">
+                    <input type="hidden" name="userId" id="userId" th:value="${employee.getUserId()}" />
+                    <td><button data-toggle="tooltip" title="View Patient" data-placement="top" class="btn pill-btn" value="modify" name="action"><i value="modify" name="action" class="fa fa-pencil-square-o" aria-hidden="true" style="font-size:24px;color:brown;"></i></button></td>
+                </form>
+            </tr>
+        </table>
+
+    </div>
 </div>
-<div class="card text-center">
-  <div class="card-body">
-    <h5 class="card-title">Edit/Delete diagnosis</h5>
-    <hr>
-    <i class="fa fa-address-card-o"  aria-hidden="true" style="font-size:8rem;"></i>
-    <br><br><br>
-    <a th:href="@{/doctor/viewpatientsdiagnosis}" class="btn btn-dark">Edit/Delete diagnosis</a>
-  </div>
-</div>
-<div class="card text-center">
-  <div class="card-body">
-    <h5 class="card-title">View Patient Lab Reports</h5>
-    <hr>
-    <i class="fa fa-history" aria-hidden="true" style="font-size:8rem;"></i>
-    <br><br><br>
-    <a th:href="@{/doctor/home}" class="btn btn-dark">View Patient Lab Reports</a>
-  </div>
-</div>
-</div>
+
 <br>
 <br>
 </div>

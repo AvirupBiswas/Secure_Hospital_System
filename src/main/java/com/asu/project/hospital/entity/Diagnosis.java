@@ -18,21 +18,27 @@ public class Diagnosis {
 
 	@ManyToOne
 	@JoinColumn(name="patientID", nullable=false)
-	private Patient patient;
+	private User user;
 	
-	@OneToOne
-	@JoinColumn(name="doctorID", nullable=false)
-	private Doctor doctor;
+	@Column(name="doctorName")
+	private String doctorName;
 	
-	@Column(name="description")
-	private String description;
+	@Column(name="problem")
+	private String problem;
+	
+	@Column(name="symptoms")
+	private String symptoms;
+	
+	@Column(name="labTestNeeded")
+	private Boolean labTestNeeded;
+	
 	
 	@Column(name="prescription")
 	private String prescription;
 	
 	@Column(name="labtests")
 	private String labtests;
-	
+
 	public int getDiagnosisID() {
 		return diagnosisID;
 	}
@@ -41,28 +47,44 @@ public class Diagnosis {
 		this.diagnosisID = diagnosisID;
 	}
 
-	public Patient getPatient() {
-		return patient;
+	public User getUser() {
+		return user;
 	}
 
-	public void setPatient(Patient patient) {
-		this.patient = patient;
+	public void setUser(User user) {
+		this.user = user;
 	}
 
-	public Doctor getDoctor() {
-		return doctor;
+	public String getDoctorName() {
+		return doctorName;
 	}
 
-	public void setDoctor(Doctor doctor) {
-		this.doctor = doctor;
+	public void setDoctorName(String doctorName) {
+		this.doctorName = doctorName;
 	}
 
-	public String getDescription() {
-		return description;
+	public String getProblem() {
+		return problem;
 	}
 
-	public void setDescription(String description) {
-		this.description = description;
+	public void setProblem(String problem) {
+		this.problem = problem;
+	}
+
+	public String getSymptoms() {
+		return symptoms;
+	}
+
+	public void setSymptoms(String symptoms) {
+		this.symptoms = symptoms;
+	}
+
+	public Boolean getLabTestNeeded() {
+		return labTestNeeded;
+	}
+
+	public void setLabTestNeeded(Boolean labTestNeeded) {
+		this.labTestNeeded = labTestNeeded;
 	}
 
 	public String getPrescription() {
@@ -79,6 +101,21 @@ public class Diagnosis {
 
 	public void setLabtests(String labtests) {
 		this.labtests = labtests;
+	}
+
+	public Diagnosis(int diagnosisID, User user, String doctorName, String problem, String symptoms,
+			Boolean labTestNeeded, String prescription, String labtests) {
+		this.diagnosisID = diagnosisID;
+		this.user = user;
+		this.doctorName = doctorName;
+		this.problem = problem;
+		this.symptoms = symptoms;
+		this.labTestNeeded = labTestNeeded;
+		this.prescription = prescription;
+		this.labtests = labtests;
+	}
+
+	public Diagnosis() {
 	}
 	
 	

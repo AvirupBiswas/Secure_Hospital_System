@@ -78,6 +78,7 @@ public class UrlAuthenticationSuccessHandler implements AuthenticationSuccessHan
 		roleTargetUrlMap.put("ADMIN", "/admin/home");
 		roleTargetUrlMap.put("PATIENT", "/patient/home");
 		roleTargetUrlMap.put("HOSPITALSTAFF", "/hospitalstaff/home");
+		roleTargetUrlMap.put("DOCTOR", "/doctor/home");
 		roleTargetUrlMap.put("LABSTAFF", "/labstaff/home");
 
 		final Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
