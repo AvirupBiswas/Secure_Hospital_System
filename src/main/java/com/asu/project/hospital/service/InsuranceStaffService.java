@@ -5,21 +5,28 @@ import org.springframework.stereotype.Service;
 
 import com.asu.project.hospital.entity.InsuranceStaff;
 import com.asu.project.hospital.entity.User;
-import com.asu.project.hospital.repository.InsuranceRepository;
+import com.asu.project.hospital.repository.InsuranceStaffRepository;
 
 @Service
 public class InsuranceStaffService {
-	
+
 	@Autowired
-	InsuranceRepository insuranceStaffRepository;
+	private InsuranceStaffRepository insuranceStaffRepository;
 	
 	@Autowired
 	UserService userService;
 	
+	
+
+	public InsuranceStaff getInsuranceStaff(User user) {
+		InsuranceStaff InsuranceStaff = insuranceStaffRepository.findByUser(user);
+		return InsuranceStaff;
+	}
+	
 	public void updateInsuranceStaffInfo(InsuranceStaff insuranceStaff) {
-		User user= userService.getLoggedUser();
+		User user = userService.getLoggedUser();
 		insuranceStaff.setUser(user);
 		insuranceStaffRepository.save(insuranceStaff);
 	}
-}
 
+}

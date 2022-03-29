@@ -33,6 +33,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 				.antMatchers("/admin/**").hasAuthority("ADMIN").antMatchers("/patient/**").hasAuthority("PATIENT").antMatchers("/hospitalstaff/**").hasAuthority("HOSPITALSTAFF")
 				.antMatchers("/labstaff/**").hasAuthority("LABSTAFF")
 				.antMatchers("/doctor/**").hasAuthority("DOCTOR")
+				.antMatchers("/insurancestaff/**").hasAuthority("INSURANCESTAFF")
 				.antMatchers("/").permitAll().and().formLogin().loginPage("/login")
 				.failureHandler(handleAuthenticationFailure()).successHandler(myAuthenticationSuccessHandler())
 				.permitAll().and()
