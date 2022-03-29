@@ -165,6 +165,7 @@ public class HospitalStaffController {
 		Appointment App = hospitalStaffDecisionForUserRepository.findByAppId(id);
 		PatientPayment patientPayment=new PatientPayment();
 		patientPayment.setAmount(amount);
+		patientPayment.setPurpose("Doctor Appointment");
 		patientPayment.setStatus("Pending");
 		patientPayment.setUser(App.getUser());
 		patientPaymentRepository.save(patientPayment);
@@ -189,51 +190,87 @@ public class HospitalStaffController {
 	@PostMapping("/updatepatientinfo")
 	public String updatePatientInfo(@RequestParam("userId") String userId, Model model) {
 		User user = userService.findByUserId(userId);
-		Patient patient=patientRepository.findByUser(user);
+		Patient patientdetails=patientRepository.findByUser(user);
 		model.addAttribute("user",user);
-		model.addAttribute("patientdetails", patient);
+		model.addAttribute("patientdetails", patientdetails);
 		return "hospitalstaff/updatepatientinfo";
 	}
 	
 	@PostMapping("/updatepatientinformation")
-	public String updatePatientInformation(@Valid @ModelAttribute("patient") Patient userForm, BindingResult result, Model model) {
-
-		if (result.hasErrors()) {
-			return "hospitalstaff/updatepatientinfo";
-		}
+	public String updatepatientinformation(@ModelAttribute("updatepatientinformation") Patient patient, @ModelAttribute("userId") String userId) {
+		User user = userService.findByUserId(userId);
+		patient.setUser(user);
+		patientRepository.save(patient);
+		return "hospitalstaff/home";
+	}
+	
+	@PostMapping("/editpatientinformation")
+	public String editpatientinformation(@ModelAttribute("updatepatientinformation") Patient patient, @ModelAttribute("userId") String userId) {
+		User user = userService.findByUserId(userId);
+		
 		try {
-			User user=userService.getLoggedUser();
-			model.addAttribute("height", userForm.getHeight());
-			model.addAttribute("weight", userForm.getWeight());
-			model.addAttribute("age", userForm.getAge());
-			model.addAttribute("address",userForm.getAddress());
-			model.addAttribute("gender", userForm.getGender());
-			model.addAttribute("phoneNumber", userForm.getPhoneNumber());
-			patientRepository.save(userForm);
+			Patient oldpatient=patientRepository.findByUser(user);
+			oldpatient.setHeight(patient.getHeight());
+			oldpatient.setWeight(patient.getWeight());
+			oldpatient.setAddress(patient.getAddress());
+			oldpatient.setAge(patient.getAge());
+			oldpatient.setPhoneNumber(patient.getPhoneNumber());
+			oldpatient.setGender(patient.getGender());
+			patientRepository.save(oldpatient);
 		} catch (Exception e) {
 			return e.getMessage();
 		}
 		return "hospitalstaff/home";
 	}
 	
-	@PostMapping("/editPatientinformation")
-	public String editPatientinformation(@Valid @ModelAttribute("patient") Patient patient, BindingResult result, Model model) {
-
-		if (result.hasErrors()) {
-			return "hospitalstaff/updatepatientinfo";
-		}
-		try {
+	
+//	@PostMapping("/updatepatientinformation")
+//	public String register(@Valid @ModelAttribute("patient") Patient userForm, BindingResult result, Model model) {
+//
+//		if (result.hasErrors()) {
+//			return "hospitalstaff/updateinfo";
+//		}
+//		try {
 //			User user=userService.getLoggedUser();
-//			Patient patient=patientRepository.findByUser(user);
-//			Patient patient=
-//			model.addAttribute("phoneNumber", userForm.getPhoneNumber());
+//			model.addAttribute("height", userForm.getHeight());
+//			model.addAttribute("weight", userForm.getWeight());
+//			model.addAttribute("age", userForm.getAge());
 //			model.addAttribute("address",userForm.getAddress());
-//			hospitalStaffService.updateHospitalStaffInfo(hospitalStaff);
-		} catch (Exception e) {
-			return e.getMessage();
-		}
-		return "hospitalstaff/home";
-	}
+//			model.addAttribute("gender", userForm.getGender());
+//			model.addAttribute("phoneNumber", userForm.getPhoneNumber());
+//			//patientService.updatePatientInfo(userForm);
+//		} catch (Exception e) {
+//			return e.getMessage();
+//		}
+//		return "hospitalstaff/home";
+//	}
+	
+//	@PostMapping("/editPatientinformation")
+//	public String editPatientinformation(@ModelAttribute("patient") Patient patient,@ModelAttribute("user") User user, BindingResult result, Model model) {
+//
+//		if (result.hasErrors()) {
+//			return "hospitalstaff/updatepatientinfo";
+//		}
+//		try {
+//			Patient oldpatient=patientRepository.findByUser(user);
+//			oldpatient.setHeight(patient.getHeight());
+//			oldpatient.setWeight(patient.getWeight());
+//			oldpatient.setAddress(patient.getAddress());
+//			oldpatient.setAge(patient.getAge());
+//			oldpatient.setPhoneNumber(patient.getPhoneNumber());
+//			oldpatient.setGender(patient.getGender());
+//			model.addAttribute("height", patient.getHeight());
+//			model.addAttribute("weight", patient.getWeight());
+//			model.addAttribute("address", patient.getAddress());
+//			model.addAttribute("age", patient.getAge());
+//			model.addAttribute("phoneNumber", patient.getPhoneNumber());
+//			model.addAttribute("gender", patient.getGender());
+//			patientRepository.save(oldpatient);
+//		} catch (Exception e) {
+//			return e.getMessage();
+//		}
+//		return "hospitalstaff/home";
+//	}
 	
 	@PostMapping("/createSpecificTransac")
 	public String createSpecificTransac(@RequestParam("userId") String userId, Model model) {

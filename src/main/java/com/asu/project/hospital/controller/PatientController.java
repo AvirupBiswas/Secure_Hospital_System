@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.asu.project.hospital.entity.Appointment;
+import com.asu.project.hospital.entity.Diagnosis;
 import com.asu.project.hospital.entity.InsuranceClaims;
 import com.asu.project.hospital.entity.InsuranceDetails;
 import com.asu.project.hospital.entity.LabTest;
@@ -174,6 +175,13 @@ public class PatientController {
 		patientService.requestLabTest(Integer.parseInt(labTestId));
 		return "patient/viewlabreports";
 		
+	}
+	
+	@GetMapping("/viewAllDiagnosisReports")
+	public String viewAllDiagnosisReports(Model model) {
+		User user=userService.getLoggedUser();
+		List<Diagnosis> diagnosisList=patientService.viewAllDiagnosis(user);
+		return "patient/viewAllDiagnosisReports";
 	}
 	
 	
