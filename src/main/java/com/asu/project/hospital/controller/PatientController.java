@@ -10,6 +10,7 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -157,6 +158,22 @@ public class PatientController {
 		List<PatientPayment> patientPayments=patientService.findAllPaymentsByStatus();
 		model.addAttribute("patientPayments", patientPayments);
 		return "patient/viewPendingPayments";		
+	}
+	
+	@GetMapping("/viewLabTests")
+	public String viewLabTests(Model model) {
+		User user=userService.getLoggedUser();
+		List<LabTest> labTests=patientService.viewLabTests(user);
+		model.addAttribute("labTests", labTests);
+		return "patient/viewlabreports";
+	}
+	
+	@GetMapping("/requestLabReports/{labTestId}")
+	public String requestLabReports(@PathVariable("labTestId") String labTestId) {
+		System.out.println("request lab request...");
+		patientService.requestLabTest(Integer.parseInt(labTestId));
+		return "patient/viewlabreports";
+		
 	}
 	
 	

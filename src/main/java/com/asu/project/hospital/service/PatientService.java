@@ -102,5 +102,19 @@ public class PatientService {
 		labTestRepository.save(labTest);
 	}
 	
+	public List<LabTest> viewLabTests(User user){
+		List<LabTest> labTests=labTestRepository.findByUser(user)
+				.stream().filter(e->!e.getStatus().equals("Requested"))
+				.collect(Collectors.toList());
+		return labTests;
+		
+	}
+	
+	public void requestLabTest(int labTestId) {
+		LabTest labtest=labTestRepository.getById(labTestId);
+		System.out.println(labTestId);
+		labtest.setStatus("Pending");
+		labTestRepository.save(labtest);
+	}
 
 }
