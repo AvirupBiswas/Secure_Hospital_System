@@ -38,7 +38,56 @@
 <br>
 <br>
 <div class="content-section col-md-8">
+	<div th:if="${patientdetails}">
     <h2>Update Patient Information</h2>
+    <form action="#" th:action="@{/hospitalstaff/editPatientinformation}" th:object="${patient}" method="post">
+        <fieldset class="form-group">
+            <div class="form-group">
+                <label for="Height">Height:</label>
+                <input type="number" class="form-control" id="height" placeholder="Enter height in cm" name="Height" th:value="${patientdetails.height}">
+                <span class="text-danger" th:if="${#fields.hasErrors('height')}" th:errors="*{height}"></span>
+            </div>
+            <div class="form-group">
+                <label for="Weight">Weight:</label>
+                <input type="number" class="form-control" id="Weight" placeholder="Enter Weight in pounds" name="Weight" th:value="${patientdetails.weight}">
+                <span class="text-danger" th:if="${#fields.hasErrors('weight')}" th:errors="*{weight}"></span>
+            </div>
+            <div class="form-group">
+                <label for="Age">Age:</label>
+                <input type="number" class="form-control" id="age" placeholder="Enter age" name="age" th:value="${patientdetails.age}">
+                <span class="text-danger" th:if="${#fields.hasErrors('age')}" th:errors="*{age}"></span>
+            </div>
+            <div class="form-group">
+                <label for="PhoneNumber">Phone Number:</label>
+                <input type="number" class="form-control" id="phoneNumber" placeholder="Phone Number" name="phoneNumber" th:value="${patientdetails.phoneNumber}">
+                <span class="text-danger" th:if="${#fields.hasErrors('phoneNumber')}" th:errors="*{phoneNumber}"></span>
+            </div>
+            <div class="form-group">
+                <label for="Address">Address:</label>
+                <input type="textarea" class="form-control" id="address" placeholder="Enter address" name="address" th:value="${patientdetails.address}">
+                <span class="text-danger" th:if="${#fields.hasErrors('address')}" th:errors="*{address}"></span>
+            </div>
+            <div class="dropdown">
+                <label for="Gender">Gender:</label>
+                <select id="gender" placeholder="" name="gender" th:field="*{gender}" class="form-control">
+                    <option th:value="null" th:text="Select">Select</option>
+                    <option th:value="Female" th:text="Female">Female</option>
+                    <option th:value="Male" th:text="Male">Male</option>
+                    <option th:value="Do_not_Specify" th:text="Do_not_Specify">Do notnspecify</option>
+                </select>
+                <span class="text-danger" th:if="${#fields.hasErrors('gender')}" th:value="${patientdetails.gender}></span>
+            </div>
+            <br>
+            <button type="submit" class="btn btn-primary">Update</button>
+        </fieldset>
+    </form>
+</div>
+</div>
+
+
+<div class="content-section col-md-8">
+	<div th:unless="${patientdetails}">
+    <h2>Provide Patient Information</h2>
     <form action="#" th:action="@{/hospitalstaff/updatepatientinformation}" th:object="${patient}" method="post">
         <fieldset class="form-group">
             <div class="form-group">
@@ -81,6 +130,9 @@
         </fieldset>
     </form>
 </div>
+</div>
+
+
 </div>
 <br>
 <footer class="buttom-footer py-lg-4 py-md-3 py-sm-3 py-3 " style="color: #fff; background-color: #343a40; bottom: 0; width: 100%;">

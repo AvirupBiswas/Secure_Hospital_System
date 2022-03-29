@@ -35,6 +35,7 @@ import com.asu.project.hospital.service.UserService;
 import com.asu.project.hospital.service.AppointmentService;
 import com.asu.project.hospital.service.HospitalStaffService;
 import com.asu.project.hospital.entity.HospitalStaff;
+import com.asu.project.hospital.entity.InsuranceClaims;
 
 @Controller
 @RequestMapping("/hospitalstaff")
@@ -178,12 +179,19 @@ public class HospitalStaffController {
 		return "hospitalstaff/viewpatients";
 	}
 	
+	@GetMapping("/viewPatientsforTransac")
+	public String viewPatientsforTransac(Model model) {
+		List<User> allPatients=hospitalStaffService.getAllPatients();
+		model.addAttribute("patient",allPatients);
+		return "hospitalstaff/viewPatientsforTransac";
+	}
 	
 	@PostMapping("/updatepatientinfo")
 	public String updatePatientInfo(@RequestParam("userId") String userId, Model model) {
 		User user = userService.findByUserId(userId);
+		Patient patient=patientRepository.findByUser(user);
 		model.addAttribute("user",user);
-		model.addAttribute("patient", new Patient());
+		model.addAttribute("patientdetails", patient);
 		return "hospitalstaff/updatepatientinfo";
 	}
 	
@@ -205,6 +213,42 @@ public class HospitalStaffController {
 		} catch (Exception e) {
 			return e.getMessage();
 		}
+		return "hospitalstaff/home";
+	}
+	
+	@PostMapping("/editPatientinformation")
+	public String editPatientinformation(@Valid @ModelAttribute("patient") Patient patient, BindingResult result, Model model) {
+
+		if (result.hasErrors()) {
+			return "hospitalstaff/updatepatientinfo";
+		}
+		try {
+//			User user=userService.getLoggedUser();
+//			Patient patient=patientRepository.findByUser(user);
+//			Patient patient=
+//			model.addAttribute("phoneNumber", userForm.getPhoneNumber());
+//			model.addAttribute("address",userForm.getAddress());
+//			hospitalStaffService.updateHospitalStaffInfo(hospitalStaff);
+		} catch (Exception e) {
+			return e.getMessage();
+		}
+		return "hospitalstaff/home";
+	}
+	
+	@PostMapping("/createSpecificTransac")
+	public String createSpecificTransac(@RequestParam("userId") String userId, Model model) {
+		User user = userService.findByUserId(userId);
+		model.addAttribute("user",user);
+		model.addAttribute("patient", new Patient());
+		return "hospitalstaff/createSpecificTransaction";
+	}
+	
+	@PostMapping("/createSpecificTransaction")
+	public String createSpecificTransaction(@ModelAttribute("createSpecificTransaction") PatientPayment patientPayment, @ModelAttribute("userId") String userId) {
+		User user = userService.findByUserId(userId);
+		patientPayment.setStatus("Pending");
+		patientPayment.setUser(user);
+		patientPaymentRepository.save(patientPayment);
 		return "hospitalstaff/home";
 	}
 	
