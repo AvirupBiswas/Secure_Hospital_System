@@ -1,19 +1,26 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>Secure Hospital System</title>
+   <title>Secure Hospital System</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"/>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/css/all.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<style>
+#editbtn {
+  margin-left: 560px;
+}
+#savebtn {
+  margin-left: 595px;
+}
+</style>
 
-    
 </head>
 <body>
 <div class="container">
     <nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
-        <a th:href="@{/hospitalstaff/home}" class="navbar-brand" href="#">Secure Hospital System</a>
+        <a th:href="@{/patient/home}" class="navbar-brand" href="#">Secure Hospital System</a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
@@ -23,125 +30,136 @@
 		        <li class="nav-item active" style="padding-right: 20px;">
 	        		<div style="display: flex; align-items:center">
 				      	<div style="height: 10px; width: 10px; border-radius:50%; background-color: var(--success)"></div>
-				      	<em style="color:white; font-size: 15px; margin-left: 10px">logged in as <span th:text="${accountName}"></span></em>
+				      	<em style="color:white; font-size: 15px; margin-left: 10px">logged in as</span></em>
 				    </div>
 			     </li>
 		        <li>
-    				<form sec:authorize="isAuthenticated()" th:action="@{/logout}" method="POST">
-		  				<button class="btn btn-outline-light" type="submit" title="Logout">Log Out</button>
-		         	</form>
+		      	  <a th:href="@{/logout}" class="nav-link btn btn-outline-light">Log Out</a>
 		        </li>
 	        </ul>
     	</div>
     </nav>
-<br>
-<br>
-<br>
-<div class="content-section col-md-8">
-	<div th:if="${patientdetails}">
-    <h2>Update Patient Information</h2>
-    <form action="#" th:action="@{/hospitalstaff/editPatientinformation}" th:object="${patient}" method="post">
-        <fieldset class="form-group">
-            <div class="form-group">
-                <label for="Height">Height:</label>
-                <input type="number" class="form-control" id="height" placeholder="Enter height in cm" name="Height" th:value="${patientdetails.height}">
-                <span class="text-danger" th:if="${#fields.hasErrors('height')}" th:errors="*{height}"></span>
-            </div>
-            <div class="form-group">
-                <label for="Weight">Weight:</label>
-                <input type="number" class="form-control" id="Weight" placeholder="Enter Weight in pounds" name="Weight" th:value="${patientdetails.weight}">
-                <span class="text-danger" th:if="${#fields.hasErrors('weight')}" th:errors="*{weight}"></span>
-            </div>
-            <div class="form-group">
-                <label for="Age">Age:</label>
-                <input type="number" class="form-control" id="age" placeholder="Enter age" name="age" th:value="${patientdetails.age}">
-                <span class="text-danger" th:if="${#fields.hasErrors('age')}" th:errors="*{age}"></span>
-            </div>
-            <div class="form-group">
-                <label for="PhoneNumber">Phone Number:</label>
-                <input type="number" class="form-control" id="phoneNumber" placeholder="Phone Number" name="phoneNumber" th:value="${patientdetails.phoneNumber}">
-                <span class="text-danger" th:if="${#fields.hasErrors('phoneNumber')}" th:errors="*{phoneNumber}"></span>
-            </div>
-            <div class="form-group">
-                <label for="Address">Address:</label>
-                <input type="textarea" class="form-control" id="address" placeholder="Enter address" name="address" th:value="${patientdetails.address}">
-                <span class="text-danger" th:if="${#fields.hasErrors('address')}" th:errors="*{address}"></span>
-            </div>
-            <div class="dropdown">
+    <br>
+    <br>
+    <br>
+    <div th:if="${patientdetails}">
+  	<div class="content-section col-md-8" id="patientdetailsfromdb">
+	<br>
+	<br>
+	<h2>Update Patient Information</h2>
+	<br>
+      <div>
+    <form action="#" th:action="@{/hospitalstaff/editpatientinformation}" id="patientdetails" method="POST" accept-charset="UTF-8" class="content-section col-md-8">
+	    <div class="form-group">
+	      <label>
+	        User ID
+	        </label>
+	        <input type="text" readonly="readonly" class="form-control" id="userId" placeholder="Enter Patient userID" name="userId" th:value="${user.userId}">
+      </div>
+	<div class="form-group">
+		<label>
+	      Height
+	      </label>
+	      <input type="text" class="form-control" id="height" placeholder="Enter height in cm" name="Height" th:value="${patientdetails.height}">
+      </div>
+      <div class="form-group">
+		<label>
+	      Weight
+	      </label>
+	      <input type="text" class="form-control" id="weight" placeholder="Enter weight in pounds" name="Weight" th:value="${patientdetails.weight}">
+      </div>
+      <div class="form-group">
+		<label>
+	      Age
+	      </label>
+	      <input type="text" class="form-control" id="age" placeholder="Enter age" name="Age" th:value="${patientdetails.age}">
+      </div>
+      <div class="form-group">
+		<label>
+	      Phone Number
+	      </label>
+	      <input type="text" class="form-control" id="phoneNumber" placeholder="Enter phone number" name="phoneNumber" th:value="${patientdetails.phoneNumber}">
+      </div>
+      <div class="form-group">
+		<label>
+	      Address
+	      </label>
+	      <input type="text" class="form-control" id="address" placeholder="Enter Address" name="Address" th:value="${patientdetails.address}">
+      </div>
+      <div class="dropdown">
                 <label for="Gender">Gender:</label>
-                <select id="gender" placeholder="" name="gender" th:field="*{gender}" class="form-control">
+                <select id="gender" placeholder="" name="gender" th:value="${patientdetails.gender}" class="form-control">
                     <option th:value="null" th:text="Select">Select</option>
                     <option th:value="Female" th:text="Female">Female</option>
                     <option th:value="Male" th:text="Male">Male</option>
-                    <option th:value="Do_not_Specify" th:text="Do_not_Specify">Do notnspecify</option>
+                    <option th:value="Do_not_Specify" th:text="Do_not_Specify">Do not specify</option>
                 </select>
-                <span class="text-danger" th:if="${#fields.hasErrors('gender')}" th:value="${patientdetails.gender}></span>
             </div>
-            <br>
-            <button type="submit" class="btn btn-primary">Update</button>
-        </fieldset>
-    </form>
-</div>
-</div>
-
-
-<div class="content-section col-md-8">
-	<div th:unless="${patientdetails}">
-    <h2>Provide Patient Information</h2>
-    <form action="#" th:action="@{/hospitalstaff/updatepatientinformation}" th:object="${patient}" method="post">
-        <fieldset class="form-group">
-            <div class="form-group">
-                <label for="Height">Height:</label>
-                <input type="number" class="form-control" id="height" placeholder="Enter height in cm" name="Height" th:field="*{height}">
-                <span class="text-danger" th:if="${#fields.hasErrors('height')}" th:errors="*{height}"></span>
-            </div>
-            <div class="form-group">
-                <label for="Weight">Weight:</label>
-                <input type="number" class="form-control" id="Weight" placeholder="Enter Weight in pounds" name="Weight" th:field="*{weight}">
-                <span class="text-danger" th:if="${#fields.hasErrors('weight')}" th:errors="*{weight}"></span>
-            </div>
-            <div class="form-group">
-                <label for="Age">Age:</label>
-                <input type="number" class="form-control" id="age" placeholder="Enter age" name="age" th:field="*{age}">
-                <span class="text-danger" th:if="${#fields.hasErrors('age')}" th:errors="*{age}"></span>
-            </div>
-            <div class="form-group">
-                <label for="PhoneNumber">Phone Number:</label>
-                <input type="number" class="form-control" id="phoneNumber" placeholder="Phone Number" name="phoneNumber" th:field="*{phoneNumber}">
-                <span class="text-danger" th:if="${#fields.hasErrors('phoneNumber')}" th:errors="*{phoneNumber}"></span>
-            </div>
-            <div class="form-group">
-                <label for="Address">Address:</label>
-                <input type="textarea" class="form-control" id="address" placeholder="Enter address" name="address" th:field="*{address}">
-                <span class="text-danger" th:if="${#fields.hasErrors('address')}" th:errors="*{address}"></span>
-            </div>
-            <div class="dropdown">
-                <label for="Gender">Gender:</label>
-                <select id="gender" placeholder="" name="gender" th:field="*{gender}" class="form-control">
-                    <option th:value="null" th:text="Select">Select</option>
-                    <option th:value="Female" th:text="Female">Female</option>
-                    <option th:value="Male" th:text="Male">Male</option>
-                    <option th:value="Do_not_Specify" th:text="Do_not_Specify">Do notnspecify</option>
-                </select>
-                <span class="text-danger" th:if="${#fields.hasErrors('gender')}" th:errors="*{gender}"></span>
-            </div>
-            <br>
-            <button type="submit" class="btn btn-primary">Submit</button>
-        </fieldset>
-    </form>
-</div>
-</div>
-
-
-</div>
-<br>
-<footer class="buttom-footer py-lg-4 py-md-3 py-sm-3 py-3 " style="color: #fff; background-color: #343a40; bottom: 0; width: 100%;">
-    <div class="copy-agile-right text-center">
-        <h2 class="my-3">Secure Hospital System</h2>
-        <p>
-            © Secure Hospital System
-        </p>
+      <br>
+      <button type="submit" class="btn btn-primary">Update</button>
+</form>
     </div>
-</footer>
+    </div>
+	</div>
+	<div th:unless="${patientdetails}">
+  	<div id="editpatientdetails">
+    <form action="#" th:action="@{/hospitalstaff/updatepatientinformation}" id="patientdetails" method="POST" accept-charset="UTF-8" class="content-section col-md-8">
+	<br>
+	<br>
+	<h2>Enter Patient Information</h2>
+	<br>
+	 <div class="form-group">
+	      <label>
+	        User ID
+	        </label>
+	        <input type="text" readonly="readonly" class="form-control" id="userId" placeholder="Enter Patient userID" name="userId" th:value="${user.userId}">
+      </div>
+	<div class="form-group">
+		<label>
+	      Height
+	      </label>
+	      <input type="text" class="form-control" id="height" placeholder="Enter height in cm" name="Height">
+      </div>
+      <div class="form-group">
+		<label>
+	      Weight
+	      </label>
+	      <input type="text" class="form-control" id="weight" placeholder="Enter weight in pounds" name="Weight">
+      </div>
+      <div class="form-group">
+		<label>
+	      Age
+	      </label>
+	      <input type="text" class="form-control" id="age" placeholder="Enter age" name="Age">
+      </div>
+      <div class="form-group">
+		<label>
+	      Phone Number
+	      </label>
+	      <input type="text" class="form-control" id="phoneNumber" placeholder="Enter phone number" name="phoneNumber">
+      </div>
+      <div class="form-group">
+		<label>
+	      Address
+	      </label>
+	      <input type="text" class="form-control" id="address" placeholder="Enter Address" name="Address">
+      </div>
+      <div class="dropdown">
+                <label for="Gender">Gender:</label>
+                <select id="gender" placeholder="" name="gender" class="form-control">
+                    <option th:value="null" th:text="Select">Select</option>
+                    <option th:value="Female" th:text="Female">Female</option>
+                    <option th:value="Male" th:text="Male">Male</option>
+                    <option th:value="Do_not_Specify" th:text="Do_not_Specify">Do not specify</option>
+                </select>
+            </div>
+      <br>
+      <button type="submit" id = "savebtn" class="btn btn-outline-primary btn-sm">Save</button>
+</form>
+    </div>
+	</div>
+    
+	
+</div>
 </body>
 </html>
