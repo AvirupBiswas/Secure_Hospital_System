@@ -171,7 +171,7 @@ public class LabStaffController {
 		model.addAttribute("accountName", user.getFirstName());
 		LabTest labTestObj = labStaffService.getLabTest(Integer.parseInt(labTestId));
 		labStaffService.createLabTestReport(labTestReport, labTestObj);
-		return "redirect:/labstaff/getLabTestRequests?status=Generate";
+		return "redirect:/labstaff/getLabTestRequests?status=Pending";
 	}
 
 	@PostMapping("/manageLabTestReport")
