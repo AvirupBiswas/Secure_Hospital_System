@@ -10,4 +10,6 @@ import java.util.List;
 public interface LabTestRepository extends JpaRepository<LabTest, Integer>{
     public List<LabTest> findByStatus(String status);
     
+    public List<LabTest> findByUser(User user);
+    
 }

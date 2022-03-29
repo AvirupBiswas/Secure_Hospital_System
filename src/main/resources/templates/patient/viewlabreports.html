@@ -73,7 +73,7 @@
                 <td th:text="${labtest.status}"></td>
                 <td th:if="${labtest.status=='Approved'}"><button class="btn btn-success"   
                         th:onclick="'getTest(\''+${labtest.labTestId}+ '\');'">Request Report</button></td>
-                <td th:if="${labtest.status=='Generated'}"><a th:href="@{/patient/home}" target="_blank"><i class="fa fa-file-pdf-o" style="font-size:24px;color:red;"></i></a></td>
+                <td th:if="${labtest.status=='Reported'}"><a th:href="@{/patient/home}" target="_blank"><i class="fa fa-file-pdf-o" style="font-size:24px;color:red;"></i></a></td>
             </tr>
         </table>	
 
