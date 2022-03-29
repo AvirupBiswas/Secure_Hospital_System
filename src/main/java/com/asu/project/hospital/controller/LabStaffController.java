@@ -107,7 +107,7 @@ public class LabStaffController {
 		if (status.equals("Requested")) {
 			model.addAttribute("allLabTests", labStaffService.getLabTestsByStatus(status));
 			return "labstaff/labtestrequests";
-		} else if (status.equals("Generate")) {
+		} else if (status.equals("Pending")) {
 			model.addAttribute("allLabTests", labStaffService.getLabTestsByStatus(status));
 			return "labstaff/createreport";
 		} else {
