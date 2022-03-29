@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Secure Hospital System</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/css/all.min.css">
+
+
+</head>
+<body>
+<div class="container">
+    <nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
+        <a th:href="@{/insurancestaff/home}" class="navbar-brand" href="#">Secure Hospital System</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse justify-content-end" id="navbarsExampleDefault">
+            <ul style="list-style: none; display:contents">
+                <li class="nav-item active" style="padding-right: 20px;">
+                    <div style="display: flex; align-items:center">
+                        <div style="height: 10px; width: 10px; border-radius:50%; background-color: var(--success)"></div>
+                        <em style="color:white; font-size: 15px; margin-left: 10px">logged in as <span th:text="${accountName}"></span></em>
+                    </div>
+                </li>
+                <li>
+                    <form sec:authorize="isAuthenticated()" th:action="@{/logout}" method="POST">
+                        <button class="btn btn-outline-light" type="submit" title="Logout">Log Out</button>
+                    </form>
+                </li>
+            </ul>
+        </div>
+    </nav>
+    <br>
+    <br>
+    <br>
+
+    <div th:if="${userInfo}">
+        <div class="content-section col-md-8">
+            <h2>Edit Insurance Staff Information</h2>
+            <form action="#" th:action="@{/insurancestaff/editinformation}" th:object="${insuranceStaff}" method="post">
+                <fieldset class="form-group">
+                    <div class="form-group">
+                        <label for="PhoneNumber">PhoneNumber:</label>
+                        <input type="number" class="form-control" id="phoneNumber" placeholder="Enter phoneNumber" name="phoneNumber" th:value="${userInfo.phoneNumber}">
+                        <span class="text-danger" th:if="${#fields.hasErrors('phoneNumber')}" th:errors="*{phoneNumber}"></span>
+                    </div>
+                    <div class="form-group">
+                        <label for="Address">Address:</label>
+                        <input type="textarea" class="form-control" id="address" placeholder="Enter address" name="address" th:value="${userInfo.address}">
+                        <span class="text-danger" th:if="${#fields.hasErrors('address')}" th:errors="*{address}"></span>
+                    </div>
+                    <br>
+                    <button type="submit" class="btn btn-primary">Update</button>
+                </fieldset>
+            </form>
+        </div>
+    </div>
+
+    <div th:unless="${userInfo}">
+        <div class="content-section col-md-8">
+            <h2>Update Insurance Staff Information</h2>
+            <form action="#" th:action="@{/insurancestaff/updateinformation}" th:object="${insuranceStaff}" method="post">
+                <fieldset class="form-group">
+                    <div class="form-group">
+                        <label for="PhoneNumber">PhoneNumber:</label>
+                        <input type="number" class="form-control" id="phoneNumber" placeholder="Enter phoneNumber" name="phoneNumber" th:field="*{phoneNumber}">
+                        <span class="text-danger" th:if="${#fields.hasErrors('phoneNumber')}" th:errors="*{phoneNumber}"></span>
+                    </div>
+                    <div class="form-group">
+                        <label for="Address">Address:</label>
+                        <input type="textarea" class="form-control" id="address" placeholder="Enter address" name="address" th:field="*{address}">
+                        <span class="text-danger" th:if="${#fields.hasErrors('address')}" th:errors="*{address}"></span>
+                    </div>
+                    <br>
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                </fieldset>
+            </form>
+        </div>
+    </div>
+
+
+    <br>
+</div>
+
+</body>
+</html>
