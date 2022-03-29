@@ -44,15 +44,14 @@ public class LabStaffController {
 	@GetMapping("/home")
 	public String labStaffHome(Model model) {
 		User user = userService.getLoggedUser();
-//		System.out.println("user obj:" + user);
 		model.addAttribute("accountName", user.getFirstName());
-//		model.addAttribute("user", user);
 		return "labstaff/labstaffhome";
 	}
 
 	@GetMapping("/updateinfo")
 	public String register(Model model) {
 		User user = userService.getLoggedUser();
+		model.addAttribute("accountName", user.getFirstName());
 		LabStaff labStaffUser = labStaffRepository.findByUser(user);
 		model.addAttribute("labstaff", new LabStaff());
 		model.addAttribute("userInfo", labStaffUser);
@@ -67,13 +66,14 @@ public class LabStaffController {
 		}
 		try {
 			User user = userService.getLoggedUser();
+			model.addAttribute("accountName", user.getFirstName());
 			model.addAttribute("phoneNumber", userForm.getPhoneNumber());
 			model.addAttribute("address", userForm.getAddress());
 			labStaffService.updateLabStaffInfo(userForm);
 		} catch (Exception e) {
 			return e.getMessage();
 		}
-		return "labstaff/labstaffhome";
+		return "redirect:/labstaff/home";
 	}
 
 	@PostMapping("/editinformation")
@@ -85,6 +85,7 @@ public class LabStaffController {
 		}
 		try {
 			User user = userService.getLoggedUser();
+			model.addAttribute("accountName", user.getFirstName());
 			LabStaff labStaffUser = labStaffRepository.findByUser(user);
 			labStaffUser.setPhoneNumber(userForm.getPhoneNumber());
 			labStaffUser.setAddress(userForm.getAddress());
@@ -94,24 +95,21 @@ public class LabStaffController {
 		} catch (Exception e) {
 			return e.getMessage();
 		}
-		return "labstaff/labstaffhome";
+		return "redirect:/labstaff/home";
 	}
 
 	@GetMapping("/getLabTestRequests")
 	public String getLabTestRequests(Model model, @RequestParam(name = "status") String status) {
 		User user = userService.getLoggedUser();
-//		System.out.println("user obj:" + user);
 		model.addAttribute("accountName", user.getFirstName());
-//		model.addAttribute("user", user);
-
 		if (status.equals("Requested")) {
 			model.addAttribute("allLabTests", labStaffService.getLabTestsByStatus(status));
 			return "labstaff/labtestrequests";
-		} else if (status.equals("Generate")) {
+		} else if (status.equals("Pending")) {
 			model.addAttribute("allLabTests", labStaffService.getLabTestsByStatus(status));
 			return "labstaff/createreport";
 		} else {
-			return "labstaff/labstaffhome";
+			return "redirect:/labstaff/home";
 		}
 
 	}
@@ -123,8 +121,6 @@ public class LabStaffController {
 		model.addAttribute("allLabTestReports", labStaffService.getAllLabTestReports());
 		return "labstaff/ViewOrUpdateOrDeleteLabTest";
 	}
-
-//	approvelabtest
 
 	@GetMapping("/approvelabtest/{labTestId}")
 	public String approveLabTest(@PathVariable("labTestId") String labTestId, Model model) {
@@ -171,7 +167,7 @@ public class LabStaffController {
 		model.addAttribute("accountName", user.getFirstName());
 		LabTest labTestObj = labStaffService.getLabTest(Integer.parseInt(labTestId));
 		labStaffService.createLabTestReport(labTestReport, labTestObj);
-		return "redirect:/labstaff/getLabTestRequests?status=Generate";
+		return "redirect:/labstaff/getLabTestRequests?status=Pending";
 	}
 
 	@PostMapping("/manageLabTestReport")
