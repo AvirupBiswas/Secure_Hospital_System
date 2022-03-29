@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.asu.project.hospital.entity.Appointment;
+import com.asu.project.hospital.entity.Diagnosis;
 import com.asu.project.hospital.entity.InsuranceClaims;
 import com.asu.project.hospital.entity.InsuranceDetails;
 import com.asu.project.hospital.entity.LabTest;
@@ -15,6 +16,7 @@ import com.asu.project.hospital.entity.Patient;
 import com.asu.project.hospital.entity.PatientPayment;
 import com.asu.project.hospital.entity.User;
 import com.asu.project.hospital.repository.AppointmentRepository;
+import com.asu.project.hospital.repository.DiagnosisRepository;
 import com.asu.project.hospital.repository.InsuranceClaimsRepository;
 import com.asu.project.hospital.repository.InsuranceDetailsRepository;
 import com.asu.project.hospital.repository.LabTestRepository;
@@ -41,6 +43,9 @@ public class PatientService {
 	
 	@Autowired
 	LabTestRepository labTestRepository;
+	
+	@Autowired
+	DiagnosisRepository diagnosisRepository;
 	
 	@Autowired
 	UserService userService;
@@ -108,6 +113,10 @@ public class PatientService {
 				.collect(Collectors.toList());
 		return labTests;
 		
+	}
+	
+	public List<Diagnosis> viewAllDiagnosis(User user){
+		return diagnosisRepository.findByUser(user);
 	}
 	
 	public void requestLabTest(int labTestId) {
