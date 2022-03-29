@@ -92,4 +92,9 @@ public class LabStaffService {
 		Optional<LabTestReport> optionalLabTestReport = labTestReportRepository.findById(parseInt);
 		return optionalLabTestReport.isPresent()?optionalLabTestReport.get():null;
 	}
+	
+	public int getLabTestReportId(int labTestId) {
+		LabTest labTest = getLabTest(labTestId);
+		return labTestReportRepository.findByLabTest(labTest).getLabTestReportId();
+	}
 }
