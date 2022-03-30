@@ -114,7 +114,7 @@ public class DoctorController {
 	}
 	
 	@PostMapping("/editDiagnosis")
-	public String createDiagnosis(@RequestParam("diagnosisId") int diagnosisId,@ModelAttribute("diagnosis") Diagnosis diagnosis) {
+	public String editDiagnosis(@RequestParam("diagnosisId") int diagnosisId,@ModelAttribute("diagnosis") Diagnosis diagnosis) {
 		Diagnosis updatedDiagnosis=doctorService.findByDiagnosis(diagnosisId);
 		updatedDiagnosis.setLabtests(diagnosis.getLabtests());
 		updatedDiagnosis.setProblem(diagnosis.getProblem());

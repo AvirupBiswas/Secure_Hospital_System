@@ -2,6 +2,8 @@ package com.asu.project.hospital.entity;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -14,6 +16,7 @@ public class Diagnosis {
 	
 	@Id
 	@Column(name="diagnosisID")
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int diagnosisID;
 
 	@ManyToOne
@@ -30,7 +33,7 @@ public class Diagnosis {
 	private String symptoms;
 	
 	@Column(name="labTestNeeded")
-	private Boolean labTestNeeded;
+	private String labTestNeeded;
 	
 	
 	@Column(name="prescription")
@@ -79,11 +82,11 @@ public class Diagnosis {
 		this.symptoms = symptoms;
 	}
 
-	public Boolean getLabTestNeeded() {
+	public String getLabTestNeeded() {
 		return labTestNeeded;
 	}
 
-	public void setLabTestNeeded(Boolean labTestNeeded) {
+	public void setLabTestNeeded(String labTestNeeded) {
 		this.labTestNeeded = labTestNeeded;
 	}
 
@@ -104,7 +107,7 @@ public class Diagnosis {
 	}
 
 	public Diagnosis(int diagnosisID, User user, String doctorName, String problem, String symptoms,
-			Boolean labTestNeeded, String prescription, String labtests) {
+			String labTestNeeded, String prescription, String labtests) {
 		this.diagnosisID = diagnosisID;
 		this.user = user;
 		this.doctorName = doctorName;

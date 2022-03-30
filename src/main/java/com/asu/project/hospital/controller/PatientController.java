@@ -181,7 +181,8 @@ public class PatientController {
 	public String viewAllDiagnosisReports(Model model) {
 		User user=userService.getLoggedUser();
 		List<Diagnosis> diagnosisList=patientService.viewAllDiagnosis(user);
-		return "patient/viewAllDiagnosisReports";
+		model.addAttribute("diagnosisList", diagnosisList);
+		return "patient/viewDiagnosis";
 	}
 	
 	@GetMapping("/makePaymentInsurance/{paymentId}")
