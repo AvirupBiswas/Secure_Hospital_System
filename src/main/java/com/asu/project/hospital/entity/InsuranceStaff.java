@@ -12,31 +12,27 @@ import javax.persistence.Table;
 @Entity
 @Table(name="insurance_staff")
 public class InsuranceStaff {
-	
 	@Id
     @Column(name = "insuranceStaffID",nullable = false)
     @GeneratedValue(strategy = GenerationType.IDENTITY )
     private Long insuranceStaffID;
 	
 	@OneToOne
-	@JoinColumn(name="userID", nullable=false)
+	@JoinColumn(name="userId", nullable=false)
 	private User user;
 	
-	@Column(name="contact")
-	private Long contact;
+	@Column(name="phoneNumber")
+	private Long phoneNumber;
 	
 	@Column(name="address")
 	private String address;
 
-	public InsuranceStaff(User user, Long contact, String address) {
-		super();
-		this.user = user;
-		this.contact = contact;
-		this.address = address;
+	public Long getInsuranceStaffID() {
+		return insuranceStaffID;
 	}
 
-	public InsuranceStaff() {
-		super();
+	public void setInsuranceStaffID(Long insuranceStaffID) {
+		this.insuranceStaffID = insuranceStaffID;
 	}
 
 	public User getUser() {
@@ -48,11 +44,11 @@ public class InsuranceStaff {
 	}
 
 	public Long getPhoneNumber() {
-		return contact;
+		return phoneNumber;
 	}
 
-	public void setPhoneNumber(Long contact) {
-		this.contact = contact;
+	public void setPhoneNumber(Long phoneNumber) {
+		this.phoneNumber = phoneNumber;
 	}
 
 	public String getAddress() {
@@ -62,4 +58,18 @@ public class InsuranceStaff {
 	public void setAddress(String address) {
 		this.address = address;
 	}
+
+	public InsuranceStaff(Long insuranceStaffID, User user, Long phoneNumber, String address) {
+		super();
+		this.insuranceStaffID = insuranceStaffID;
+		this.user = user;
+		this.phoneNumber = phoneNumber;
+		this.address = address;
+	}
+
+	public InsuranceStaff() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+
 }
