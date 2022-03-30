@@ -1,5 +1,6 @@
 package com.asu.project.hospital.service;
 
+import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
 import java.util.Properties;
@@ -100,5 +101,22 @@ public class MailService {
 	@Async
 	public void sendLabTestDenyMail(String email,String firstName,String lastName, String testName) {
 		sendEmail(email, "Lab test request for " + testName + " has been denied!", "<html><body>" + "Sorry "+firstName+" "+lastName+ ".Your lab test " + testName +" request has been denied by lab staff." + "</body></html>", false, true);
+	}
+	
+	// For Insurance Claim 
+	@Async
+	public void sendInsuranceClaimApprovalMail(String email,String firstName,String lastName, String calimId) {
+		sendEmail(email, "Insurance Claim request for claim id " + calimId + " has been approved!", "<html><body>" + "Congraluation "+firstName+" "+lastName+ ".Your claim id "+ calimId +" has been approved by Insurance staff." + "</body></html>", false, true);
+	}
+
+	@Async
+	public void sendInsuranceClaimDenyMail(String email,String firstName,String lastName, String calimId) {
+		sendEmail(email, "Insurance Claim request for claim id " + calimId + " has been denied!", "<html><body>" + "Sorry "+firstName+" "+lastName+ ".Your claim id "+ calimId +" has been denied by Insurance staff." + "</body></html>", false, true);
+	
+	}
+
+	public void sendInsuranceClaimAmountDisburseMail(String email, String firstName, String lastName, String claimId,
+			BigDecimal amount) {
+		sendEmail(email, "Insurance Claim amount "+amount+ " for claim id " + claimId + " has been disbursed!", "<html><body>" + "Congraluation "+firstName+" "+lastName+ ".Your claim amount "+ amount + "corresponding to claim id "+claimId+" has been disbursed by Insurance staff." + "</body></html>", false, true);
 	}
 }

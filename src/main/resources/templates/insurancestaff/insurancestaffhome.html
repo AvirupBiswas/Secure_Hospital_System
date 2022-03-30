@@ -11,7 +11,7 @@
 <body>
 <div class="container">
     <nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
-        <a th:href="@{/labstaff/home}" class="navbar-brand" href="#">Secure Hospital System</a>
+        <a th:href="@{/insurancestaff/home}" class="navbar-brand" href="#">Secure Hospital System</a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
@@ -44,7 +44,7 @@
         <br>
     </div>
     <br>
-    </div>
+    
     
     <div class="card-deck">
 <div class="card text-center">
@@ -60,7 +60,7 @@
     <h5 class="card-title">View Claim Requests</h5>
     <hr>
     <i class="fa fa-list-alt" aria-hidden="true" style="font-size:8rem;"></i>
-    <a th:href="@{/labstaff/getLabTestRequests(status='Requested')}" class="btn btn-dark">View Claim Requests</a>
+    <a th:href="@{/insurancestaff/getInsuranceClaim(status='Pending')}" class="btn btn-dark">View Claim Requests</a>
   </div>
 </div>
 <div class="card text-center">
@@ -68,7 +68,7 @@
     <h5 class="card-title">Create Insurance Policies</h5>
     <hr>
     <i class="fa fa-list-alt" aria-hidden="true" style="font-size:8rem;"></i>
-    <a th:href="@{/labstaff/getLabTestRequests(status='Generate')}" class="btn btn-dark">Create Insurance Policies</a>
+    <a th:href="@{/insurancestaff/createInsurance}" class="btn btn-dark">Create Insurance Policies</a>
   </div>
 </div>
 <div class="card text-center">
@@ -76,12 +76,12 @@
     <h5 class="card-title">Disperse Fund</h5>
     <hr>
     <i class="fa fa-address-card-o"  aria-hidden="true" style="font-size:8rem;"></i>
-   <a th:href="@{/labstaff/ViewOrUpdateOrDeleteLabTest}" class="btn btn-dark">Disperse Fund</a>
+   <a th:href="@{/insurancestaff/getInsuranceClaim(status='Approved')}" class="btn btn-dark">Disperse Fund</a>
   </div>
 </div>
 </div>
-<br>
-<br>
 </div>
+<br>
+<br>
 </body>
 </html>
