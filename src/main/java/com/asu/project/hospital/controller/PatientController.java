@@ -158,7 +158,7 @@ public class PatientController {
 		User user=userService.getLoggedUser();
 		List<PatientPayment> patientPayments=patientService.findAllPaymentsByStatus();
 		model.addAttribute("patientPayments", patientPayments);
-		return "patient/viewPendingPayments";		
+		return "patient/viewpendingpayments";		
 	}
 	
 	@GetMapping("/viewLabTests")
@@ -183,6 +183,23 @@ public class PatientController {
 		List<Diagnosis> diagnosisList=patientService.viewAllDiagnosis(user);
 		return "patient/viewAllDiagnosisReports";
 	}
+	
+	@GetMapping("/makePaymentInsurance/{paymentId}")
+	public String makePaymentInsurance(@PathVariable("paymentId") String paymentId) {
+		System.out.println("request lab request...");
+		patientService.makePaymentInsurance(Long.parseLong(paymentId));
+		return "patient/viewlabreports";
+		
+	}
+	
+	@GetMapping("/makeSelfPayment/{paymentId}")
+	public String makeSelfPayment(@PathVariable("paymentId") String paymentId) {
+		System.out.println("request lab request...");
+		patientService.makePayment(Long.parseLong(paymentId));
+		return "patient/viewpendingpayments";
+		
+	}
+	
 	
 	
 

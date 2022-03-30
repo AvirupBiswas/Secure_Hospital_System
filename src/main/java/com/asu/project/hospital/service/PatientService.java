@@ -125,5 +125,25 @@ public class PatientService {
 		labtest.setStatus("Pending");
 		labTestRepository.save(labtest);
 	}
+	
+	public void makePayment(Long paymentID) {
+		PatientPayment patientPayment=patientPaymentRepository.getById(paymentID);
+		patientPayment.setPaymentType("card");
+		patientPayment.setStatus("paid");
+		patientPaymentRepository.save(patientPayment);
+	}
+	
+	public void makePaymentInsurance(Long paymentID) {
+		PatientPayment patientPayment=patientPaymentRepository.getById(paymentID);
+		patientPayment.setPaymentType("insurance");
+		patientPayment.setStatus("Pending Insurance");
+		InsuranceClaims claim=new InsuranceClaims();
+		claim.setAmount(patientPayment.getAmount());
+		claim.setPurpose(patientPayment.getPurpose());
+		claim.setStatus("Pending");
+		claim.setPatientPayment(patientPayment);
+		addInsuranceClaimRequest(claim);
+		patientPaymentRepository.save(patientPayment);
+	}
 
 }
