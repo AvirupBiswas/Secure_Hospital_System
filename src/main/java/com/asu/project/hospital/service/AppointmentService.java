@@ -10,13 +10,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.asu.project.hospital.entity.Appointment;
+import com.asu.project.hospital.entity.SystemLog;
 import com.asu.project.hospital.entity.User;
 import com.asu.project.hospital.repository.AppointmentRepository;
+import com.asu.project.hospital.repository.SystemLogRepository;
 
 @Service
 public class AppointmentService {
 	 @Autowired
 	    private AppointmentRepository appointmentRepository;
+	 
+	 @Autowired
+		SystemLogRepository systemLogRepository;
 
 	    public AppointmentService(AppointmentRepository appointmentRepository){
 	        this.appointmentRepository = appointmentRepository;
@@ -67,7 +72,7 @@ public class AppointmentService {
 	        //end time
 	        Calendar c = Calendar.getInstance();
 	        c.setTime(finalStartDate);
-	        c.add(Calendar.HOUR_OF_DAY, 1);  // next hour
+	        c.add(Calendar.MINUTE, 30);  // next hour
 	        Date finalEndDate = c.getTime();
 	        System.out.println("END TIME/DATE: " + finalEndDate.toString());
 
@@ -76,6 +81,11 @@ public class AppointmentService {
 	        System.out.println(app.getPhoneNumber());
 	        System.out.println(app.getStartTime());
 	        System.out.println(app.getEndTime());
+	        SystemLog systemLog=new SystemLog();
+			systemLog.setMessage("Appointment booked by "+user.getFirstName()+" "+user.getLastName()
+					+ ",at "+appointment.getStartTime());
+			systemLog.setTimestamp(new Date());
+			systemLogRepository.save(systemLog);
 	        appointmentRepository.save(app);
 	    }
 
