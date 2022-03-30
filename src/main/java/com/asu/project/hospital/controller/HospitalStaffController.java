@@ -36,6 +36,7 @@ import com.asu.project.hospital.service.AppointmentService;
 import com.asu.project.hospital.service.HospitalStaffService;
 import com.asu.project.hospital.entity.HospitalStaff;
 import com.asu.project.hospital.entity.InsuranceClaims;
+import com.asu.project.hospital.entity.LabTest;
 
 @Controller
 @RequestMapping("/hospitalstaff")
@@ -287,6 +288,21 @@ public class HospitalStaffController {
 		patientPayment.setUser(user);
 		patientPaymentRepository.save(patientPayment);
 		return "hospitalstaff/home";
+	}
+	
+	@GetMapping("/viewPatientsforReports")
+	public String viewPatientsforReports(Model model) {
+		List<User> allPatients=hospitalStaffService.getAllPatients();
+		model.addAttribute("patient",allPatients);
+		return "hospitalstaff/viewPatientsforReports";
+	}
+	
+	@GetMapping("/viewLabTests")
+	public String viewLabTests(@RequestParam("userId") String userId, Model model) {
+		User user = userService.findByUserId(userId);
+		List<LabTest> labTests=hospitalStaffService.viewLabTests(user);
+		model.addAttribute("labTests", labTests);
+		return "hospitalstaff/viewlabreports";
 	}
 	
 }
