@@ -67,4 +67,21 @@ public class ViewPDFController {
 		byte data[] = reportService.exportReport(PatientLabReports, "patientLabTestReport.jrxml");
 		return ResponseEntity.ok().contentType(MediaType.APPLICATION_PDF).body(data);
 	}
+	
+	@GetMapping(value = "/hospitalStaff/reportView/{labTestId}", produces = MediaType.APPLICATION_PDF_VALUE)
+	public ResponseEntity<byte[]> generateLabTestReportForHospitalStaff(@PathVariable("labTestId") String labTestId)
+			throws FileNotFoundException, JRException {
+		int labTestReportId = labStaffService.getLabTestReportId(Integer.parseInt(labTestId));
+		LabTestReport labTestReport = labStaffService.getLabTestReport(labTestReportId);
+		List<PatientLabReport> PatientLabReports = new ArrayList<>();
+		PatientLabReport patientLabReport = new PatientLabReport();
+		patientLabReport.setPatientName(labTestReport.getLabTest().getUser().getFirstName() + " "
+				+ labTestReport.getLabTest().getUser().getLastName());
+		patientLabReport.setPrice(labTestReport.getLabTest().getPrice());
+		patientLabReport.setTestName(labTestReport.getTestName());
+		patientLabReport.setTestResult(labTestReport.getTestResult());
+		PatientLabReports.add(patientLabReport);
+		byte data[] = reportService.exportReport(PatientLabReports, "patientLabTestReport.jrxml");
+		return ResponseEntity.ok().contentType(MediaType.APPLICATION_PDF).body(data);
+	}
 }
