@@ -24,6 +24,7 @@ import com.asu.project.hospital.entity.LabTest;
 import com.asu.project.hospital.entity.Patient;
 import com.asu.project.hospital.entity.PatientPayment;
 import com.asu.project.hospital.entity.User;
+import com.asu.project.hospital.repository.DiagnosisRepository;
 import com.asu.project.hospital.service.AppointmentService;
 import com.asu.project.hospital.service.PatientService;
 import com.asu.project.hospital.service.UserService;
@@ -40,6 +41,9 @@ public class PatientController {
 	
 	@Autowired
 	private AppointmentService appointmentService;
+	
+	@Autowired
+	private DiagnosisRepository diagnosisRepository;
 	
 	@GetMapping("/home")
 	public String adminHome(Model model) {
@@ -85,12 +89,6 @@ public class PatientController {
 	public String claimInsurance(Model model) {
 		model.addAttribute("InsuranceDetails", new InsuranceDetails());
 		return "patient/editinsurance";
-	}
-	
-	@GetMapping("/labrequest")
-	public String labRequest(Model model) {
-		model.addAttribute("labTest", new LabTest());
-		return "patient/requestlabtest";
 	}
 	
 	@PostMapping("/createappointment")
@@ -142,8 +140,19 @@ public class PatientController {
 	}
 	
 	
+	@PostMapping("/labrequest")
+	public String labRequest(@RequestParam("diagnosisID") String diagnosisID,Model model) {
+		Diagnosis diagnosis=diagnosisRepository.getById(Integer.parseInt(diagnosisID));
+		System.out.println(diagnosisID);
+		model.addAttribute("diagnosis", diagnosis);
+		return "patient/requestlabtest";
+	}
+	
+	
 	@PostMapping("/createLabRequest")
-	public String createLabTestRequest(@ModelAttribute LabTest labTest) {
+	public String createLabTestRequest(@RequestParam("diagnosisID") String diagnosisID,@ModelAttribute LabTest labTest) {
+		Diagnosis diagnosis=diagnosisRepository.getById(Integer.parseInt(diagnosisID));
+		labTest.setDiagnosis(diagnosis);
 		patientService.createLabRequest(labTest);
 		return "patient/patienthome";
 	}
