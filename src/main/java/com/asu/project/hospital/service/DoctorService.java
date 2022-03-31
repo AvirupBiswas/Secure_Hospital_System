@@ -8,10 +8,12 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.asu.project.hospital.entity.Appointment;
 import com.asu.project.hospital.entity.Diagnosis;
 import com.asu.project.hospital.entity.Doctor;
 import com.asu.project.hospital.entity.SystemLog;
 import com.asu.project.hospital.entity.User;
+import com.asu.project.hospital.repository.AppointmentRepository;
 import com.asu.project.hospital.repository.DiagnosisRepository;
 import com.asu.project.hospital.repository.DoctorRepository;
 import com.asu.project.hospital.repository.PatientRepository;
@@ -37,6 +39,9 @@ public class DoctorService {
 	DiagnosisRepository diagnosisRepository;
 	
 	@Autowired
+	AppointmentRepository appointmentRepository;
+	
+	@Autowired
 	SystemLogRepository systemLogRepository;
 	
 	public void updateDoctorInfo(Doctor doctor) {
@@ -55,8 +60,11 @@ public class DoctorService {
 	}
 	
 	public List<User> getAllPatients(){
-		List <User> users = userRepository.findAll().stream().filter(e->e.getRole().equals("PATIENT")).collect(Collectors.toList());
-		return users;
+		List <User> patients = userRepository.findAll().stream().filter(e->e.getRole().equals("PATIENT")).collect(Collectors.toList());
+		List<Appointment>  appointments = appointmentRepository.findAll();
+		List<User> patientwithAppointmentList = appointments.stream().map(e->e.getUser()).collect(Collectors.toList());
+		List <User> patientwithAppointment = patients.stream().filter(e->patientwithAppointmentList.contains(e)).collect(Collectors.toList());
+		return patientwithAppointment;
 	}
 	
 	public List<Diagnosis> getAllDiagnosis(User user){
