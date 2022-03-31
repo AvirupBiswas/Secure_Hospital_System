@@ -46,6 +46,7 @@ public class UserService {
 			u.setActive(true);
 			userRepository.save(u);
 		} else {
+			validateUser(user);
 			validateUserBeforeAdminApproval(user);
 			AdminDecisionForUser u = new AdminDecisionForUser();
 			u.setFirstName(user.getFirstName());
@@ -82,6 +83,7 @@ public class UserService {
 	}
 
 	public void validateUserBeforeAdminApproval(User user) {
+		
 		adminDecisionForUserRepository.findOneByEmailIgnoreCase(user.getEmail()).ifPresent(existing -> {
 			if (existing.getEmail().equalsIgnoreCase(user.getEmail())) {
 				throw new EmailUsedException();

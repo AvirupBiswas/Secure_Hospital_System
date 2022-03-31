@@ -143,17 +143,17 @@
 </div>
 <div class="card text-center">
   <div class="card-body">
-    <h5 class="card-title">Pending Approval List</h5>
+    <h5 class="card-title">Pending Account Approval List</h5>
     <hr>
     <i class="fa fa-list-alt" aria-hidden="true" style="font-size:8rem;"></i>
-    <a th:href="@{/admin/userAccPendingDecision}" class="btn btn-dark">Pending Approval List</a>
+    <a th:href="@{/admin/userAccPendingDecision}" class="btn btn-dark">Pending Account Approval List</a>
   </div>
 </div>
 <div class="card text-center">
   <div class="card-body">
     <h5 class="card-title">Register an Employee</h5>
     <hr>
-    <i class="fa fa-address-card-o"  aria-hidden="true" style="font-size:8rem;"></i>
+    <i class="fa fa-address-card-o"  aria-hidden="true" style="font-size:7rem;"></i>
     <a th:href="@{/register(registeredBy='admin')}" class="btn btn-dark">Register Employee</a>
   </div>
 </div>
@@ -163,7 +163,15 @@
     <hr>
     <i class="fa fa-history" aria-hidden="true" style="font-size:8rem;"></i>
     <br><br>
-    <a th:href="@{/admin/signInHistory}" class="btn btn-dark">Sign History</a>
+    <a th:href="@{/admin/signInHistory}" class="btn btn-dark">Sign in History</a>
+  </div>
+</div>
+<div class="card text-center">
+  <div class="card-body">
+    <h5 class="card-title">Pending Paymenent Approval List</h5>
+    <hr>
+    <i class="fa fa-list-alt" aria-hidden="true" style="font-size:8rem;"></i>
+    <a th:href="@{/admin/paymentApproval}" class="btn btn-dark">Pending Paymenent Approval List</a>
   </div>
 </div>
 </div>

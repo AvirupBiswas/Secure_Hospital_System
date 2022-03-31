@@ -21,12 +21,14 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.asu.project.hospital.entity.AdminDecisionForUser;
+import com.asu.project.hospital.entity.PatientPayment;
 import com.asu.project.hospital.entity.SignInHistory;
 import com.asu.project.hospital.entity.SystemLog;
 import com.asu.project.hospital.entity.User;
 import com.asu.project.hospital.model.SignInhistorySearchResult;
 import com.asu.project.hospital.model.SystemLogsSearchResult;
 import com.asu.project.hospital.repository.AdminDecisionForUserRepository;
+import com.asu.project.hospital.repository.PatientPaymentRepository;
 import com.asu.project.hospital.repository.SignInHistoryRepository;
 import com.asu.project.hospital.repository.SystemLogRepository;
 import com.asu.project.hospital.repository.UserRepository;
@@ -55,6 +57,9 @@ public class AdminController {
 	@Autowired
 	private SystemLogRepository systemLogRepository;
 
+	@Autowired
+	private PatientPaymentRepository patientPaymentRepository;
+
 	@GetMapping("/aproveUser/{Id}")
 	public ResponseEntity<String> aproveUser(@PathVariable("Id") String Id) {
 		Long id = Long.parseLong(Id);
@@ -66,7 +71,8 @@ public class AdminController {
 					user.get().getLastName());
 		}
 		SystemLog systemLog = new SystemLog();
-		systemLog.setMessage(user.get().getEmail() +" account creation approved By admin "+userService.getLoggedUser().getEmail());
+		systemLog.setMessage(user.get().getEmail() + " account creation approved By admin "
+				+ userService.getLoggedUser().getEmail());
 		systemLog.setTimestamp(new Date());
 		systemLogRepository.save(systemLog);
 		return new ResponseEntity<String>(HttpStatus.OK);
@@ -82,7 +88,8 @@ public class AdminController {
 					user.get().getLastName());
 		}
 		SystemLog systemLog = new SystemLog();
-		systemLog.setMessage(user.get().getEmail() +" account creation denied By admin "+userService.getLoggedUser().getEmail());
+		systemLog.setMessage(
+				user.get().getEmail() + " account creation denied By admin " + userService.getLoggedUser().getEmail());
 		systemLog.setTimestamp(new Date());
 		systemLogRepository.save(systemLog);
 		return new ResponseEntity<String>(HttpStatus.OK);
@@ -264,6 +271,27 @@ public class AdminController {
 		SystemLogsSearchResult systemLogsSearchResult = new SystemLogsSearchResult();
 		systemLogsSearchResult.setSystemLogsList(systemLogPage.getContent());
 		return new ResponseEntity<SystemLogsSearchResult>(systemLogsSearchResult, HttpStatus.OK);
+	}
+
+	@GetMapping("/paymentApproval")
+	public String paymentApprovalList(Model model) {
+		User user = userService.getLoggedUser();
+		model.addAttribute("accountName", user.getFirstName());
+		model.addAttribute("allPaymentList", patientPaymentRepository.findByStatus("paid"));
+		return "admin/pendingPaymentApprovalList";
+	}
+
+	@GetMapping("/approveEachPayment/{paymentId}")
+	public String approveEachPayment(Model model, @PathVariable("paymentId") String paymentId) {
+		User user = userService.getLoggedUser();
+		model.addAttribute("accountName", user.getFirstName());
+		Optional<PatientPayment> patientPaymentOpt = patientPaymentRepository.findById(Long.parseLong(paymentId));
+		if (patientPaymentOpt.isPresent()) {
+			PatientPayment patientPayment = patientPaymentOpt.get();
+			patientPayment.setStatus("Approved");
+			patientPaymentRepository.save(patientPayment);
+		}
+		return "admin/pendingPaymentApprovalList";
 	}
 
 }
