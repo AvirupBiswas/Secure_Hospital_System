@@ -7,46 +7,6 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"/>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-
-    <style>
-   .lds-dual-ring.hidden {
-        display: none;
-    }
-
-    .overlay {
-        position: fixed;
-        top:  50%;
-    	left: 50%;
-    	transform: translate(-50%,-50%);
-        text-align: center;
-    }
-    
-    /*Spinner Styles*/
-    .lds-dual-ring {
-        display: inline-block;
-        width: 80px;
-        height: 80px;
-    }
-    .lds-dual-ring:after {
-        content: " ";
-        display: block;
-        width: 64px;
-        height: 64px;
-        border-radius: 50%;
-        border: 6px solid #000000;
-        border-color: #000000 transparent #000000 transparent;
-        animation: lds-dual-ring 1.2s linear infinite;
-        text-align: center;
-    }
-    @keyframes lds-dual-ring {
-        0% {
-            transform: rotate(0deg);
-        }
-        100% {
-            transform: rotate(360deg);
-        }
-    }
-    </style>
 </head>
 <body>
 
@@ -54,7 +14,7 @@
 <br>
 <br>
 <nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
-        <a th:href="@{/patient/home}" class="navbar-brand" href="#">Secure Hospital System</a>
+        <a th:href="@{/doctor/home}" class="navbar-brand" href="#">Secure Hospital System</a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
