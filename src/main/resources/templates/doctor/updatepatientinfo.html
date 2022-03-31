@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+   <title>Secure Hospital System</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"/>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<style>
+#editbtn {
+  margin-left: 560px;
+}
+#savebtn {
+  margin-left: 595px;
+}
+</style>
+
+</head>
+<body>
+<div class="container">
+<nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
+        <a th:href="@{/doctor/home}" class="navbar-brand" href="#">Secure Hospital System</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+          
+           <div class="collapse navbar-collapse justify-content-end" id="navbarsExampleDefault">
+	        <ul style="list-style: none; display:contents">
+	         <li>
+		  		<a th:href="@{/doctor/updateinfo}"><i style ="color:white;font-size:2rem;" class="fa fa-user" title="profile"></i></a>
+		        </li>&nbsp&nbsp
+		        <li class="nav-item active" style="padding-right: 20px;">
+	        		<div style="display: flex; align-items:center">
+				      	<div style="height: 10px; width: 10px; border-radius:50%; background-color: var(--success)"></div>
+				      	<em style="color:white; font-size: 15px; margin-left: 10px">logged in as <span th:text="${accountName}"></span></em>
+				    </div>
+			     </li>
+		        <li>
+    				<form sec:authorize="isAuthenticated()" th:action="@{/logout}" method="POST">
+		  				<button class="btn btn-outline-light" type="submit" title="Logout">Log Out</button>
+		         	</form>
+		        </li>
+	        </ul>
+    	</div>
+    </nav>
+    <br>
+    <br>
+    <br>
+    <div th:if="${patientdetails}">
+  	<div class="content-section col-md-8" id="patientdetailsfromdb">
+	<br>
+	<br>
+	<h2>Update Patient Information</h2>
+	<br>
+      <div>
+    <form th:action="@{/doctor/editpatientinformation}" id="patientdetails" method="POST" accept-charset="UTF-8" class="content-section col-md-8">
+	    <input type="hidden" name="userId" id="userId" th:value="${user.userId}" />
+	    <div class="form-group">
+	      <label>
+	        Patient First Name
+	        </label>
+	        <input type="text" readonly="readonly" class="form-control" id="firstname" placeholder="Enter Patient First Name" name="firstname" th:value="${user.firstName}">
+      </div>
+      <div class="form-group">
+	      <label>
+	        Patient Last Name
+	        </label>
+	        <input type="text" readonly="readonly" class="form-control" id="lastname" placeholder="Enter Patient Last Name" name="lastname" th:value="${user.lastName}">
+      </div>
+      <div class="form-group">
+	      <label>
+	        Email
+	        </label>
+	        <input type="text" readonly="readonly" class="form-control" id="email" placeholder="Enter Patient Email" name="email" th:value="${user.email}">
+      </div>
+	<div class="form-group">
+		<label>
+	      Height
+	      </label>
+	      <input type="text" class="form-control" id="height" placeholder="Enter height in cm" name="Height" th:value="${patientdetails.height}">
+      </div>
+      <div class="form-group">
+		<label>
+	      Weight
+	      </label>
+	      <input type="text" class="form-control" id="weight" placeholder="Enter weight in pounds" name="Weight" th:value="${patientdetails.weight}">
+      </div>
+      <div class="form-group">
+		<label>
+	      Age
+	      </label>
+	      <input type="text" class="form-control" id="age" placeholder="Enter age" name="Age" th:value="${patientdetails.age}">
+      </div>
+      <div class="form-group">
+		<label>
+	      Phone Number
+	      </label>
+	      <input type="text" class="form-control" id="phoneNumber" placeholder="Enter phone number" name="phoneNumber" th:value="${patientdetails.phoneNumber}">
+      </div>
+      <div class="form-group">
+		<label>
+	      Address
+	      </label>
+	      <input type="text" class="form-control" id="address" placeholder="Enter Address" name="Address" th:value="${patientdetails.address}">
+      </div>
+      <br>
+      <button type="submit" class="btn btn-primary">Update</button>
+</form>
+    </div>
+    </div>
+	</div>
+	<div th:unless="${patientdetails}">
+  	<div id="editpatientdetails">
+    <form 	th:action="@{/doctor/updatepatientinformation}" id="patientdetails" method="POST" accept-charset="UTF-8" class="content-section col-md-8">
+	<br>
+	<br>
+	<h2>Enter Patient Information</h2>
+	<br>
+	 <input type="hidden" name="userId" id="userId" th:value="${user.userId}" />
+	 <div class="form-group">
+	      <label>
+	        Patient First Name
+	        </label>
+	        <input type="text" readonly="readonly" class="form-control" id="firstname" placeholder="Enter Patient First Name" name="firstname" th:value="${user.firstName}">
+      </div>
+      <div class="form-group">
+	      <label>
+	        Patient Last Name
+	        </label>
+	        <input type="text" readonly="readonly" class="form-control" id="lastname" placeholder="Enter Patient Last Name" name="lastname" th:value="${user.lastName}">
+      </div>
+      <div class="form-group">
+	      <label>
+	        Email
+	        </label>
+	        <input type="text" readonly="readonly" class="form-control" id="email" placeholder="Enter Patient Email" name="email" th:value="${user.email}">
+      </div>
+	<div class="form-group">
+		<label>
+	      Height
+	      </label>
+	      <input type="text" class="form-control" id="height" placeholder="Enter height in cm" name="Height">
+      </div>
+      <div class="form-group">
+		<label>
+	      Weight
+	      </label>
+	      <input type="text" class="form-control" id="weight" placeholder="Enter weight in pounds" name="Weight">
+      </div>
+      <div class="form-group">
+		<label>
+	      Age
+	      </label>
+	      <input type="text" class="form-control" id="age" placeholder="Enter age" name="Age">
+      </div>
+      <div class="form-group">
+		<label>
+	      Phone Number
+	      </label>
+	      <input type="text" class="form-control" id="phoneNumber" placeholder="Enter phone number" name="phoneNumber">
+      </div>
+      <div class="form-group">
+		<label>
+	      Address
+	      </label>
+	      <input type="text" class="form-control" id="address" placeholder="Enter Address" name="Address">
+      </div>
+      <br>
+      <button type="submit" id = "savebtn" class="btn btn-primary">Save</button>
+</form>
+    </div>
+	</div>
+    
+	
+</div>
+</body>
+</html>

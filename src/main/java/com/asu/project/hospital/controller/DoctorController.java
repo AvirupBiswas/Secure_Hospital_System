@@ -16,8 +16,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.asu.project.hospital.entity.Diagnosis;
 import com.asu.project.hospital.entity.Doctor;
+import com.asu.project.hospital.entity.Patient;
 import com.asu.project.hospital.entity.User;
 import com.asu.project.hospital.repository.DoctorRepository;
+import com.asu.project.hospital.repository.PatientRepository;
 import com.asu.project.hospital.service.DoctorService;
 import com.asu.project.hospital.service.UserService;
 
@@ -33,6 +35,9 @@ public class DoctorController {
 	
 	@Autowired
 	private DoctorRepository doctorRepository;
+	
+	@Autowired
+	private PatientRepository patientRepository;
 	
 	@GetMapping("/home")
 	public String doctorHome(Model model) {
@@ -133,6 +138,15 @@ public class DoctorController {
 		return "doctor/viewdiagnosis";
 	}
 	
+	@GetMapping("/viewpatientsrecords")
+	public String viewPatientsRecords(Model model) {
+		User user = userService.getLoggedUser();
+		model.addAttribute("accountName", user.getFirstName());
+		List<User> allPatients=doctorService.getAllPatients();
+		model.addAttribute("patient",allPatients);
+		return "doctor/viewpatientsrecords";
+	}
+	
 	@GetMapping("/updatediagnosis")
 	public String updateDiagnosis(@RequestParam("diagnosisId") int diagnosisId,Model model) {
 		Diagnosis diagnosis=doctorService.findByDiagnosis(diagnosisId);
@@ -140,6 +154,14 @@ public class DoctorController {
 		User user = userService.getLoggedUser();
 		model.addAttribute("accountName", user.getFirstName());
 		return "doctor/updatediagnosis";
+	}
+
+	@GetMapping("/deletediagnosis")
+	public String deleteDiagnosis(@RequestParam("diagnosisId") int diagnosisId,Model model) {
+		Diagnosis diagnosis=doctorService.findByDiagnosis(diagnosisId);
+		System.out.println("Delete diagnosis"+diagnosisId);
+		doctorService.deleteDiagnosis(diagnosis);
+		return "doctor/doctorhome";
 	}
 	
 	@PostMapping("/diagnosis")
@@ -158,6 +180,43 @@ public class DoctorController {
 		updatedDiagnosis.setLabTestNeeded(diagnosis.getLabTestNeeded());
 		updatedDiagnosis.setSymptoms(diagnosis.getSymptoms());
 		doctorService.createDiagnosis(updatedDiagnosis);
+		return "doctor/doctorhome";
+	}
+	
+	@PostMapping("/updatepatientinfo")
+	public String updatePatientInfo(@RequestParam("userId") String userId, Model model) {
+		User user1 = userService.getLoggedUser();
+		model.addAttribute("accountName", user1.getFirstName());
+		User user = userService.findByUserId(userId);
+		Patient patientdetails=patientRepository.findByUser(user);
+		model.addAttribute("user",user);
+		model.addAttribute("patientdetails", patientdetails);
+		return "doctor/updatepatientinfo";
+	}
+	
+	@PostMapping("/updatepatientinformation")
+	public String updatepatientinformation(@ModelAttribute("updatepatientinformation") Patient patient, @ModelAttribute("userId") String userId) {
+		User user = userService.findByUserId(userId);
+		patient.setUser(user);
+		patientRepository.save(patient);
+		return "doctor/doctorhome";
+	}
+	
+	@PostMapping("/editpatientinformation")
+	public String editpatientinformation(@ModelAttribute("updatepatientinformation") Patient patient, @ModelAttribute("userId") String userId) {
+		User user = userService.findByUserId(userId);
+		
+		try {
+			Patient oldpatient=patientRepository.findByUser(user);
+			oldpatient.setHeight(patient.getHeight());
+			oldpatient.setWeight(patient.getWeight());
+			oldpatient.setAddress(patient.getAddress());
+			oldpatient.setAge(patient.getAge());
+			oldpatient.setPhoneNumber(patient.getPhoneNumber());
+			patientRepository.save(oldpatient);
+		} catch (Exception e) {
+			return e.getMessage();
+		}
 		return "doctor/doctorhome";
 	}
 }
