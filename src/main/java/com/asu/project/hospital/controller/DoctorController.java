@@ -1,7 +1,6 @@
 package com.asu.project.hospital.controller;
 
 import java.util.List;
-import java.util.Optional;
 
 import javax.validation.Valid;
 
@@ -17,9 +16,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.asu.project.hospital.entity.Diagnosis;
 import com.asu.project.hospital.entity.Doctor;
-import com.asu.project.hospital.entity.InsuranceDetails;
-import com.asu.project.hospital.entity.Patient;
 import com.asu.project.hospital.entity.User;
+import com.asu.project.hospital.repository.DoctorRepository;
 import com.asu.project.hospital.service.DoctorService;
 import com.asu.project.hospital.service.UserService;
 
@@ -33,6 +31,9 @@ public class DoctorController {
 	@Autowired
 	private DoctorService doctorService;
 	
+	@Autowired
+	private DoctorRepository doctorRepository;
+	
 	@GetMapping("/home")
 	public String doctorHome(Model model) {
 		User user = userService.getLoggedUser();
@@ -42,7 +43,11 @@ public class DoctorController {
 	
 	@GetMapping("/updateinfo")
 	public String register(Model model) {
+		User user = userService.getLoggedUser();
+		model.addAttribute("accountName", user.getFirstName());
+		Doctor doctorUser = doctorRepository.findByUser(user);
 		model.addAttribute("doctor", new Doctor());
+		model.addAttribute("userInfo", doctorUser);
 		return "doctor/updatedocinfo";
 	}
 	
@@ -65,6 +70,31 @@ public class DoctorController {
 		return "doctor/doctorhome";
 	}
 	
+	@PostMapping("/editinformation")
+	public String editInformation(@Valid @ModelAttribute("doctor") Doctor userForm, BindingResult result,
+			Model model) {
+
+		if (result.hasErrors()) {
+			return "doctor/updateinfo";
+		}
+		try {
+			User user = userService.getLoggedUser();
+			model.addAttribute("accountName", user.getFirstName());
+			Doctor doctorUser = doctorRepository.findByUser(user);
+			doctorUser.setPhoneNumber(userForm.getPhoneNumber());
+			doctorUser.setAddress(userForm.getAddress());
+			doctorUser.setAge(userForm.getAge());
+			doctorUser.setGender(userForm.getGender());
+			model.addAttribute("phoneNumber", userForm.getPhoneNumber());
+			model.addAttribute("address", userForm.getAddress());
+			model.addAttribute("age", userForm.getAge());
+			model.addAttribute("gender", userForm.getGender());
+			doctorService.updateDoctorInfo(doctorUser);
+		} catch (Exception e) {
+			return e.getMessage();
+		}
+		return "redirect:/doctor/home";
+	}
 	@PostMapping("/createDiagnosis")
 	public String createDiagnosis(@RequestParam("userId") String userId, @ModelAttribute("diagnosis") Diagnosis diagnosis) {
 		User patient=userService.findByUserId(userId);

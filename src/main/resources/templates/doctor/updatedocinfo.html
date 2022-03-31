@@ -11,10 +11,64 @@
     
 </head>
 <body>
+<div class="container">
+ <nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
+        <a th:href="@{/doctor/home}" class="navbar-brand" href="#">Secure Hospital System</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
 
+        <div class="collapse navbar-collapse justify-content-end" id="navbarsExampleDefault">
+            <ul style="list-style: none; display:contents">
+                <li class="nav-item active" style="padding-right: 20px;">
+                    <div style="display: flex; align-items:center">
+                        <div style="height: 10px; width: 10px; border-radius:50%; background-color: var(--success)"></div>
+                        <em style="color:white; font-size: 15px; margin-left: 10px">logged in as <span th:text="${accountName}"></span></em>
+                    </div>
+                </li>
+                <li>
+                    <form sec:authorize="isAuthenticated()" th:action="@{/logout}" method="POST">
+                        <button class="btn btn-outline-light" type="submit" title="Logout">Log Out</button>
+                    </form>
+                </li>
+            </ul>
+        </div>
+    </nav>
 <br>
 <br>
 <br>
+<div th:if="${userInfo}">
+<div class="content-section col-md-8">
+    <h2>Edit Doctor's Personal Information</h2>
+    <form action="#" th:action="@{/doctor/editinformation}" th:object="${doctor}" method="post">
+        <fieldset class="form-group">
+            <div class="form-group">
+                <label for="Age">Age:</label>
+                <input type="number" class="form-control" id="age" placeholder="Enter age" name="age" th:value="${userInfo.age}">
+                <span class="text-danger" th:if="${#fields.hasErrors('age')}" th:errors="*{age}"></span>
+            </div>
+            <div class="form-group">
+                <label for="PhoneNumber">Phone Number:</label>
+                <input type="number" class="form-control" id="phoneNumber" placeholder="Phone Number" name="phoneNumber" th:value="${userInfo.phoneNumber}">
+                <span class="text-danger" th:if="${#fields.hasErrors('phoneNumber')}" th:errors="*{phoneNumber}"></span>
+            </div>
+            <div class="form-group">
+                <label for="Address">Address:</label>
+                <input type="textarea" class="form-control" id="address" placeholder="Enter Address" name="address" th:value="${userInfo.address}">
+                <span class="text-danger" th:if="${#fields.hasErrors('address')}" th:errors="*{address}"></span>
+            </div>
+            <div class="form-group">
+                <label for="Gender">Gender:</label>
+                <input type="textarea" class="form-control" id="gender" placeholder="Enter Gender" name="gender" th:value="${userInfo.gender}">
+                <span class="text-danger" th:if="${#fields.hasErrors('gender')}" th:errors="*{gender}"></span>
+            </div>
+            <br>
+            <button type="submit" class="btn btn-primary">Update</button>
+        </fieldset>
+    </form>
+</div>
+</div>
+<div th:unless="${userInfo}">
 <div class="content-section col-md-8">
     <h2>Update Personal Information</h2>
     <form action="#" th:action="@{/doctor/updateinformation}" th:object="${doctor}" method="post">
@@ -49,14 +103,7 @@
         </fieldset>
     </form>
 </div>
-<br>
-<footer class="buttom-footer py-lg-4 py-md-3 py-sm-3 py-3 " style="color: #fff; background-color: #343a40; bottom: 0; width: 100%;">
-    <div class="copy-agile-right text-center">
-        <h2 class="my-3">Secure Hospital System</h2>
-        <p>
-            © Secure Hospital System
-        </p>
-    </div>
-</footer>
+</div>
+</div>
 </body>
 </html>
