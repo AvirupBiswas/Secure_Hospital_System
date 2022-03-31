@@ -7,6 +7,7 @@ import javax.validation.Valid;
 import com.asu.project.hospital.entity.LabTest;
 import com.asu.project.hospital.entity.LabTestReport;
 import com.asu.project.hospital.entity.SystemLog;
+import com.asu.project.hospital.repository.DiagnosisRepository;
 import com.asu.project.hospital.repository.LabStaffRepository;
 import com.asu.project.hospital.repository.LabTestRepository;
 import com.asu.project.hospital.repository.SystemLogRepository;
@@ -17,6 +18,7 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import com.asu.project.hospital.entity.Diagnosis;
 import com.asu.project.hospital.entity.LabStaff;
 import com.asu.project.hospital.entity.User;
 import com.asu.project.hospital.service.LabStaffService;
@@ -40,6 +42,12 @@ public class LabStaffController {
 
 	@Autowired
 	private SystemLogRepository systemLogRepository;
+	
+	@Autowired
+	private DiagnosisRepository diagnosisRepository;
+	
+	@Autowired
+	private LabTestRepository labTestRepository;
 
 	@GetMapping("/home")
 	public String labStaffHome(Model model) {
@@ -195,5 +203,17 @@ public class LabStaffController {
 		labStaffService.UpdateLabTestReport(labTestReport, Integer.parseInt(labTestReportId));
 		return "redirect:/labstaff/ViewOrUpdateOrDeleteLabTest";
 	}
+	
+	@GetMapping("/viewdiagnosis/{labTestId}")
+	public String viewdiagnosis(Model model,@PathVariable("labTestId") String labTestId) {
+		LabTest labTest = labTestRepository.findById(Integer.parseInt(labTestId)).get();
+		Diagnosis diagnosis = diagnosisRepository.findByDiagnosisID(labTest.getDiagnosis().getDiagnosisID());
+		User user = userService.getLoggedUser();
+		model.addAttribute("accountName", user.getFirstName());
+		model.addAttribute("labtests",diagnosis.getLabtests());
+		model.addAttribute("doctorName",diagnosis.getDoctorName());
+		return "labstaff/viewDoctorDiagnosis";
+	}
+	
 
 }

@@ -44,12 +44,14 @@
             });
         	$("#loader").removeClass('hidden');
         }
+        function diagnosis(id) {
+        	 window.location ="/labstaff/viewdiagnosis/"+id
+       }
     </script>
     <style>
    .lds-dual-ring.hidden {
         display: none;
     }
-
     .overlay {
         position: fixed;
         top:  50%;
@@ -144,7 +146,7 @@
                 <td>[[${labTest.user.email}]]</td>
 	            <td>[[${labTest.testName}]]</td>
 	            <td>[[${labTest.description}]]</td>
-                <td><button class="btn btn-info">Doctor's Diagnosis</button></td>
+                <td><button class="btn btn-info"  th:onclick=diagnosis([[${labTest.labTestId}]])>Doctor's Diagnosis</button></td>
 	            <td><button class="btn btn-success"   
                         th:onclick="'approve(\''+${labTest.labTestId}+ '\');'">Approve</button></td>
                 <td><button class="btn btn-danger" 
