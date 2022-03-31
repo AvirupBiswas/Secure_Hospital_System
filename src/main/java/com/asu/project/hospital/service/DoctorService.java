@@ -59,6 +59,11 @@ public class DoctorService {
 		diagnosisRepository.save(diagnosis);
 	}
 	
+	public void deleteDiagnosis(Diagnosis diagnosis) {
+		System.out.println("Delete diagnosis service"+diagnosis.getDiagnosisID());
+		diagnosisRepository.deleteById(diagnosis.getDiagnosisID());
+	}
+	
 	public List<User> getAllPatients(){
 		List <User> patients = userRepository.findAll().stream().filter(e->e.getRole().equals("PATIENT")).collect(Collectors.toList());
 		List<Appointment>  appointments = appointmentRepository.findAll();
