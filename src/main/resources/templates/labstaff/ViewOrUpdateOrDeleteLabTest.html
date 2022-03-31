@@ -42,6 +42,9 @@
     <br>
     <br>
     <br>
+     <div th:if="${#lists.isEmpty(allLabTestReports)}">
+     <h2 style="text-align:center;">No Lab Test Report to View </h2>
+     </div>
     <br>
      <input class="btn btn-primary" type="button" value="Go Back" onclick="labstaffdashboard()" />
     <br>
