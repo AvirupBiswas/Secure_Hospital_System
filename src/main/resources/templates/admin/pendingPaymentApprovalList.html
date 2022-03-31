@@ -27,29 +27,18 @@
                 			     "amount":amount.toString(),
                 			     "date":formatDate()
                 	 			};
-                	/*  info= {
-                			    "id": "1",
-                			    "patient_name": "Renuka Indu",
-                			    "amount": "100",
-                			    "date": "03/30/2022"
-                			} */
                 	 $.ajax({
-                         url : "http://54.153.22.7:8080/api/add_payment/",
-                         type : "POST",
-                         dataType: "json",
-                         data: info,
-                         headers: {
-                             'Content-Type': 'application/json'
-                         },
-                         //contentType: 'application/json',
-                         success : function(data) {
-                        	 console.log("sucessfull");
-                         },
-                         error : function() {
-                             console.log("There was an error while saving it on block chain");
-                             console.log(info);
-                         }
-                     });
+                	      method: "POST",
+                	      url: "http://52.53.242.26:8080/api/add_payment/",
+                	      data: JSON.stringify(info),
+                	      headers: {
+                	        'Content-Type': 'application/json',
+                	        'Access-Control-Allow-Origin': '*' 
+                	    }
+                	    })
+                	      .done(function( msg ) {
+                	    	  console.log("Sucessfully saved to block chain");
+                	      });
                 },
                 error : function() {
                     console.log("There was an error");
