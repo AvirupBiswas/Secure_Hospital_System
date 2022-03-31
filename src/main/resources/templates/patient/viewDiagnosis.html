@@ -7,6 +7,22 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"/>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<script th:inline="javascript">
+        function requestTest(id) {
+            $.ajax({
+                url : "[(@{'/patient/labrequest/'})]"+id,
+                type : "GET",
+                success : function(data) {
+	              window.location = '/patient/requestlabtest';
+                },
+                error : function() {
+                    console.log("There was an error");
+                }
+            }); 
+        }
+        
+        
+    </script>
 </head>
 <body>
 <div class="container">
@@ -51,17 +67,21 @@
                 <th scope="col">Prescription</th>
 	            <th scope="col">LabTests</th>
 	            <th scope="col"> Request Lab Test</th>
+	            <th scope="col"> View PDF</th>
             </tr>
             <tr th:each = "diagnosis: ${diagnosisList}">
                 <td th:text="${diagnosis.doctorName}"></td>
                 <td th:text="${diagnosis.problem}"></td>
                 <td th:text="${diagnosis.prescription}"></td>
                 <td th:text="${diagnosis.labtests}"></td>
-                <td th:if="${diagnosis.labTestNeeded=='Yes'}" th:text="${diagnosis.labtests}"></td>
-                <td th:if="${diagnosis.labTestNeeded!='Yes'}">--</td>
-                <td th:if="${diagnosis.labTestNeeded=='Yes'}"><button class="btn btn-success"   
-                        th:onclick="@{/patient/labrequest}">Request</button></td>
-                <td th:if="${diagnosis.labTestNeeded!='Yes'}">--</td>
+                <td th:if="${diagnosis.labTestNeeded=='Yes'}">
+                	<form th:action="@{/patient/labrequest}" method="post">
+                    	<input type="hidden" name="diagnosisID" id="diagnosisID" th:value="${diagnosis.diagnosisID}" />
+                    	<td><button data-toggle="tooltip" title="View Patient" data-placement="top" class="btn pill-btn" value="modify" name="action"><i value="modify" name="action" class="fa fa-pencil-square-o" aria-hidden="true" style="font-size:24px;color:brown;"></i></button></td>
+                	</form>
+                </td>
+                <td th:if="${diagnosis.labTestNeeded!='yes'}">--</td>
+                <td><a th:href="@{|/viewPDF/patient/diagnosisreport/${diagnosis.diagnosisID}|}" target="_blank"><i class="fa fa-file-pdf-o" style="font-size:24px;color:red;"></i></a></td>
             </tr>
         </table>	
 

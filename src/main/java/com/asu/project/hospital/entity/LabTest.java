@@ -41,6 +41,16 @@ public class LabTest {
 	@OneToOne
 	@JoinColumn(name="diagnosisId")
 	private Diagnosis diagnosis;
+	
+	
+
+	public Diagnosis getDiagnosis() {
+		return diagnosis;
+	}
+
+	public void setDiagnosis(Diagnosis diagnosis) {
+		this.diagnosis = diagnosis;
+	}
 
 	public int getLabTestId() {
 		return labTestId;
