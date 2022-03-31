@@ -7,6 +7,7 @@ import javax.validation.Valid;
 import com.asu.project.hospital.entity.LabTest;
 import com.asu.project.hospital.entity.LabTestReport;
 import com.asu.project.hospital.entity.SystemLog;
+import com.asu.project.hospital.repository.DiagnosisRepository;
 import com.asu.project.hospital.repository.LabStaffRepository;
 import com.asu.project.hospital.repository.LabTestRepository;
 import com.asu.project.hospital.repository.SystemLogRepository;
@@ -17,6 +18,7 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import com.asu.project.hospital.entity.Diagnosis;
 import com.asu.project.hospital.entity.LabStaff;
 import com.asu.project.hospital.entity.User;
 import com.asu.project.hospital.service.LabStaffService;
@@ -40,19 +42,24 @@ public class LabStaffController {
 
 	@Autowired
 	private SystemLogRepository systemLogRepository;
+	
+	@Autowired
+	private DiagnosisRepository diagnosisRepository;
+	
+	@Autowired
+	private LabTestRepository labTestRepository;
 
 	@GetMapping("/home")
 	public String labStaffHome(Model model) {
 		User user = userService.getLoggedUser();
-//		System.out.println("user obj:" + user);
 		model.addAttribute("accountName", user.getFirstName());
-//		model.addAttribute("user", user);
 		return "labstaff/labstaffhome";
 	}
 
 	@GetMapping("/updateinfo")
 	public String register(Model model) {
 		User user = userService.getLoggedUser();
+		model.addAttribute("accountName", user.getFirstName());
 		LabStaff labStaffUser = labStaffRepository.findByUser(user);
 		model.addAttribute("labstaff", new LabStaff());
 		model.addAttribute("userInfo", labStaffUser);
@@ -67,13 +74,14 @@ public class LabStaffController {
 		}
 		try {
 			User user = userService.getLoggedUser();
+			model.addAttribute("accountName", user.getFirstName());
 			model.addAttribute("phoneNumber", userForm.getPhoneNumber());
 			model.addAttribute("address", userForm.getAddress());
 			labStaffService.updateLabStaffInfo(userForm);
 		} catch (Exception e) {
 			return e.getMessage();
 		}
-		return "labstaff/labstaffhome";
+		return "redirect:/labstaff/home";
 	}
 
 	@PostMapping("/editinformation")
@@ -85,6 +93,7 @@ public class LabStaffController {
 		}
 		try {
 			User user = userService.getLoggedUser();
+			model.addAttribute("accountName", user.getFirstName());
 			LabStaff labStaffUser = labStaffRepository.findByUser(user);
 			labStaffUser.setPhoneNumber(userForm.getPhoneNumber());
 			labStaffUser.setAddress(userForm.getAddress());
@@ -94,24 +103,21 @@ public class LabStaffController {
 		} catch (Exception e) {
 			return e.getMessage();
 		}
-		return "labstaff/labstaffhome";
+		return "redirect:/labstaff/home";
 	}
 
 	@GetMapping("/getLabTestRequests")
 	public String getLabTestRequests(Model model, @RequestParam(name = "status") String status) {
 		User user = userService.getLoggedUser();
-//		System.out.println("user obj:" + user);
 		model.addAttribute("accountName", user.getFirstName());
-//		model.addAttribute("user", user);
-
 		if (status.equals("Requested")) {
 			model.addAttribute("allLabTests", labStaffService.getLabTestsByStatus(status));
 			return "labstaff/labtestrequests";
-		} else if (status.equals("Generate")) {
+		} else if (status.equals("Pending")) {
 			model.addAttribute("allLabTests", labStaffService.getLabTestsByStatus(status));
 			return "labstaff/createreport";
 		} else {
-			return "labstaff/labstaffhome";
+			return "redirect:/labstaff/home";
 		}
 
 	}
@@ -123,8 +129,6 @@ public class LabStaffController {
 		model.addAttribute("allLabTestReports", labStaffService.getAllLabTestReports());
 		return "labstaff/ViewOrUpdateOrDeleteLabTest";
 	}
-
-//	approvelabtest
 
 	@GetMapping("/approvelabtest/{labTestId}")
 	public String approveLabTest(@PathVariable("labTestId") String labTestId, Model model) {
@@ -171,7 +175,7 @@ public class LabStaffController {
 		model.addAttribute("accountName", user.getFirstName());
 		LabTest labTestObj = labStaffService.getLabTest(Integer.parseInt(labTestId));
 		labStaffService.createLabTestReport(labTestReport, labTestObj);
-		return "redirect:/labstaff/getLabTestRequests?status=Generate";
+		return "redirect:/labstaff/getLabTestRequests?status=Pending";
 	}
 
 	@PostMapping("/manageLabTestReport")
@@ -199,5 +203,17 @@ public class LabStaffController {
 		labStaffService.UpdateLabTestReport(labTestReport, Integer.parseInt(labTestReportId));
 		return "redirect:/labstaff/ViewOrUpdateOrDeleteLabTest";
 	}
+	
+	@GetMapping("/viewdiagnosis/{labTestId}")
+	public String viewdiagnosis(Model model,@PathVariable("labTestId") String labTestId) {
+		LabTest labTest = labTestRepository.findById(Integer.parseInt(labTestId)).get();
+		Diagnosis diagnosis = diagnosisRepository.findByDiagnosisID(labTest.getDiagnosis().getDiagnosisID());
+		User user = userService.getLoggedUser();
+		model.addAttribute("accountName", user.getFirstName());
+		model.addAttribute("labtests",diagnosis.getLabtests());
+		model.addAttribute("doctorName",diagnosis.getDoctorName());
+		return "labstaff/viewDoctorDiagnosis";
+	}
+	
 
 }

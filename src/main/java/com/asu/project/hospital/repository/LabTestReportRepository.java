@@ -7,4 +7,6 @@ import com.asu.project.hospital.entity.LabTestReport;
 
 public interface LabTestReportRepository extends JpaRepository<LabTestReport, Integer>{
 
+	LabTestReport findByLabTest(LabTest labTest);
+
 }

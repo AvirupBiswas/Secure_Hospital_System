@@ -15,7 +15,8 @@
     <form action="#" th:action="@{/otp/validateOtp}"  method="post">
         <fieldset class="form-group">
             <legend class="border-bottom" >OTP has been sent to [[${email}]].Please use the same OTP to proceed further.OTP is valid for [[${expiry_mins}]] minutes</legend>
-            <input type="hidden" name="viewPage" th:value="${viewPage}"> 
+            <input type="hidden" name="viewPage" th:value="${viewPage}">
+             <input type="hidden" name="labTestId" th:value="${labTestId}"> 
             <div class="form-group">
                 <label for="otp">OTP:</label>
                 <input type="text" class="form-control" id="otp" placeholder="otp" name="otp" >

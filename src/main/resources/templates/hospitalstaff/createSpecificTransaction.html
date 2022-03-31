@@ -1,17 +1,15 @@
 <!DOCTYPE html>
-<html lang="en" x mlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
    <title>Secure Hospital System</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"/>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-
-<script th:inline="javascript">
-        function approve(id) {
+      <script th:inline="javascript">
+        function createTransaction(id) {
             $.ajax({
-                url : "[(@{'/labstaff/aproveUser/'})]"+id,
+                url : "[(@{'/hospitalstaff/createTransaction/'})]"+id,
                 type : "GET",
                 beforeSend: function () {
         	    	$("#loader").removeClass('hidden');
@@ -20,31 +18,12 @@
         	        $("#loader").addClass('hidden');
         	        },
                 success : function(data) {
-                	 $('#' + id).remove();
+                	window.location= '/hospitalstaff/userAppPendingDecision'
                 },
                 error : function() {
                     console.log("There was an error");
                 }
             });
-        }
-        function deny(id) {
-             $.ajax({
-                url : "[(@{'/labstaff/denyUser/'})]"+id,
-                type : "GET",
-                beforeSend: function () {
-        	    	$("#loader").removeClass('hidden');
-        	        },
-        	    complete: function () {
-        	        $("#loader").addClass('hidden');
-        	        },
-                success : function(data) {
-                	 $('#' + id).remove();
-                },
-                error : function() {
-                    console.log("There was an error");
-                }
-            });
-        	$("#loader").removeClass('hidden');
         }
     </script>
     <style>
@@ -90,7 +69,7 @@
 <body>
 <div class="container">
     <nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
-        <a th:href="@{/labstaff/home}" class="navbar-brand" href="#">Secure Hospital System</a>
+        <a th:href="@{/hospitalstaff/home}" class="navbar-brand" href="#">Secure Hospital System</a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
@@ -114,55 +93,48 @@
     <br>
     <br>
     <br>
-     <div class="jumbotron" style="background-color: #deecf9">
-     <!--    <h3 style="text-align:center;">Welcome to the Hospital Staff Dashboard</h3>
-       <hr style="height:5px;border:none;color:#333;background-color:#333;" /> -->
-       <h1 th:inline="text">Hello [[${accountName}]]</h1>
-        <hr>
-        <h3>Welcome to the Lab Staff Dashboard</h3>
-        <br>
-    </div>
     <br>
-  	<div id="loader" class="lds-dual-ring hidden overlay">
+    <input class="btn btn-primary" type="button" value="Go Back" onclick="history.back(-1)" />
+    <br>
+     <br>
   	
+  	 <div>
+    <form action="#" th:action="@{/hospitalstaff/createSpecificTransaction}" id="createSpecificTransaction" method="POST" accept-charset="UTF-8" class="content-section col-md-8">
+	   <div class="form-group">
+	      <label>
+	        Patient Name
+	        </label>
+	        <input type="text" readonly="readonly" class="form-control" id="firstName" placeholder="Enter Patient firstName" name="firstName" th:value="${user.firstName}">
+      </div>
+      <div class="form-group">
+	      <label>
+	        Patient Email
+	        </label>
+	        <input type="text" readonly="readonly" class="form-control" id="email" placeholder="Enter Patient email" name="email" th:value="${user.email}">
+      </div>
+	      <div class="form-group">
+	      <label>
+	        User ID
+	        </label>
+	        <input type="text" readonly="readonly" class="form-control" id="userId" placeholder="Enter Patient userID" name="userId" th:value="${user.userId}">
+      </div>
+	  <div class="form-group">
+	      <label>
+	        Purpose of Payment
+	        </label>
+	        <input type="text" class="form-control" id="purpose" placeholder="Enter your Purpose of Payment" name="purpose">
+      </div>
+	<div class="form-group">
+		<label>
+	      Amount
+	      </label>
+	      <input type="number" class="form-control" id="amount" placeholder="Enter the amount" name="amount">
+      </div>
+      
+      <button type="submit" class="btn btn-primary">Submit</button>
+</form>
     </div>
-    
-    <div class="card-deck">
-<div class="card text-center">
-  <div class="card-body">
-    <h5 class="card-title">Update Lab Staff Information</h5>
-       <hr>
-       <i class="fa fa-pencil-square-o" aria-hidden="true" style="font-size:8rem;"></i>
-    <a th:href="@{/labstaff/updateinfo}" class="btn btn-dark">Update Lab Staff Information</a>
-  </div>
-</div>
-<div class="card text-center">
-  <div class="card-body">
-    <h5 class="card-title">View Lab Test Requests</h5>
-    <hr>
-    <i class="fa fa-list-alt" aria-hidden="true" style="font-size:8rem;"></i>
-    <a th:href="@{/labstaff/getLabTestRequests(status='Requested')}" class="btn btn-dark">View Lab Test Requests</a>
-  </div>
-</div>
-<div class="card text-center">
-  <div class="card-body">
-    <h5 class="card-title">Create Lab Test Report</h5>
-    <hr>
-    <i class="fa fa-list-alt" aria-hidden="true" style="font-size:8rem;"></i>
-    <a th:href="@{/labstaff/getLabTestRequests(status='Pending')}" class="btn btn-dark">Create Lab Test Reports</a>
-  </div>
-</div>
-<div class="card text-center">
-  <div class="card-body">
-    <h5 class="card-title">View/Update Lab Test Report</h5>
-    <hr>
-    <i class="fa fa-address-card-o"  aria-hidden="true" style="font-size:8rem;"></i>
-   <a th:href="@{/labstaff/ViewOrUpdateOrDeleteLabTest}" class="btn btn-dark">View/Update Lab Test Report</a>
-  </div>
-</div>
-</div>
-<br>
-<br>
+  	
 </div>
 </body>
 </html>

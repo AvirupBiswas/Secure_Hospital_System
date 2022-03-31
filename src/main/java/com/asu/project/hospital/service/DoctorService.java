@@ -1,5 +1,6 @@
 package com.asu.project.hospital.service;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -7,12 +8,16 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.asu.project.hospital.entity.Appointment;
 import com.asu.project.hospital.entity.Diagnosis;
 import com.asu.project.hospital.entity.Doctor;
+import com.asu.project.hospital.entity.SystemLog;
 import com.asu.project.hospital.entity.User;
+import com.asu.project.hospital.repository.AppointmentRepository;
 import com.asu.project.hospital.repository.DiagnosisRepository;
 import com.asu.project.hospital.repository.DoctorRepository;
 import com.asu.project.hospital.repository.PatientRepository;
+import com.asu.project.hospital.repository.SystemLogRepository;
 import com.asu.project.hospital.repository.UserRepository;
 
 @Service
@@ -33,6 +38,12 @@ public class DoctorService {
 	@Autowired
 	DiagnosisRepository diagnosisRepository;
 	
+	@Autowired
+	AppointmentRepository appointmentRepository;
+	
+	@Autowired
+	SystemLogRepository systemLogRepository;
+	
 	public void updateDoctorInfo(Doctor doctor) {
 		User user= userService.getLoggedUser();
 		doctor.setUser(user);
@@ -40,12 +51,20 @@ public class DoctorService {
 	}
 	
 	public void createDiagnosis(Diagnosis diagnosis) {
+		SystemLog systemLog=new SystemLog();
+		systemLog.setMessage("Diagnosis created for "+diagnosis.getUser().getFirstName()+" "+diagnosis.getUser().getLastName()
+				+ "by "+diagnosis.getDoctorName());
+		systemLog.setTimestamp(new Date());
+		systemLogRepository.save(systemLog);
 		diagnosisRepository.save(diagnosis);
 	}
 	
 	public List<User> getAllPatients(){
-		List <User> users = userRepository.findAll().stream().filter(e->e.getRole().equals("PATIENT")).collect(Collectors.toList());
-		return users;
+		List <User> patients = userRepository.findAll().stream().filter(e->e.getRole().equals("PATIENT")).collect(Collectors.toList());
+		List<Appointment>  appointments = appointmentRepository.findAll();
+		List<User> patientwithAppointmentList = appointments.stream().map(e->e.getUser()).collect(Collectors.toList());
+		List <User> patientwithAppointment = patients.stream().filter(e->patientwithAppointmentList.contains(e)).collect(Collectors.toList());
+		return patientwithAppointment;
 	}
 	
 	public List<Diagnosis> getAllDiagnosis(User user){

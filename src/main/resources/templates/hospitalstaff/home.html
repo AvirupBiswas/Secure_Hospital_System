@@ -147,37 +147,32 @@ mlns:th="http://www.thymeleaf.org">
 </div>
 <div class="card text-center">
   <div class="card-body">
-    <h5 class="card-title">Create Transactions</h5>
-    <hr>
-    <i class="fa fa-list-alt" aria-hidden="true" style="font-size:8rem;"></i>
-    <!--<a th:href="#" class="btn btn-dark">Create Transactions</a>-->
-  </div>
-</div>
-<div class="card text-center">
-  <div class="card-body">
     <h5 class="card-title">Create Patient Record</h5>
     <hr>
     <i class="fa fa-list-alt" aria-hidden="true" style="font-size:8rem;"></i>
     <a th:href="@{/hospitalstaff/viewpatients}" class="btn btn-dark">Create Patient Record</a>
   </div>
 </div>
+
+
+<br><br>
 <div class="card text-center">
   <div class="card-body">
-    <h5 class="card-title">View diagnosis Report</h5>
+    <h5 class="card-title">Create Transactions</h5>
     <hr>
-    <i class="fa fa-address-card-o"  aria-hidden="true" style="font-size:8rem;"></i>
-    <!--<a th:href="#" class="btn btn-dark">View diagnosis Report</a>-->
+    <i class="fa fa-list-alt" aria-hidden="true" style="font-size:8rem;"></i>
+    <a th:href="@{/hospitalstaff/viewPatientsforTransac}" class="btn btn-dark">Create Transactions</a>
   </div>
 </div>
 <div class="card text-center">
   <div class="card-body">
-    <h5 class="card-title">View Lab reports</h5>
+    <h5 class="card-title">View reports</h5>
     <hr>
-    <i class="fa fa-history" aria-hidden="true" style="font-size:8rem;"></i>
-    <br><br>
-    <!--<a th:href="#" class="btn btn-dark">Lab Reports</a>-->
+    <i class="fa fa-list-alt" aria-hidden="true" style="font-size:8rem;"></i>
+    <a th:href="@{/hospitalstaff/viewPatientsforReports}" class="btn btn-dark">View reports</a>
   </div>
 </div>
+
 <div class="card text-center">
   <div class="card-body">
     <h5 class="card-title">Create receipts</h5>

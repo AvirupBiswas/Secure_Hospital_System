@@ -88,6 +88,8 @@ public class DoctorController {
 	public String viewPatientsDiagnosis(Model model) {
 		List<User> allPatients=doctorService.getAllPatients();
 		model.addAttribute("patient",allPatients);
+		User user = userService.getLoggedUser();
+		model.addAttribute("accountName", user.getFirstName());
 		return "doctor/viewpatientsdiagnosis";
 	}
 	
@@ -96,6 +98,8 @@ public class DoctorController {
 		User user = userService.findByUserId(userId);
 		List<Diagnosis> diagnosisList=doctorService.getAllDiagnosis(user);
 		model.addAttribute("diagnosis",diagnosisList);
+		User userLogged = userService.getLoggedUser();
+		model.addAttribute("accountName", userLogged.getFirstName());
 		return "doctor/viewdiagnosis";
 	}
 	
@@ -103,6 +107,8 @@ public class DoctorController {
 	public String updateDiagnosis(@RequestParam("diagnosisId") int diagnosisId,Model model) {
 		Diagnosis diagnosis=doctorService.findByDiagnosis(diagnosisId);
 		model.addAttribute("diagnosis",diagnosis);
+		User user = userService.getLoggedUser();
+		model.addAttribute("accountName", user.getFirstName());
 		return "doctor/updatediagnosis";
 	}
 	
@@ -114,7 +120,7 @@ public class DoctorController {
 	}
 	
 	@PostMapping("/editDiagnosis")
-	public String createDiagnosis(@RequestParam("diagnosisId") int diagnosisId,@ModelAttribute("diagnosis") Diagnosis diagnosis) {
+	public String editDiagnosis(@RequestParam("diagnosisId") int diagnosisId,@ModelAttribute("diagnosis") Diagnosis diagnosis) {
 		Diagnosis updatedDiagnosis=doctorService.findByDiagnosis(diagnosisId);
 		updatedDiagnosis.setLabtests(diagnosis.getLabtests());
 		updatedDiagnosis.setProblem(diagnosis.getProblem());

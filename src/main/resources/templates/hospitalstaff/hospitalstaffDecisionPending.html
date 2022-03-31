@@ -19,7 +19,7 @@
         	        },
                 success : function(data) {
                 	 $('#' + id).remove();
-                	 window.location="history.back(-1)"
+                	 window.location='/hospitalstaff/updateTransaction/'+id
                 },
                 error : function() {
                     console.log("There was an error");

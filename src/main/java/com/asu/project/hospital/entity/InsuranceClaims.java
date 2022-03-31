@@ -11,6 +11,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 @Entity
@@ -39,6 +40,10 @@ public class InsuranceClaims {
 	
 	@Column(name="status")
 	private String status;
+	
+	@OneToOne
+	@JoinColumn(name="paymentId")
+	private PatientPayment patientPayment;
 
 	public long getClaimId() {
 		return claimId;
@@ -86,6 +91,16 @@ public class InsuranceClaims {
 
 	public void setStatus(String status) {
 		this.status = status;
+	}
+	
+	
+
+	public PatientPayment getPatientPayment() {
+		return patientPayment;
+	}
+
+	public void setPatientPayment(PatientPayment patientPayment) {
+		this.patientPayment = patientPayment;
 	}
 
 	public InsuranceClaims(long claimId, BigDecimal amount, String purpose, InsuranceDetails insuranceDetails,

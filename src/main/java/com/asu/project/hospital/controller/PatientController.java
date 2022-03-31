@@ -10,17 +10,21 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.asu.project.hospital.entity.Appointment;
+import com.asu.project.hospital.entity.Diagnosis;
 import com.asu.project.hospital.entity.InsuranceClaims;
 import com.asu.project.hospital.entity.InsuranceDetails;
 import com.asu.project.hospital.entity.LabTest;
 import com.asu.project.hospital.entity.Patient;
 import com.asu.project.hospital.entity.PatientPayment;
 import com.asu.project.hospital.entity.User;
+import com.asu.project.hospital.repository.DiagnosisRepository;
 import com.asu.project.hospital.service.AppointmentService;
 import com.asu.project.hospital.service.PatientService;
 import com.asu.project.hospital.service.UserService;
@@ -37,6 +41,9 @@ public class PatientController {
 	
 	@Autowired
 	private AppointmentService appointmentService;
+	
+	@Autowired
+	private DiagnosisRepository diagnosisRepository;
 	
 	@GetMapping("/home")
 	public String adminHome(Model model) {
@@ -84,12 +91,6 @@ public class PatientController {
 		return "patient/editinsurance";
 	}
 	
-	@GetMapping("/labrequest")
-	public String labRequest(Model model) {
-		model.addAttribute("labTest", new LabTest());
-		return "patient/requestlabtest";
-	}
-	
 	@PostMapping("/createappointment")
 	public String createAppointment(@ModelAttribute("scheduleApp") Appointment appointment, @RequestParam("date") String date, @RequestParam("time") String time) throws Exception {
         User user = userService.getLoggedUser();
@@ -121,19 +122,13 @@ public class PatientController {
 	}
 	
 	@RequestMapping("/getInsuranceDetails")
-	public String getInsuranceDetails(Model model) {
-		User user=userService.getLoggedUser();
-		InsuranceDetails details=patientService.getInsuranceDetails(user);
-		model.addAttribute("insurancedetails",details);
-		return "patient/insuranceclaim";
+	public String getInsuranceDetails() {
+		return "redirect:/otp/generateOtp/insurancedetails";
 	}
 	
 	@GetMapping("/viewClaimHistory")
-	public String getClaimsHistory(Model model) {
-		User user=userService.getLoggedUser();
-		List<InsuranceClaims> claims=patientService.findAllClaims(user);
-		model.addAttribute("insuranceClaims", claims);
-		return "patient/viewClaimHistory";
+	public String getClaimsHistory() {
+		return "redirect:/otp/generateOtp/viewClaimHistory";
 	}
 	
 	@GetMapping("/viewAppointmentHistory")
@@ -145,8 +140,19 @@ public class PatientController {
 	}
 	
 	
+	@PostMapping("/labrequest")
+	public String labRequest(@RequestParam("diagnosisID") String diagnosisID,Model model) {
+		Diagnosis diagnosis=diagnosisRepository.getById(Integer.parseInt(diagnosisID));
+		System.out.println(diagnosisID);
+		model.addAttribute("diagnosis", diagnosis);
+		return "patient/requestlabtest";
+	}
+	
+	
 	@PostMapping("/createLabRequest")
-	public String createLabTestRequest(@ModelAttribute LabTest labTest) {
+	public String createLabTestRequest(@RequestParam("diagnosisID") String diagnosisID,@ModelAttribute LabTest labTest) {
+		Diagnosis diagnosis=diagnosisRepository.getById(Integer.parseInt(diagnosisID));
+		labTest.setDiagnosis(diagnosis);
 		patientService.createLabRequest(labTest);
 		return "patient/patienthome";
 	}
@@ -156,8 +162,49 @@ public class PatientController {
 		User user=userService.getLoggedUser();
 		List<PatientPayment> patientPayments=patientService.findAllPaymentsByStatus();
 		model.addAttribute("patientPayments", patientPayments);
-		return "patient/viewPendingPayments";		
+		return "patient/viewpendingpayments";		
 	}
+	
+	@GetMapping("/viewLabTests")
+	public String viewLabTests(Model model) {
+		User user=userService.getLoggedUser();
+		List<LabTest> labTests=patientService.viewLabTests(user);
+		model.addAttribute("labTests", labTests);
+		return "patient/viewlabreports";
+	}
+	
+	@GetMapping("/requestLabReports/{labTestId}")
+	public String requestLabReports(@PathVariable("labTestId") String labTestId) {
+		System.out.println("request lab request...");
+		patientService.requestLabTest(Integer.parseInt(labTestId));
+		return "patient/viewlabreports";
+		
+	}
+	
+	@GetMapping("/viewAllDiagnosisReports")
+	public String viewAllDiagnosisReports(Model model) {
+		User user=userService.getLoggedUser();
+		List<Diagnosis> diagnosisList=patientService.viewAllDiagnosis(user);
+		model.addAttribute("diagnosisList", diagnosisList);
+		return "patient/viewDiagnosis";
+	}
+	
+	@GetMapping("/makePaymentInsurance/{paymentId}")
+	public String makePaymentInsurance(@PathVariable("paymentId") String paymentId) {
+		System.out.println("request lab request...");
+		patientService.makePaymentInsurance(Long.parseLong(paymentId));
+		return "patient/viewlabreports";
+		
+	}
+	
+	@GetMapping("/makeSelfPayment/{paymentId}")
+	public String makeSelfPayment(@PathVariable("paymentId") String paymentId) {
+		System.out.println("request lab request...");
+		patientService.makePayment(Long.parseLong(paymentId));
+		return "patient/viewpendingpayments";
+		
+	}
+	
 	
 	
 
