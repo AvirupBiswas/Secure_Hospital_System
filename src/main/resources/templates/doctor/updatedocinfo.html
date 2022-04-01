@@ -40,7 +40,8 @@
 <div th:if="${userInfo}">
 <div class="content-section col-md-8">
     <h2>Edit Doctor's Personal Information</h2>
-    <form action="#" th:action="@{/doctor/editinformation}" th:object="${doctor}" method="post">
+    <br>
+    <form th:action="@{/doctor/editinformation}" th:object="${doctor}" method="post">
         <fieldset class="form-group">
             <div class="form-group">
                 <label for="Age">Age:</label>
@@ -71,7 +72,7 @@
 <div th:unless="${userInfo}">
 <div class="content-section col-md-8">
     <h2>Update Personal Information</h2>
-    <form action="#" th:action="@{/doctor/updateinformation}" th:object="${doctor}" method="post">
+    <form th:action="@{/doctor/updateinformation}" th:object="${doctor}" method="post">
         <fieldset class="form-group">
             <div class="form-group">
                 <label for="Age">Age:</label>
