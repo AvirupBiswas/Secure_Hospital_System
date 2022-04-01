@@ -114,6 +114,8 @@ public class DoctorController {
 	
 	@GetMapping("/viewpatients")
 	public String viewPatients(Model model) {
+		User user = userService.getLoggedUser();
+		model.addAttribute("accountName", user.getFirstName());
 		List<User> allPatients=doctorService.getAllPatients();
 		model.addAttribute("patient",allPatients);
 		return "doctor/viewpatients";
@@ -166,6 +168,8 @@ public class DoctorController {
 	
 	@PostMapping("/diagnosis")
 	public String createDiagnosis(@RequestParam("userId") String userId, Model model) {
+		User account = userService.getLoggedUser();
+		model.addAttribute("accountName", account.getFirstName());
 		User user = userService.findByUserId(userId);
 		model.addAttribute("user",user);
 		return "doctor/diagnosis";
