@@ -19,7 +19,7 @@
         	        },
                 success : function(data) {
                 	 $('#' + id).remove();
-                	 var info = {"id":"claimid"+" "+id.toString(),
+                	 var info = {"id":"claimid:"+" "+id.toString(),
             			     "patient_name":firstname+' '+lastname,
             			     "content":'amount: '+amount.toString()+', policy Id: '+insId,
             			     "date":formatDate()
