@@ -58,6 +58,8 @@
                 <th scope="col">Lab Test Recommended By Doctor</th>
                 <th scope="col">Lab Test Reported</th>
                 <th scope="col">Test Description</th>
+                <th scope="col">Diagnostic Id</th>
+                <th scope="col">Lab report Id</th>
                 <th scope="col">Referred By Doctor</th>
                 <th scope="col">Patient Lab Report</th>
                 <th scope="col">Patient Diagnosis Report</th>
@@ -70,6 +72,8 @@
 	            <td>[[${report.testNameRecommendedByDoctor}]]</td>
 	            <td>[[${report.testNameReported}]]</td>
 	            <td>[[${report.description}]]</td>
+	            <td>[[${report.diagnosisID}]]</td>
+	            <td>[[${report.labTestId}]]</td>
 	            <td>[[${report.doctorName}]]</td>
 				<td><a th:unless=${report.labTestId==null} th:href="@{|/viewPDF/hospitalStaff/reportView/${report.labTestId}|}" target="_blank"><i class="fa fa-file-pdf-o" style="font-size:24px;color:red;"></i></a></td>
 	            <td><a th:unless=${report.diagnosisID==null} th:href="@{|/viewPDF/patient/diagnosisreport/${report.diagnosisID}|}" target="_blank"><i class="fa fa-file-pdf-o" style="font-size:24px;color:red;"></i></a></td>
