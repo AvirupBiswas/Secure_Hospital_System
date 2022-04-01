@@ -110,6 +110,14 @@ public class PatientService {
 		return  patientPayments;
 	}
 	
+	public List<PatientPayment> findAllPaymentsPaid(){
+		User user=userService.getLoggedUser();
+		List<PatientPayment> patientPayments=patientPaymentRepository.findByUser(user)
+				.stream().filter(e -> !e.getStatus().equals("Pending"))
+				.collect(Collectors.toList());
+		return  patientPayments;
+	}
+	
 	public void createLabRequest(LabTest labTest) {
 		User user=userService.getLoggedUser();
 		labTest.setUser(user);
