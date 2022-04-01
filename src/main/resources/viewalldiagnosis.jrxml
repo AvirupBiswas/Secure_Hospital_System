@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.10.0.final using JasperReports Library version 6.10.0-unknown  -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="viewdiagnosisreport" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="4e6fc230-675e-4517-9539-cf88dad4b019">
+	<queryString >
+		<![CDATA[]]>
+	</queryString>
+	<field name="patientName" class="java.lang.String"></field>
+	<field name="doctorName" class="java.lang.String"></field>
+	<field name="problem" class="java.lang.String"></field>
+	<field name="symptoms" class="java.lang.String"></field>
+	<field name="prescription" class="java.lang.String"></field>
+	<field name="labtests" class="java.lang.String"></field>	
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="79" splitType="Stretch">
+			<staticText>
+				<reportElement x="110" y="30" width="300" height="30" uuid="12a8fdef-7cae-4e05-9b51-c3b6ce3e2acb"/>
+				<textElement textAlignment="Center">
+					<font size="18"/>
+				</textElement>
+				<text><![CDATA[Diagnosis Report]]></text>
+			</staticText>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="35" splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band height="61" splitType="Stretch">
+			<staticText>
+				<reportElement x="0" y="0" width="130" height="30" uuid="2680b70e-beb7-4474-83c1-2f10197b300f">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="e650177e-4c23-449e-bbc3-b6473c7ee1b7"/>
+				</reportElement>
+				<text><![CDATA[Patient Name]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="31" width="130" height="30" uuid="38b43da9-a5c7-4e15-b1b4-d251847f60ba">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="4f579bbd-8999-4d44-81ac-937608d0f16f"/>
+				</reportElement>
+				<text><![CDATA[Doctor Name]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="180" y="0" width="130" height="30" uuid="2d3626e7-f5b7-4ff3-9301-94a21960420b">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="e650177e-4c23-449e-bbc3-b6473c7ee1b7"/>
+				</reportElement>
+				<textFieldExpression><![CDATA[$F{patientName}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="180" y="31" width="130" height="30" uuid="f91100e1-023d-48a0-b11d-a36847372023">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="4f579bbd-8999-4d44-81ac-937608d0f16f"/>
+				</reportElement>
+				<textFieldExpression><![CDATA[$F{doctorName}]]></textFieldExpression>
+			</textField>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="127" splitType="Stretch">
+			<textField>
+				<reportElement x="180" y="0" width="130" height="30" uuid="d155998a-1a3c-4965-a590-2a4e286ee23f">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="8450bb99-b783-4dad-a1e4-ce4b947f1a5d"/>
+				</reportElement>
+				<textFieldExpression><![CDATA[$F{problem}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="180" y="30" width="130" height="30" uuid="47098aa0-9bec-4ee4-a233-6132567b8511">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="247fb545-139b-48dd-ad00-d3f0ba39a048"/>
+				</reportElement>
+				<textFieldExpression><![CDATA[$F{symptoms}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="0" y="-1" width="130" height="30" uuid="9c01f7e8-6fde-48d7-b9ed-3b3dd335de5b">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="8450bb99-b783-4dad-a1e4-ce4b947f1a5d"/>
+				</reportElement>
+				<text><![CDATA[Problem]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="29" width="130" height="30" uuid="d52987b8-43ad-460f-b687-e33b1652d65a">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="247fb545-139b-48dd-ad00-d3f0ba39a048"/>
+				</reportElement>
+				<text><![CDATA[Symptoms]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="59" width="130" height="30" uuid="ce517247-c7db-41d1-a3f0-b6da74813d69">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="8076fe25-0e93-41bd-9712-fdf07c2458e4"/>
+				</reportElement>
+				<text><![CDATA[Prescription]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="180" y="59" width="130" height="30" uuid="73990264-1326-4e28-875a-7943c106ed66">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="8076fe25-0e93-41bd-9712-fdf07c2458e4"/>
+				</reportElement>
+				<textFieldExpression><![CDATA[$F{prescription}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="180" y="90" width="130" height="30" uuid="16ae2e40-776f-4645-a3e2-6bda9acd2f0b">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="21bbaec0-079e-44d4-9005-c2fdf2d58f26"/>
+				</reportElement>
+				<textFieldExpression><![CDATA[$F{labtests}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="0" y="89" width="130" height="30" uuid="412b07ba-66be-485c-8ea8-c2d5b44e9709">
+					<property name="com.jaspersoft.studio.spreadsheet.connectionID" value="21bbaec0-079e-44d4-9005-c2fdf2d58f26"/>
+				</reportElement>
+				<text><![CDATA[Lab Tests]]></text>
+			</staticText>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="56" splitType="Stretch">
+			<staticText>
+				<reportElement x="100" y="26" width="320" height="30" uuid="e6857b82-a83f-4696-9773-189bb725f1c8"/>
+				<textElement textAlignment="Center"/>
+				<text><![CDATA[End of page]]></text>
+			</staticText>
+		</band>
+	</columnFooter>
+	<pageFooter>
+		<band height="54" splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band height="42" splitType="Stretch"/>
+	</summary>
+</jasperReport>
