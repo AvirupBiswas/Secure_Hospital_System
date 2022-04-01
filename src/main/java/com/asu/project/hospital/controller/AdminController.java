@@ -1,5 +1,6 @@
 package com.asu.project.hospital.controller;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -21,21 +22,26 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.asu.project.hospital.entity.AdminDecisionForUser;
+import com.asu.project.hospital.entity.Diagnosis;
 import com.asu.project.hospital.entity.Doctor;
 import com.asu.project.hospital.entity.HospitalStaff;
 import com.asu.project.hospital.entity.InsuranceStaff;
 import com.asu.project.hospital.entity.LabStaff;
+import com.asu.project.hospital.entity.LabTest;
 import com.asu.project.hospital.entity.PatientPayment;
 import com.asu.project.hospital.entity.SignInHistory;
 import com.asu.project.hospital.entity.SystemLog;
 import com.asu.project.hospital.entity.User;
 import com.asu.project.hospital.model.SignInhistorySearchResult;
 import com.asu.project.hospital.model.SystemLogsSearchResult;
+import com.asu.project.hospital.model.ViewDiagNosticAndLabTestReport;
 import com.asu.project.hospital.repository.AdminDecisionForUserRepository;
+import com.asu.project.hospital.repository.DiagnosisRepository;
 import com.asu.project.hospital.repository.DoctorRepository;
 import com.asu.project.hospital.repository.HospitalStaffRepository;
 import com.asu.project.hospital.repository.InsuranceStaffRepository;
 import com.asu.project.hospital.repository.LabStaffRepository;
+import com.asu.project.hospital.repository.LabTestRepository;
 import com.asu.project.hospital.repository.PatientPaymentRepository;
 import com.asu.project.hospital.repository.SignInHistoryRepository;
 import com.asu.project.hospital.repository.SystemLogRepository;
@@ -79,6 +85,12 @@ public class AdminController {
 
 	@Autowired
 	private LabStaffRepository labStaffRepository;
+
+	@Autowired
+	private LabTestRepository labTestRepository;
+
+	@Autowired
+	private DiagnosisRepository diagnosisRepository;
 
 	@GetMapping("/aproveUser/{Id}")
 	public ResponseEntity<String> aproveUser(@PathVariable("Id") String Id) {
@@ -424,6 +436,45 @@ public class AdminController {
 			patientPaymentRepository.save(patientPayment);
 		}
 		return "admin/pendingPaymentApprovalList";
+	}
+
+	@GetMapping("/getInternalPatientFiles")
+	public String getReportsOfPatient(Model model) {
+		User user = userService.getLoggedUser();
+		model.addAttribute("accountName", user.getFirstName());
+		List<ViewDiagNosticAndLabTestReport> reportList = new ArrayList<>();
+		List<Diagnosis> diagnosisList = diagnosisRepository.findAll();
+		List<LabTest> labTests = labTestRepository.findByStatus("Reported");
+		for (Diagnosis d : diagnosisList) {
+			List<LabTest> tempLabTests = labTests.stream()
+					.filter(e -> e.getDiagnosis().getDiagnosisID() == d.getDiagnosisID()).collect(Collectors.toList());
+			if (tempLabTests != null && !tempLabTests.isEmpty()) {
+				for (LabTest l : tempLabTests) {
+					ViewDiagNosticAndLabTestReport obj = new ViewDiagNosticAndLabTestReport();
+					obj.setFirstName(d.getUser().getFirstName());
+					obj.setLastName(d.getUser().getLastName());
+					obj.setEmail(d.getUser().getEmail());
+					obj.setDescription(l.getDescription());
+					obj.setLabTestId(l.getLabTestId());
+					obj.setTestNameReported(l.getTestName());
+					obj.setTestNameRecommendedByDoctor(d.getLabtests());
+					obj.setDiagnosisID(d.getDiagnosisID());
+					obj.setDoctorName(d.getDoctorName());
+					reportList.add(obj);
+				}
+			} else {
+				ViewDiagNosticAndLabTestReport obj = new ViewDiagNosticAndLabTestReport();
+				obj.setFirstName(d.getUser().getFirstName());
+				obj.setLastName(d.getUser().getLastName());
+				obj.setEmail(d.getUser().getEmail());
+				obj.setTestNameRecommendedByDoctor(d.getLabtests());
+				obj.setDiagnosisID(d.getDiagnosisID());
+				obj.setDoctorName(d.getDoctorName());
+				reportList.add(obj);
+			}
+		}
+		model.addAttribute("allPatientWithReport", reportList);
+		return "admin/internalFile";
 	}
 
 }

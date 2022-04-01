@@ -66,7 +66,8 @@ public class DoctorService {
 	
 	public List<User> getAllPatients(){
 		List <User> patients = userRepository.findAll().stream().filter(e->e.getRole().equals("PATIENT")).collect(Collectors.toList());
-		List<Appointment>  appointments = appointmentRepository.findAll();
+		List<Appointment>  allAppointments = appointmentRepository.findAll();
+		List<Appointment>  appointments = allAppointments.stream().filter(a->a.getStatus().equals("Approved")).collect(Collectors.toList());
 		List<User> patientwithAppointmentList = appointments.stream().map(e->e.getUser()).collect(Collectors.toList());
 		List <User> patientwithAppointment = patients.stream().filter(e->patientwithAppointmentList.contains(e)).collect(Collectors.toList());
 		return patientwithAppointment;
