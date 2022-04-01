@@ -1,6 +1,7 @@
 package com.asu.project.hospital.controller;
 
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -21,14 +22,17 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.asu.project.hospital.entity.AdminDecisionForUser;
 import com.asu.project.hospital.entity.Appointment;
+import com.asu.project.hospital.entity.Diagnosis;
 import com.asu.project.hospital.entity.Patient;
 import com.asu.project.hospital.entity.PatientPayment;
+import com.asu.project.hospital.entity.SystemLog;
 import com.asu.project.hospital.entity.User;
 import com.asu.project.hospital.repository.AdminDecisionForUserRepository;
 import com.asu.project.hospital.repository.HospitalStaffDecisionForUserRepository;
 import com.asu.project.hospital.repository.HospitalStaffRepository;
 import com.asu.project.hospital.repository.PatientPaymentRepository;
 import com.asu.project.hospital.repository.PatientRepository;
+import com.asu.project.hospital.repository.SystemLogRepository;
 import com.asu.project.hospital.service.MailService;
 import com.asu.project.hospital.service.PatientService;
 import com.asu.project.hospital.service.UserService;
@@ -65,6 +69,9 @@ public class HospitalStaffController {
 	
 	@Autowired
 	private PatientPaymentRepository patientPaymentRepository;
+	
+	@Autowired
+	private SystemLogRepository systemLogRepository;
 
 	@GetMapping("/home")
 	public String hospitalStaffHome(Model model) {
@@ -79,6 +86,10 @@ public class HospitalStaffController {
 		HospitalStaff hStaff=hospitalStaffRepository.findByUser(user);
 		model.addAttribute("hospitalstaff", new HospitalStaff());
 		model.addAttribute("hospitalstaffdetails", hStaff);
+		SystemLog systemLog = new SystemLog();
+		systemLog.setMessage(user.getEmail() + " -updated details");
+		systemLog.setTimestamp(new Date());
+		systemLogRepository.save(systemLog);
 		return "hospitalstaff/updateinfo";
 	}
 	
@@ -303,6 +314,14 @@ public class HospitalStaffController {
 		List<LabTest> labTests=hospitalStaffService.viewLabTests(user);
 		model.addAttribute("labTests", labTests);
 		return "hospitalstaff/viewlabreports";
+	}
+	
+	@GetMapping("/viewAllDiagnosisReports")
+	public String viewAllDiagnosisReports(@RequestParam("userId") String userId, Model model) {
+		User user = userService.findByUserId(userId);
+		List<Diagnosis> diagnosisList=hospitalStaffService.viewAllDiagnosis(user);
+		model.addAttribute("diagnosisList", diagnosisList);
+		return "hospitalstaff/viewDiagnosis";
 	}
 	
 }

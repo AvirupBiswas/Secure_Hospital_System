@@ -90,7 +90,7 @@
       </div>
       <div class="dropdown">
                 <label for="Gender">Gender:</label>
-                <select id="gender" placeholder="" name="gender" th:value="${patientdetails.gender}" class="form-control">
+                <select id="gender" placeholder="" name="gender" th:field="${patientdetails.gender}" class="form-control">
                     <option th:value="null" th:text="Select">Select</option>
                     <option th:value="Female" th:text="Female">Female</option>
                     <option th:value="Male" th:text="Male">Male</option>

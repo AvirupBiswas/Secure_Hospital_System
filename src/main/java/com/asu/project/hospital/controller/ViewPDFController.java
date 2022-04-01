@@ -96,6 +96,24 @@ public class ViewPDFController {
 	}
 	
 	@GetMapping(value = "/patient/diagnosisreport/{diagnosisID}", produces = MediaType.APPLICATION_PDF_VALUE)
+	public ResponseEntity<byte[]> generateDiagnosisReportForPatient(@PathVariable("diagnosisID") String diagnosisID)
+			throws FileNotFoundException, JRException {
+		Diagnosis diagnosis=diagnosisRepository.getById(Integer.parseInt(diagnosisID));
+		List<PatientDiagnosisReport> diagnosisReports = new ArrayList<>();
+		PatientDiagnosisReport patientDiagnosisReport = new PatientDiagnosisReport();
+		patientDiagnosisReport.setPatientName(diagnosis.getUser().getFirstName() + " "
+				+ diagnosis.getUser().getLastName());
+		patientDiagnosisReport.setDoctorName(diagnosis.getDoctorName());
+		patientDiagnosisReport.setLabtests(diagnosis.getLabtests());
+		patientDiagnosisReport.setPrescription(diagnosis.getPrescription());
+		patientDiagnosisReport.setSymptoms(diagnosis.getSymptoms());
+		patientDiagnosisReport.setProblem(diagnosis.getProblem());
+		diagnosisReports.add(patientDiagnosisReport);
+		byte data[] = reportService.exportReport(diagnosisReports, "viewalldiagnosis.jrxml");
+		return ResponseEntity.ok().contentType(MediaType.APPLICATION_PDF).body(data);
+	}
+	
+	@GetMapping(value = "/hospitalStaff/diagnosisreport/{diagnosisID}", produces = MediaType.APPLICATION_PDF_VALUE)
 	public ResponseEntity<byte[]> generateDiagnosisReportForHospitalStaff(@PathVariable("diagnosisID") String diagnosisID)
 			throws FileNotFoundException, JRException {
 		Diagnosis diagnosis=diagnosisRepository.getById(Integer.parseInt(diagnosisID));
