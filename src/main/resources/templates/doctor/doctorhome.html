@@ -51,7 +51,7 @@
 <body>
 <div class="container">
     <nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
-        <a th:href="@{/patient/home}" class="navbar-brand" href="#">Secure Hospital System</a>
+        <a th:href="@{/doctor/home}" class="navbar-brand" href="#">Secure Hospital System</a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
@@ -81,10 +81,9 @@
      <div class="jumbotron" style="background-color: #deecf9">
      <!--    <h3 style="text-align:center;">Welcome to the Admin Dashboard</h3>
        <hr style="height:5px;border:none;color:#333;background-color:#333;" /> -->
-       <h1 th:inline="text">Hello</h1>
+       <h1 th:inline="text">Hello <span th:text="${accountName}"></h1>
         <hr>
         <h3>Welcome to the Doctor Dashboard</h3>
-        <h3 th:inline="text">Hello</h3>
         <br>
     </div>
     <br>
@@ -109,6 +108,15 @@
     <i class="fa fa-address-card-o"  aria-hidden="true" style="font-size:8rem;"></i>
     <br><br><br>
     <a th:href="@{/doctor/viewpatientsdiagnosis}" class="btn btn-dark">Edit/Delete diagnosis</a>
+  </div>
+</div>
+<div class="card text-center">
+  <div class="card-body">
+    <h5 class="card-title">View/Update Patient Records</h5>
+    <hr>
+    <i class="fa fa-address-card-o"  aria-hidden="true" style="font-size:8rem;"></i>
+    <br><br><br>
+    <a th:href="@{/doctor/viewpatientsrecords}" class="btn btn-dark">View/Update Patient Records</a>
   </div>
 </div>
 <div class="card text-center">

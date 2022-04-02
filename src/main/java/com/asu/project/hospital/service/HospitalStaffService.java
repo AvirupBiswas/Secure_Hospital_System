@@ -6,10 +6,12 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.asu.project.hospital.entity.Diagnosis;
 import com.asu.project.hospital.entity.HospitalStaff;
 import com.asu.project.hospital.entity.LabTest;
 import com.asu.project.hospital.entity.Patient;
 import com.asu.project.hospital.entity.User;
+import com.asu.project.hospital.repository.DiagnosisRepository;
 import com.asu.project.hospital.repository.HospitalStaffRepository;
 import com.asu.project.hospital.repository.LabTestRepository;
 import com.asu.project.hospital.repository.PatientRepository;
@@ -29,6 +31,9 @@ public class HospitalStaffService {
 	
 	@Autowired
 	LabTestRepository labTestRepository;
+	
+	@Autowired
+	DiagnosisRepository diagnosisRepository;
 	
 	
 	public void updateHospitalStaffInfo(HospitalStaff hospitalStaff) {
@@ -50,4 +55,7 @@ public class HospitalStaffService {
 		
 	}
 	
+	public List<Diagnosis> viewAllDiagnosis(User user){
+		return diagnosisRepository.findByUser(user);
+	}
 }

@@ -13,9 +13,13 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import com.asu.project.hospital.entity.Diagnosis;
 import com.asu.project.hospital.entity.LabTestReport;
+import com.asu.project.hospital.model.PatientDiagnosisReport;
 import com.asu.project.hospital.model.PatientLabReport;
+import com.asu.project.hospital.repository.DiagnosisRepository;
 import com.asu.project.hospital.service.LabStaffService;
+import com.asu.project.hospital.service.PatientService;
 import com.asu.project.hospital.service.ReportService;
 
 import net.sf.jasperreports.engine.JRException;
@@ -29,6 +33,12 @@ public class ViewPDFController {
 
 	@Autowired
 	private LabStaffService labStaffService;
+	
+	@Autowired
+	private DiagnosisRepository diagnosisRepository;
+	
+	
+	
 	
 	@GetMapping(value = "/labstaff/reportView/{labTestReportId}", produces = MediaType.APPLICATION_PDF_VALUE)
 	public ResponseEntity<byte[]> generateLabTestReport(@PathVariable("labTestReportId") String labTestReportId)
@@ -82,6 +92,42 @@ public class ViewPDFController {
 		patientLabReport.setTestResult(labTestReport.getTestResult());
 		PatientLabReports.add(patientLabReport);
 		byte data[] = reportService.exportReport(PatientLabReports, "patientLabTestReport.jrxml");
+		return ResponseEntity.ok().contentType(MediaType.APPLICATION_PDF).body(data);
+	}
+	
+	@GetMapping(value = "/patient/diagnosisreport/{diagnosisID}", produces = MediaType.APPLICATION_PDF_VALUE)
+	public ResponseEntity<byte[]> generateDiagnosisReportForPatient(@PathVariable("diagnosisID") String diagnosisID)
+			throws FileNotFoundException, JRException {
+		Diagnosis diagnosis=diagnosisRepository.getById(Integer.parseInt(diagnosisID));
+		List<PatientDiagnosisReport> diagnosisReports = new ArrayList<>();
+		PatientDiagnosisReport patientDiagnosisReport = new PatientDiagnosisReport();
+		patientDiagnosisReport.setPatientName(diagnosis.getUser().getFirstName() + " "
+				+ diagnosis.getUser().getLastName());
+		patientDiagnosisReport.setDoctorName(diagnosis.getDoctorName());
+		patientDiagnosisReport.setLabtests(diagnosis.getLabtests());
+		patientDiagnosisReport.setPrescription(diagnosis.getPrescription());
+		patientDiagnosisReport.setSymptoms(diagnosis.getSymptoms());
+		patientDiagnosisReport.setProblem(diagnosis.getProblem());
+		diagnosisReports.add(patientDiagnosisReport);
+		byte data[] = reportService.exportReport(diagnosisReports, "viewalldiagnosis.jrxml");
+		return ResponseEntity.ok().contentType(MediaType.APPLICATION_PDF).body(data);
+	}
+	
+	@GetMapping(value = "/hospitalStaff/diagnosisreport/{diagnosisID}", produces = MediaType.APPLICATION_PDF_VALUE)
+	public ResponseEntity<byte[]> generateDiagnosisReportForHospitalStaff(@PathVariable("diagnosisID") String diagnosisID)
+			throws FileNotFoundException, JRException {
+		Diagnosis diagnosis=diagnosisRepository.getById(Integer.parseInt(diagnosisID));
+		List<PatientDiagnosisReport> diagnosisReports = new ArrayList<>();
+		PatientDiagnosisReport patientDiagnosisReport = new PatientDiagnosisReport();
+		patientDiagnosisReport.setPatientName(diagnosis.getUser().getFirstName() + " "
+				+ diagnosis.getUser().getLastName());
+		patientDiagnosisReport.setDoctorName(diagnosis.getDoctorName());
+		patientDiagnosisReport.setLabtests(diagnosis.getLabtests());
+		patientDiagnosisReport.setPrescription(diagnosis.getPrescription());
+		patientDiagnosisReport.setSymptoms(diagnosis.getSymptoms());
+		patientDiagnosisReport.setProblem(diagnosis.getProblem());
+		diagnosisReports.add(patientDiagnosisReport);
+		byte data[] = reportService.exportReport(diagnosisReports, "viewalldiagnosis.jrxml");
 		return ResponseEntity.ok().contentType(MediaType.APPLICATION_PDF).body(data);
 	}
 }

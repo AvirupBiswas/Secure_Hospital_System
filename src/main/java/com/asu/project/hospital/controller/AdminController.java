@@ -1,5 +1,6 @@
 package com.asu.project.hospital.controller;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -21,13 +22,26 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.asu.project.hospital.entity.AdminDecisionForUser;
+import com.asu.project.hospital.entity.Diagnosis;
+import com.asu.project.hospital.entity.Doctor;
+import com.asu.project.hospital.entity.HospitalStaff;
+import com.asu.project.hospital.entity.InsuranceStaff;
+import com.asu.project.hospital.entity.LabStaff;
+import com.asu.project.hospital.entity.LabTest;
 import com.asu.project.hospital.entity.PatientPayment;
 import com.asu.project.hospital.entity.SignInHistory;
 import com.asu.project.hospital.entity.SystemLog;
 import com.asu.project.hospital.entity.User;
 import com.asu.project.hospital.model.SignInhistorySearchResult;
 import com.asu.project.hospital.model.SystemLogsSearchResult;
+import com.asu.project.hospital.model.ViewDiagNosticAndLabTestReport;
 import com.asu.project.hospital.repository.AdminDecisionForUserRepository;
+import com.asu.project.hospital.repository.DiagnosisRepository;
+import com.asu.project.hospital.repository.DoctorRepository;
+import com.asu.project.hospital.repository.HospitalStaffRepository;
+import com.asu.project.hospital.repository.InsuranceStaffRepository;
+import com.asu.project.hospital.repository.LabStaffRepository;
+import com.asu.project.hospital.repository.LabTestRepository;
 import com.asu.project.hospital.repository.PatientPaymentRepository;
 import com.asu.project.hospital.repository.SignInHistoryRepository;
 import com.asu.project.hospital.repository.SystemLogRepository;
@@ -58,7 +72,25 @@ public class AdminController {
 	private SystemLogRepository systemLogRepository;
 
 	@Autowired
+	private HospitalStaffRepository hospitalStaffRepository;
+
+	@Autowired
+	private InsuranceStaffRepository insuranceStaffRepository;
+
+	@Autowired
 	private PatientPaymentRepository patientPaymentRepository;
+
+	@Autowired
+	private DoctorRepository doctorRepository;
+
+	@Autowired
+	private LabStaffRepository labStaffRepository;
+
+	@Autowired
+	private LabTestRepository labTestRepository;
+
+	@Autowired
+	private DiagnosisRepository diagnosisRepository;
 
 	@GetMapping("/aproveUser/{Id}")
 	public ResponseEntity<String> aproveUser(@PathVariable("Id") String Id) {
@@ -125,9 +157,48 @@ public class AdminController {
 	@RequestMapping(value = "/manageAccounts/{userId}", method = RequestMethod.GET)
 	public String manageAccount(@PathVariable("userId") String userId, Model model) {
 		User user = userService.findByUserId(userId);
-		model.addAttribute("user", user);
+		String address = null;
+		Long phoneNumber = null;
+		if (user.getRole().equals("HOSPITALSTAFF")) {
+
+			HospitalStaff hsStaff = hospitalStaffRepository.findByUser(user);
+			if (hsStaff != null) {
+				address = hsStaff.getAddress();
+				phoneNumber = hsStaff.getPhoneNumber();
+			}
+
+		} else if (user.getRole().equals("DOCTOR")) {
+
+			Doctor doctor = doctorRepository.findByUser(user);
+			if (doctor != null) {
+				address = doctor.getAddress();
+				phoneNumber = doctor.getPhoneNumber();
+				model.addAttribute("age", doctor.getAge());
+				model.addAttribute("gender", doctor.getGender());
+			}
+
+		} else if (user.getRole().equals("LABSTAFF")) {
+
+			LabStaff labStaff = labStaffRepository.findByUser(user);
+			if (labStaff != null) {
+				address = labStaff.getAddress();
+				phoneNumber = labStaff.getPhoneNumber();
+			}
+
+		} else if (user.getRole().equals("INSURANCESTAFF")) {
+
+			InsuranceStaff insuranceStaff = insuranceStaffRepository.findByUser(user);
+			if (insuranceStaff != null) {
+				address = insuranceStaff.getAddress();
+				phoneNumber = insuranceStaff.getPhoneNumber();
+			}
+		}
 		User userLoggedIn = userService.getLoggedUser();
 		model.addAttribute("accountName", userLoggedIn.getFirstName());
+		model.addAttribute("user", user);
+		model.addAttribute("address", address);
+		model.addAttribute("phoneNumber", phoneNumber);
+		model.addAttribute("role", user.getRole());
 		return "admin/updateEmployeeProfile";
 	}
 
@@ -145,7 +216,9 @@ public class AdminController {
 	@PostMapping("/updateEmployeeProfile")
 	public String updateEmployeeProfile(@RequestParam("firstName") String firstName,
 			@RequestParam("lastName") String lastName, @RequestParam("email") String email,
-			@RequestParam("userId") String userId) {
+			@RequestParam("userId") String userId, @RequestParam("address") String address,
+			@RequestParam("phone") String phone, @RequestParam(value = "age", required = false) String age,
+			@RequestParam(value = "gender", required = false) String gender) {
 
 		try {
 			User user = userRepository.findByUserId(userId);
@@ -153,6 +226,77 @@ public class AdminController {
 			user.setLastName(lastName);
 			user.setEmail(email);
 			userRepository.save(user);
+
+			Long phoneNumber = phone != null && !phone.isEmpty() && !phone.equals("NA") ? Long.parseLong(phone) : null;
+			address = address != null && !address.isEmpty() && !address.equals("NA") ? address : null;
+
+			if (user.getRole().equals("HOSPITALSTAFF")) {
+
+				HospitalStaff hsStaff = hospitalStaffRepository.findByUser(user);
+				if (hsStaff != null) {
+					hsStaff.setAddress(address);
+					hsStaff.setPhoneNumber(phoneNumber);
+					hospitalStaffRepository.save(hsStaff);
+				} else {
+					HospitalStaff hsStaffObj = new HospitalStaff();
+					hsStaffObj.setAddress(address);
+					hsStaffObj.setPhoneNumber(phoneNumber);
+					hsStaffObj.setUser(user);
+					hospitalStaffRepository.save(hsStaffObj);
+				}
+
+			} else if (user.getRole().equals("DOCTOR")) {
+
+				Integer ageVal = age != null && !age.isEmpty() && !age.equals("NA") ? Integer.parseInt(age) : null;
+				String genderVal = gender != null && !gender.isEmpty() && !gender.equals("NA") ? gender : null;
+
+				Doctor doctor = doctorRepository.findByUser(user);
+				if (doctor != null) {
+					doctor.setAddress(address);
+					doctor.setPhoneNumber(phoneNumber);
+					doctor.setAge(ageVal);
+					doctor.setGender(genderVal);
+					doctorRepository.save(doctor);
+				} else {
+					Doctor doctorObj = new Doctor();
+					doctorObj.setAddress(address);
+					doctorObj.setPhoneNumber(phoneNumber);
+					doctorObj.setAge(ageVal);
+					doctorObj.setGender(genderVal);
+					doctorObj.setUser(user);
+					doctorRepository.save(doctorObj);
+				}
+
+			} else if (user.getRole().equals("LABSTAFF")) {
+
+				LabStaff labStaff = labStaffRepository.findByUser(user);
+				if (labStaff != null) {
+					labStaff.setAddress(address);
+					labStaff.setPhoneNumber(phoneNumber);
+					labStaffRepository.save(labStaff);
+				} else {
+					LabStaff labStaffObj = new LabStaff();
+					labStaffObj.setAddress(address);
+					labStaffObj.setPhoneNumber(phoneNumber);
+					labStaffObj.setUser(user);
+					labStaffRepository.save(labStaffObj);
+				}
+
+			} else if (user.getRole().equals("INSURANCESTAFF")) {
+
+				InsuranceStaff insuranceStaff = insuranceStaffRepository.findByUser(user);
+				if (insuranceStaff != null) {
+					insuranceStaff.setAddress(address);
+					insuranceStaff.setPhoneNumber(phoneNumber);
+					insuranceStaffRepository.save(insuranceStaff);
+				} else {
+					InsuranceStaff insuranceStaffObj = new InsuranceStaff();
+					insuranceStaffObj.setAddress(address);
+					insuranceStaffObj.setPhoneNumber(phoneNumber);
+					insuranceStaffObj.setUser(user);
+					insuranceStaffRepository.save(insuranceStaffObj);
+				}
+			}
 			return "redirect:manageAccounts";
 		} catch (Exception e) {
 			return "redirect:/admin/error";
@@ -292,6 +436,45 @@ public class AdminController {
 			patientPaymentRepository.save(patientPayment);
 		}
 		return "admin/pendingPaymentApprovalList";
+	}
+
+	@GetMapping("/getInternalPatientFiles")
+	public String getReportsOfPatient(Model model) {
+		User user = userService.getLoggedUser();
+		model.addAttribute("accountName", user.getFirstName());
+		List<ViewDiagNosticAndLabTestReport> reportList = new ArrayList<>();
+		List<Diagnosis> diagnosisList = diagnosisRepository.findAll();
+		List<LabTest> labTests = labTestRepository.findByStatus("Reported");
+		for (Diagnosis d : diagnosisList) {
+			List<LabTest> tempLabTests = labTests.stream()
+					.filter(e -> e.getDiagnosis().getDiagnosisID() == d.getDiagnosisID()).collect(Collectors.toList());
+			if (tempLabTests != null && !tempLabTests.isEmpty()) {
+				for (LabTest l : tempLabTests) {
+					ViewDiagNosticAndLabTestReport obj = new ViewDiagNosticAndLabTestReport();
+					obj.setFirstName(d.getUser().getFirstName());
+					obj.setLastName(d.getUser().getLastName());
+					obj.setEmail(d.getUser().getEmail());
+					obj.setDescription(l.getDescription());
+					obj.setLabTestId(l.getLabTestId());
+					obj.setTestNameReported(l.getTestName());
+					obj.setTestNameRecommendedByDoctor(d.getLabtests());
+					obj.setDiagnosisID(d.getDiagnosisID());
+					obj.setDoctorName(d.getDoctorName());
+					reportList.add(obj);
+				}
+			} else {
+				ViewDiagNosticAndLabTestReport obj = new ViewDiagNosticAndLabTestReport();
+				obj.setFirstName(d.getUser().getFirstName());
+				obj.setLastName(d.getUser().getLastName());
+				obj.setEmail(d.getUser().getEmail());
+				obj.setTestNameRecommendedByDoctor(d.getLabtests());
+				obj.setDiagnosisID(d.getDiagnosisID());
+				obj.setDoctorName(d.getDoctorName());
+				reportList.add(obj);
+			}
+		}
+		model.addAttribute("allPatientWithReport", reportList);
+		return "admin/internalFile";
 	}
 
 }

@@ -21,10 +21,12 @@ import com.asu.project.hospital.entity.InsuranceClaims;
 import com.asu.project.hospital.entity.InsuranceDetails;
 import com.asu.project.hospital.entity.InsuranceStaff;
 import com.asu.project.hospital.entity.LabTest;
+import com.asu.project.hospital.entity.PatientPayment;
 import com.asu.project.hospital.entity.SystemLog;
 import com.asu.project.hospital.entity.User;
 import com.asu.project.hospital.model.Insurance;
 import com.asu.project.hospital.repository.InsuranceClaimsRepository;
+import com.asu.project.hospital.repository.PatientPaymentRepository;
 import com.asu.project.hospital.repository.SystemLogRepository;
 import com.asu.project.hospital.repository.UserRepository;
 import com.asu.project.hospital.service.InsuranceStaffService;
@@ -43,6 +45,9 @@ public class InsuranceStatfController {
 	
 	@Autowired
 	private UserRepository userRepository;
+	
+	@Autowired
+	private PatientPaymentRepository patientPaymentRepository;
 	
 	@Autowired
 	private SystemLogRepository systemLogRepository;
@@ -163,6 +168,10 @@ public class InsuranceStatfController {
 	@GetMapping("/denyclaim/{claimId}")
 	public String denyLabTest(@PathVariable("claimId") String claimId, Model model) {
 		User user = insuranceStaffService.updateClaimStatus("Denied", Long.parseLong(claimId));
+		InsuranceClaims claim=insuranceClaimsRepository.getById(Long.parseLong(claimId));
+		PatientPayment patientPayment=claim.getPatientPayment();
+		patientPayment.setStatus("Pending");
+		patientPaymentRepository.save(patientPayment);
 		emailService.sendInsuranceClaimDenyMail(user.getEmail(), user.getFirstName(), user.getLastName(),
 				claimId);
 		SystemLog systemLog = new SystemLog();
@@ -179,6 +188,9 @@ public class InsuranceStatfController {
 		User user = insuranceStaffService.updateClaimStatus("Disbursed", Long.parseLong(claimId));
 		Optional<InsuranceClaims> claim = insuranceClaimsRepository.findById( Long.parseLong(claimId));
 		InsuranceClaims claimObj = claim.get();
+		PatientPayment patientPayment=claimObj.getPatientPayment();
+		patientPayment.setStatus("paid");
+		patientPaymentRepository.save(patientPayment);
 		emailService.sendInsuranceClaimAmountDisburseMail(user.getEmail(), user.getFirstName(), user.getLastName(),
 				claimId,claimObj.getAmount());
 		SystemLog systemLog = new SystemLog();
