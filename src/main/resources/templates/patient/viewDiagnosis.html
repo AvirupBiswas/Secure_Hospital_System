@@ -74,9 +74,11 @@
                 <td th:text="${diagnosis.problem}"></td>
                 <td th:text="${diagnosis.prescription}"></td>
                 <td th:text="${diagnosis.labtests}"></td>
-                <td th:if="${diagnosis.labTestNeeded=='Yes'}" th:action="@{/patient/labrequest}" method="post">
-                    	<input type="hidden" name="diagnosisID" id="diagnosisID" th:value="${diagnosis.diagnosisID}" />
-                    	<button class="btn btn-success" title="Request Labtest" value="modify" name="action">Request LabTest</button>
+                <td th:if="${diagnosis.labTestNeeded=='Yes'}" >
+                 <form  th:action="@{/patient/labrequest}" method="POST">
+                  <input type="hidden" name="diagnosisID" id="diagnosisID" th:value="${diagnosis.diagnosisID}" />
+                  <button class="btn btn-success" title="Request Labtest" type="submit">Request LabTest</button>
+                  </form>
                 </td>
                 <td th:if="${diagnosis.labTestNeeded!='Yes'}">--</td>
                 <td><a th:href="@{|/viewPDF/patient/diagnosisreport/${diagnosis.diagnosisID}|}" target="_blank"><i class="fa fa-file-pdf-o" style="font-size:24px;color:red;"></i></a></td>
