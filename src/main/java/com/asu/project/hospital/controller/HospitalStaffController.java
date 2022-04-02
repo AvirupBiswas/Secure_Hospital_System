@@ -1,6 +1,7 @@
 package com.asu.project.hospital.controller;
 
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -21,21 +22,23 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.asu.project.hospital.entity.AdminDecisionForUser;
 import com.asu.project.hospital.entity.Appointment;
+import com.asu.project.hospital.entity.Diagnosis;
 import com.asu.project.hospital.entity.Patient;
 import com.asu.project.hospital.entity.PatientPayment;
+import com.asu.project.hospital.entity.SystemLog;
 import com.asu.project.hospital.entity.User;
 import com.asu.project.hospital.repository.AdminDecisionForUserRepository;
 import com.asu.project.hospital.repository.HospitalStaffDecisionForUserRepository;
 import com.asu.project.hospital.repository.HospitalStaffRepository;
 import com.asu.project.hospital.repository.PatientPaymentRepository;
 import com.asu.project.hospital.repository.PatientRepository;
+import com.asu.project.hospital.repository.SystemLogRepository;
 import com.asu.project.hospital.service.MailService;
 import com.asu.project.hospital.service.PatientService;
 import com.asu.project.hospital.service.UserService;
 import com.asu.project.hospital.service.AppointmentService;
 import com.asu.project.hospital.service.HospitalStaffService;
 import com.asu.project.hospital.entity.HospitalStaff;
-import com.asu.project.hospital.entity.InsuranceClaims;
 import com.asu.project.hospital.entity.LabTest;
 
 @Controller
@@ -47,9 +50,6 @@ public class HospitalStaffController {
 	
 	@Autowired
 	private MailService emailService;
-	
-	@Autowired
-	private AppointmentService appointmentService;
 	
 	@Autowired
 	private HospitalStaffService hospitalStaffService;
@@ -65,6 +65,9 @@ public class HospitalStaffController {
 	
 	@Autowired
 	private PatientPaymentRepository patientPaymentRepository;
+	
+	@Autowired
+	private SystemLogRepository systemLogRepository;
 
 	@GetMapping("/home")
 	public String hospitalStaffHome(Model model) {
@@ -93,6 +96,10 @@ public class HospitalStaffController {
 			model.addAttribute("phoneNumber", userForm.getPhoneNumber());
 			model.addAttribute("address",userForm.getAddress());
 			hospitalStaffService.updateHospitalStaffInfo(userForm);
+			SystemLog systemLog = new SystemLog();
+			systemLog.setMessage("Added Hospital Staff "+user.getFirstName() + " "+user.getLastName()+ "'s details");
+			systemLog.setTimestamp(new Date());
+			systemLogRepository.save(systemLog);
 		} catch (Exception e) {
 			return e.getMessage();
 		}
@@ -113,6 +120,10 @@ public class HospitalStaffController {
 			model.addAttribute("phoneNumber", userForm.getPhoneNumber());
 			model.addAttribute("address",userForm.getAddress());
 			hospitalStaffService.updateHospitalStaffInfo(hospitalStaff);
+			SystemLog systemLog = new SystemLog();
+			systemLog.setMessage("Updated Hospital Staff "+user.getFirstName() + " "+user.getLastName()+ "'s details");
+			systemLog.setTimestamp(new Date());
+			systemLogRepository.save(systemLog);
 		} catch (Exception e) {
 			return e.getMessage();
 		}
@@ -122,11 +133,16 @@ public class HospitalStaffController {
 	@GetMapping("/aproveUser/{Id}")
 	public ResponseEntity<String>  aproveUser(@PathVariable("Id") String Id) {
 		Long id = Long.parseLong(Id);
-		Appointment user = hospitalStaffDecisionForUserRepository.findByAppId(id);
-		if (user != null) {
-			user.setStatus("Approved");
-			hospitalStaffDecisionForUserRepository.save(user);
-			emailService.sendUserAppointmentAcceptanceMail(user.getUser().getEmail(),user.getUser().getFirstName(), user.getStartTime());
+		User user = userService.getLoggedUser();
+		Appointment app = hospitalStaffDecisionForUserRepository.findByAppId(id);
+		if (app != null) {
+			app.setStatus("Approved");
+			hospitalStaffDecisionForUserRepository.save(app);
+			emailService.sendUserAppointmentAcceptanceMail(app.getUser().getEmail(),app.getUser().getFirstName(), app.getStartTime());
+			SystemLog systemLog = new SystemLog();
+			systemLog.setMessage("Hospital Staff "+user.getFirstName() + " "+user.getLastName()+" has approved Patient "+ app.getUser().getFirstName() +"'s appointment");
+			systemLog.setTimestamp(new Date());
+			systemLogRepository.save(systemLog);
 		}
 		return new ResponseEntity<String>(HttpStatus.OK);
 	}
@@ -134,10 +150,15 @@ public class HospitalStaffController {
 	@GetMapping("/denyUser/{Id}")
 	public ResponseEntity<String> denyUser(@PathVariable("Id") String Id) {
 		Long id = Long.parseLong(Id);
-		Appointment user = hospitalStaffDecisionForUserRepository.findByAppId(id);
-		if (user != null) {
-			hospitalStaffDecisionForUserRepository.delete(user);
-			emailService.sendUserAppointmentDenialMail(user.getUser().getEmail(),user.getUser().getFirstName(), user.getStartTime());
+		User user = userService.getLoggedUser();
+		Appointment app = hospitalStaffDecisionForUserRepository.findByAppId(id);
+		if (app != null) {
+			hospitalStaffDecisionForUserRepository.delete(app);
+			emailService.sendUserAppointmentDenialMail(app.getUser().getEmail(),app.getUser().getFirstName(), app.getStartTime());
+			SystemLog systemLog = new SystemLog();
+			systemLog.setMessage("Hospital Staff "+user.getFirstName() + " "+user.getLastName()+" has denied Patient"+ app.getUser().getFirstName()+" "+app.getUser().getLastName() +"'s appointment");
+			systemLog.setTimestamp(new Date());
+			systemLogRepository.save(systemLog);
 		}
 		return new ResponseEntity<String>(HttpStatus.OK);
 	}
@@ -155,6 +176,7 @@ public class HospitalStaffController {
 	public String  updateTransaction(@PathVariable("Id") String Id, Model model) {
 		Long id = Long.parseLong(Id);
 		Appointment app = hospitalStaffDecisionForUserRepository.findByAppId(id);
+		System.out.println(app);
 		model.addAttribute("app", app);
 		return "hospitalstaff/createTransaction";
 	}
@@ -162,14 +184,20 @@ public class HospitalStaffController {
 	@GetMapping("/createTransaction/{Id}")
 	public ResponseEntity<String>  createTransaction(@PathVariable("Id") String Id) {
 		Long id = Long.parseLong(Id);
+		User user = userService.getLoggedUser();
 		BigDecimal amount=new BigDecimal(100);
-		Appointment App = hospitalStaffDecisionForUserRepository.findByAppId(id);
+		Appointment app = hospitalStaffDecisionForUserRepository.findByAppId(id);
 		PatientPayment patientPayment=new PatientPayment();
 		patientPayment.setAmount(amount);
 		patientPayment.setPurpose("Doctor Appointment");
 		patientPayment.setStatus("Pending");
-		patientPayment.setUser(App.getUser());
+		patientPayment.setUser(app.getUser());
 		patientPaymentRepository.save(patientPayment);
+		
+		SystemLog systemLog = new SystemLog();
+		systemLog.setMessage("Hospital Staff "+user.getFirstName() + " "+user.getLastName()+" has created a transaction for patient "+ app.getUser().getFirstName()+" "+app.getUser().getLastName());
+		systemLog.setTimestamp(new Date());
+		systemLogRepository.save(systemLog);
 	
 		return new ResponseEntity<String>(HttpStatus.OK);
 	}
@@ -199,18 +227,24 @@ public class HospitalStaffController {
 	
 	@PostMapping("/updatepatientinformation")
 	public String updatepatientinformation(@ModelAttribute("updatepatientinformation") Patient patient, @ModelAttribute("userId") String userId) {
-		User user = userService.findByUserId(userId);
-		patient.setUser(user);
+		User patientUser = userService.findByUserId(userId);
+		patient.setUser(patientUser);
 		patientRepository.save(patient);
+		
+		User user = userService.getLoggedUser();
+		SystemLog systemLog = new SystemLog();
+		systemLog.setMessage("Hospital Staff "+user.getFirstName() + " "+user.getLastName()+" has added details of patient - "+ patientUser.getFirstName()+" "+patientUser.getLastName());
+		systemLog.setTimestamp(new Date());
+		systemLogRepository.save(systemLog);
 		return "hospitalstaff/home";
 	}
 	
 	@PostMapping("/editpatientinformation")
 	public String editpatientinformation(@ModelAttribute("updatepatientinformation") Patient patient, @ModelAttribute("userId") String userId) {
-		User user = userService.findByUserId(userId);
+		User patientUser = userService.findByUserId(userId);
 		
 		try {
-			Patient oldpatient=patientRepository.findByUser(user);
+			Patient oldpatient=patientRepository.findByUser(patientUser);
 			oldpatient.setHeight(patient.getHeight());
 			oldpatient.setWeight(patient.getWeight());
 			oldpatient.setAddress(patient.getAddress());
@@ -218,60 +252,17 @@ public class HospitalStaffController {
 			oldpatient.setPhoneNumber(patient.getPhoneNumber());
 			oldpatient.setGender(patient.getGender());
 			patientRepository.save(oldpatient);
+			
+			User user = userService.getLoggedUser();
+			SystemLog systemLog = new SystemLog();
+			systemLog.setMessage("Hospital Staff "+user.getFirstName() + " "+user.getLastName()+" has updated details of patient - "+ patientUser.getFirstName()+" "+patientUser.getLastName());
+			systemLog.setTimestamp(new Date());
+			systemLogRepository.save(systemLog);
 		} catch (Exception e) {
 			return e.getMessage();
 		}
 		return "hospitalstaff/home";
 	}
-	
-	
-//	@PostMapping("/updatepatientinformation")
-//	public String register(@Valid @ModelAttribute("patient") Patient userForm, BindingResult result, Model model) {
-//
-//		if (result.hasErrors()) {
-//			return "hospitalstaff/updateinfo";
-//		}
-//		try {
-//			User user=userService.getLoggedUser();
-//			model.addAttribute("height", userForm.getHeight());
-//			model.addAttribute("weight", userForm.getWeight());
-//			model.addAttribute("age", userForm.getAge());
-//			model.addAttribute("address",userForm.getAddress());
-//			model.addAttribute("gender", userForm.getGender());
-//			model.addAttribute("phoneNumber", userForm.getPhoneNumber());
-//			//patientService.updatePatientInfo(userForm);
-//		} catch (Exception e) {
-//			return e.getMessage();
-//		}
-//		return "hospitalstaff/home";
-//	}
-	
-//	@PostMapping("/editPatientinformation")
-//	public String editPatientinformation(@ModelAttribute("patient") Patient patient,@ModelAttribute("user") User user, BindingResult result, Model model) {
-//
-//		if (result.hasErrors()) {
-//			return "hospitalstaff/updatepatientinfo";
-//		}
-//		try {
-//			Patient oldpatient=patientRepository.findByUser(user);
-//			oldpatient.setHeight(patient.getHeight());
-//			oldpatient.setWeight(patient.getWeight());
-//			oldpatient.setAddress(patient.getAddress());
-//			oldpatient.setAge(patient.getAge());
-//			oldpatient.setPhoneNumber(patient.getPhoneNumber());
-//			oldpatient.setGender(patient.getGender());
-//			model.addAttribute("height", patient.getHeight());
-//			model.addAttribute("weight", patient.getWeight());
-//			model.addAttribute("address", patient.getAddress());
-//			model.addAttribute("age", patient.getAge());
-//			model.addAttribute("phoneNumber", patient.getPhoneNumber());
-//			model.addAttribute("gender", patient.getGender());
-//			patientRepository.save(oldpatient);
-//		} catch (Exception e) {
-//			return e.getMessage();
-//		}
-//		return "hospitalstaff/home";
-//	}
 	
 	@PostMapping("/createSpecificTransac")
 	public String createSpecificTransac(@RequestParam("userId") String userId, Model model) {
@@ -283,10 +274,16 @@ public class HospitalStaffController {
 	
 	@PostMapping("/createSpecificTransaction")
 	public String createSpecificTransaction(@ModelAttribute("createSpecificTransaction") PatientPayment patientPayment, @ModelAttribute("userId") String userId) {
-		User user = userService.findByUserId(userId);
+		User patientUser = userService.findByUserId(userId);
 		patientPayment.setStatus("Pending");
-		patientPayment.setUser(user);
+		patientPayment.setUser(patientUser);
 		patientPaymentRepository.save(patientPayment);
+		
+		User user = userService.getLoggedUser();
+		SystemLog systemLog = new SystemLog();
+		systemLog.setMessage("Hospital Staff "+user.getFirstName() + " "+user.getLastName()+" has created transaction for patient - "+ patientUser.getFirstName()+" "+patientUser.getLastName());
+		systemLog.setTimestamp(new Date());
+		systemLogRepository.save(systemLog);
 		return "hospitalstaff/home";
 	}
 	
@@ -299,10 +296,30 @@ public class HospitalStaffController {
 	
 	@GetMapping("/viewLabTests")
 	public String viewLabTests(@RequestParam("userId") String userId, Model model) {
-		User user = userService.findByUserId(userId);
-		List<LabTest> labTests=hospitalStaffService.viewLabTests(user);
+		User patientUser = userService.findByUserId(userId);
+		List<LabTest> labTests=hospitalStaffService.viewLabTests(patientUser);
 		model.addAttribute("labTests", labTests);
+		
+		User user = userService.getLoggedUser();
+		SystemLog systemLog = new SystemLog();
+		systemLog.setMessage("Hospital Staff "+user.getFirstName() + " "+user.getLastName()+" viewed Lab reports of patient - "+ patientUser.getFirstName()+" "+patientUser.getLastName());
+		systemLog.setTimestamp(new Date());
+		systemLogRepository.save(systemLog);
 		return "hospitalstaff/viewlabreports";
+	}
+	
+	@GetMapping("/viewAllDiagnosisReports")
+	public String viewAllDiagnosisReports(@RequestParam("userId") String userId, Model model) {
+		User patientUser = userService.findByUserId(userId);
+		List<Diagnosis> diagnosisList=hospitalStaffService.viewAllDiagnosis(patientUser);
+		model.addAttribute("diagnosisList", diagnosisList);
+		
+		User user = userService.getLoggedUser();
+		SystemLog systemLog = new SystemLog();
+		systemLog.setMessage("Hospital Staff "+user.getFirstName() + " "+user.getLastName()+" viewed Diagnosis reports of patient - "+ patientUser.getFirstName()+" "+patientUser.getLastName());
+		systemLog.setTimestamp(new Date());
+		systemLogRepository.save(systemLog);
+		return "hospitalstaff/viewDiagnosis";
 	}
 	
 }

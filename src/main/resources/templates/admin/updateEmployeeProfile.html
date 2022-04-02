@@ -62,7 +62,7 @@
             <fieldset class="form-group">
                 <div class="form-group">
                     <label for="firstName"><b>First Name:</b> (Must be 2-30 characters)</label>
-                    <input type="text" class="form-control" id="firstName" placeholder="First Name" name="firstName" th:value="${user.getFirstName()}">
+                    <input type="text" class="form-control" id="firstName"  name="firstName" th:value="${user.getFirstName()}">
                 </div>
                 <div class="form-group">
                     <label for="email"><b>Last Name:</b> (Must be 2-30 characters)</label>
@@ -71,6 +71,26 @@
                 <div class="form-group">
                     <label for="email"><b>Email:</b></label>
                     <input readonly="readonly" type="email" class="form-control" id="email" placeholder="e.g. abc@gmail.com" name="email" th:value="${user.getEmail()}">
+                </div>
+                 <div class="form-group">
+                    <label for="address"><b>Address:</b></label>
+                    <textarea th:if=${address!=null} class="form-control" id="address" placeholder="Address" name="address">[[${address}]]</textarea>
+                    <textarea th:unless=${address!=null} class="form-control" id="address" placeholder="Address" name="address">NA</textarea>
+                </div>
+                 <div class="form-group">
+                    <label for="phone"><b>Phone Number:</b></label>
+                    <input th:if=${phoneNumber!=null} type="text" class="form-control" id="phone" placeholder="Phone Number" name="phone" th:value="${phoneNumber}">
+                    <input th:unless=${phoneNumber!=null} type="text" class="form-control" id="phone" placeholder="Phone Number" name="phone" th:value="NA">
+                </div>
+                <div th:if=${role=='DOCTOR'} class="form-group">
+                    <label for="age"><b>Age:</b></label>
+                    <input th:if=${age!=null} type="text" class="form-control" id="age" placeholder="Age" name="age" th:value="${age}">
+                    <input th:unless=${age!=null} type="text" class="form-control" id="age" placeholder="Age" name="age" th:value="NA">
+                </div>
+                <div th:if=${role=='DOCTOR'} class="form-group">
+                    <label for="gender"><b>Gender:</b></label>
+                    <input th:if=${gender!=null} type="text" class="form-control" id="gender" placeholder="Gender" name="gender" th:value="${gender}">
+                    <input th:unless=${gender!=null} type="text" class="form-control" id="gender" placeholder="Gender" name="gender" th:value="NA">
                 </div>
                 <input type="hidden" name="userId" id="userId" th:value="${user.getUserId()}" />
                 <br>

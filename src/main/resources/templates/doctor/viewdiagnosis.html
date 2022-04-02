@@ -41,7 +41,7 @@
     <br>
     <br>
      <div th:if="${#lists.isEmpty(diagnosis)}">
-     <h2 style="text-align:center;">No Diagnosis of Any Patient Found </h2>
+     <h2 style="text-align:center;">No Diagnosis for the selected patient is found </h2>
      </div>
     <br>
     <input class="btn btn-primary" type="button" value="Go Back" onclick="history.back(-1)" />
@@ -52,7 +52,7 @@
 <div class="container">
 <div th:unless="${#lists.isEmpty(diagnosis)}">
     <div class="starter-template">
-        <h1>View Diagnosis</h1>
+        <h1>List of Diagnoses for the selected patient</h1>
         <br>
 
         <table class="table table-striped table-bordered">
@@ -60,6 +60,7 @@
                 <th scope="col">Diagnosis ID</th>
                 <th scope="col">Doctor Name</th>
                 <th scope="col">Problem</th>
+                <th scope="col"></th>
                 <th scope="col"></th>
             </tr>
             <tr th:each = "employee: ${diagnosis}">
@@ -69,6 +70,10 @@
                 <form action="#" th:action="@{/doctor/updatediagnosis}" method="get">
                     <input type="hidden" name="diagnosisId" id="diagnosisId" th:value="${employee.getDiagnosisID()}" />
                     <td><button data-toggle="tooltip" title="Update Diagnosis" data-placement="top" class="btn pill-btn" value="modify" name="action"><i value="modify" name="action" class="fa fa-pencil-square-o" aria-hidden="true" style="font-size:24px;color:brown;"></i></button></td>
+                </form>
+                <form th:action="@{/doctor/deletediagnosis}" method="get">
+                	<input type="hidden" name="diagnosisId" id="diagnosisId" th:value="${employee.getDiagnosisID()}" />
+                	<td><button data-toggle="tooltip" title="Delete Diagnosis" class="btn btn-danger">Delete</button></td>
                 </form>
             </tr>
         </table>

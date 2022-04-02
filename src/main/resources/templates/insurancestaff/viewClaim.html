@@ -7,7 +7,7 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"/>
       <script th:inline="javascript">
-        function approve(id) {
+        function approve(id,firstname,lastname,amount,insId) {
             $.ajax({
                 url : "[(@{'/insurancestaff/approveclaim/'})]"+id,
                 type : "GET",
@@ -19,6 +19,23 @@
         	        },
                 success : function(data) {
                 	 $('#' + id).remove();
+                	 var info = {"id":"claimid:"+" "+id.toString(),
+            			     "patient_name":firstname+' '+lastname,
+            			     "content":'amount: '+amount.toString()+', policy Id: '+insId,
+            			     "date":formatDate()
+            	 			};
+            	 $.ajax({
+            	      method: "POST",
+            	      url: "http://52.53.242.26:8080/api/add_report/",
+            	      data: JSON.stringify(info),
+            	      headers: {
+            	        'Content-Type': 'application/json',
+            	        'Access-Control-Allow-Origin': '*' 
+            	    }
+            	    })
+            	      .done(function( msg ) {
+            	    	  console.log("Sucessfully saved to block chain");
+            	      });
                 },
                 error : function() {
                     console.log("There was an error");
@@ -44,6 +61,17 @@
             });
         	$("#loader").removeClass('hidden');
         }
+        
+        function formatDate()
+        {
+         date = new Date()
+         var dd = date.getDate(); 
+         var mm = date.getMonth()+1;
+         var yyyy = date.getFullYear(); 
+         if(dd<10){dd='0'+dd} 
+         if(mm<10){mm='0'+mm}
+         return d = mm+'/'+dd+'/'+yyyy
+       }
     </script>
     <style>
    .lds-dual-ring.hidden {
@@ -133,7 +161,7 @@
                 <th scope="col">Patient Email</th>
 	            <th scope="col">Amount</th>
 	            <th scope="col">Purpose</th>
-                <th scope="col">InsuranceId</th>
+                <th scope="col">Policy ID</th>
 	            <th scope="col">InsuranceName</th>
 	            <th scope="col">Provider</th>
 	            <th scope="col"></th>
@@ -149,8 +177,8 @@
 	            <td>[[${claim.insuranceDetails.insuranceId}]]</td>
 	            <td>[[${claim.insuranceDetails.insuranceName}]]</td>
 	            <td>[[${claim.insuranceDetails.provider}]]</td>
-	            <td><button class="btn btn-success"   
-                        th:onclick="'approve(\''+${claim.claimId}+ '\');'">Approve</button></td>
+	            <td><button class="btn btn-success" 
+                       th:onclick=approve([[${claim.claimId}]],[[${claim.user.firstName}]],[[${claim.user.lastName}]],[[${claim.amount}]],[[${claim.insuranceDetails.insuranceId}]])>Approve</button></td>
                 <td><button class="btn btn-danger" 
                 	th:onclick="'deny(\''+${claim.claimId}+ '\');'">Deny</button></td>
 	        </tr>

@@ -134,11 +134,11 @@
 </div>
 <div class="card text-center">
   <div class="card-body">
-    <h5 class="card-title">View System Log</h5>
+    <h5 class="card-title">View System Logs</h5>
     <hr>
    <i class="fa fa-file-o" aria-hidden="true" style="font-size:8rem;"></i>
    <br><br><br>
-    <a th:href="@{/admin/logs}" class="btn btn-dark">System Log</a>
+    <a th:href="@{/admin/logs}" class="btn btn-dark">System Logs</a>
   </div>
 </div>
 <div class="card text-center">
@@ -157,6 +157,8 @@
     <a th:href="@{/register(registeredBy='admin')}" class="btn btn-dark">Register Employee</a>
   </div>
 </div>
+</div>
+ <div class="card-deck">
 <div class="card text-center">
   <div class="card-body">
     <h5 class="card-title">View Sign History</h5>
@@ -172,6 +174,14 @@
     <hr>
     <i class="fa fa-list-alt" aria-hidden="true" style="font-size:8rem;"></i>
     <a th:href="@{/admin/paymentApproval}" class="btn btn-dark">Pending Paymenent Approval List</a>
+  </div>
+</div>
+<div class="card text-center">
+  <div class="card-body">
+    <h5 class="card-title">View Internal Files</h5>
+    <hr>
+    <i class="fa fa-list-alt" aria-hidden="true" style="font-size:10rem;"></i>
+    <a th:href="@{/admin/getInternalPatientFiles}" class="btn btn-dark">View Internal Files</a>
   </div>
 </div>
 </div>

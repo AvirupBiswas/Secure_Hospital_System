@@ -54,7 +54,7 @@
 <br>
 <br>
 <nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
-        <a th:href="@{/patient/home}" class="navbar-brand" href="#">Secure Hospital System</a>
+        <a th:href="@{/doctor/home}" class="navbar-brand" href="#">Secure Hospital System</a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
@@ -80,6 +80,7 @@
     </nav>
 <div class="content-section col-md-8">
     <h2>Create Diagnosis</h2>
+    <br>
     <form th:action="@{/doctor/createDiagnosis}" id="diagnosis" method="POST" accept-charset="UTF-8" class="content-section col-md-8">
         <fieldset class="form-group">
         	<input type="hidden" name="userId" id="userId" th:value="${user.getUserId()}" />

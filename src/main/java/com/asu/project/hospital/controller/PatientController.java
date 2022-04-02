@@ -189,6 +189,14 @@ public class PatientController {
 		return "patient/viewDiagnosis";
 	}
 	
+	@GetMapping("/viewPaymentHistory")
+	public String viewAllPayments(Model model) {
+		User user=userService.getLoggedUser();
+		List<PatientPayment> patientPayments= patientService.findAllPaymentsPaid();
+		model.addAttribute("patientPayments", patientPayments);
+		return "patient/viewPaymentHistory";
+	}
+	
 	@GetMapping("/makePaymentInsurance/{paymentId}")
 	public String makePaymentInsurance(@PathVariable("paymentId") String paymentId) {
 		System.out.println("request lab request...");
