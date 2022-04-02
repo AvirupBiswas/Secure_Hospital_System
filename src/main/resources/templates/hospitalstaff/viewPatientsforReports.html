@@ -88,7 +88,6 @@
                 <th scope="col">Last Name</th>
                 <th scope="col">Lab Reports</th>
                 <th scope="col">Diagnosis Reports</th>
-                <th scope="col"></th>
             </tr>
             <tr th:each = "employee: ${patient}">
                 <td th:text="${employee.getEmail()}"></td>
@@ -96,11 +95,11 @@
                 <td th:text="${employee.getLastName()}"></td>
                 <form action="#" th:action="@{/hospitalstaff/viewLabTests/}" method="get">
                     <input type="hidden" name="userId" id="userId" th:value="${employee.getUserId()}" />
-                    <td><button data-toggle="tooltip" title="Lab Reports" data-placement="top" value="modify" name="action">Lab Reports</button></td>
+                    <td><button class="btn btn-primary" data-toggle="tooltip" title="Lab Reports" data-placement="top" value="modify" name="action">Lab Reports</button></td>
                 </form>
                 <form action="#" th:action="@{/hospitalstaff/viewAllDiagnosisReports/}" method="get">
                     <input type="hidden" name="userId" id="userId" th:value="${employee.getUserId()}" />
-                    <td><button data-toggle="tooltip" title="Diagnosis Reports" data-placement="top" value="modify" name="action">Diagnosis Reports</button></td>
+                    <td><button class="btn btn-primary" data-toggle="tooltip" title="Diagnosis Reports" data-placement="top" value="modify" name="action">Diagnosis Reports</button></td>
                 </form> 
             </tr>
         </table>
