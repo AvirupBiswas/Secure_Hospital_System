@@ -93,7 +93,7 @@
                 <td th:text="${employee.getLastName()}"></td>
                 <form action="#" th:action="@{/hospitalstaff/createSpecificTransac/}" method="post">
                     <input type="hidden" name="userId" id="userId" th:value="${employee.getUserId()}" />
-                    <td><button data-toggle="tooltip" title="Create Transaction" data-placement="top" value="modify" name="action">Create Transaction</button></td>
+                    <td><button class="btn btn-primary" data-toggle="tooltip" title="Create Transaction" data-placement="top" value="modify" name="action">Create Transaction</button></td>
                 </form>
             </tr>
         </table>
