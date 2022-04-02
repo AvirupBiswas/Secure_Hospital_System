@@ -2,7 +2,6 @@ package com.asu.project.hospital.controller;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Date;
 import java.util.List;
 
 import javax.validation.Valid;
@@ -19,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.asu.project.hospital.entity.Diagnosis;
 import com.asu.project.hospital.entity.Doctor;
+import com.asu.project.hospital.entity.LabTest;
 import com.asu.project.hospital.entity.Patient;
 import com.asu.project.hospital.entity.User;
 import com.asu.project.hospital.model.BlockChainDiagnosisObject;
@@ -238,5 +238,24 @@ public class DoctorController {
 			return e.getMessage();
 		}
 		return "doctor/doctorhome";
+	}
+	
+	@GetMapping("/viewpatientsforreports")
+	public String viewPatientsforReports(Model model) {
+		User account = userService.getLoggedUser();
+		model.addAttribute("accountName", account.getFirstName());
+		List<User> allPatients=doctorService.getAllPatientsforLabReports();
+		model.addAttribute("patient",allPatients);
+		return "doctor/viewpatientsforreports";
+	}
+	
+	@GetMapping("/viewlabreports")
+	public String viewLabTests(@RequestParam("userId") String userId, Model model) {
+		User account = userService.getLoggedUser();
+		model.addAttribute("accountName", account.getFirstName());
+		User patientUser = userService.findByUserId(userId);
+		List<LabTest> labTests=doctorService.viewLabTests(patientUser);
+		model.addAttribute("labTests", labTests);
+		return "hospitalstaff/viewlabreports";
 	}
 }

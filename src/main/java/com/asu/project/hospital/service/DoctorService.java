@@ -2,7 +2,6 @@ package com.asu.project.hospital.service;
 
 import java.util.Date;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,11 +10,13 @@ import org.springframework.stereotype.Service;
 import com.asu.project.hospital.entity.Appointment;
 import com.asu.project.hospital.entity.Diagnosis;
 import com.asu.project.hospital.entity.Doctor;
+import com.asu.project.hospital.entity.LabTest;
 import com.asu.project.hospital.entity.SystemLog;
 import com.asu.project.hospital.entity.User;
 import com.asu.project.hospital.repository.AppointmentRepository;
 import com.asu.project.hospital.repository.DiagnosisRepository;
 import com.asu.project.hospital.repository.DoctorRepository;
+import com.asu.project.hospital.repository.LabTestRepository;
 import com.asu.project.hospital.repository.PatientRepository;
 import com.asu.project.hospital.repository.SystemLogRepository;
 import com.asu.project.hospital.repository.UserRepository;
@@ -43,6 +44,9 @@ public class DoctorService {
 	
 	@Autowired
 	SystemLogRepository systemLogRepository;
+	
+	@Autowired
+	LabTestRepository labTestRepository;
 	
 	public void updateDoctorInfo(Doctor doctor) {
 		User user= userService.getLoggedUser();
@@ -79,6 +83,19 @@ public class DoctorService {
 	
 	public Diagnosis findByDiagnosis(int diagnosisId) {
 		return diagnosisRepository.findByDiagnosisID(diagnosisId);
+	}
+	
+	public List<User> getAllPatientsforLabReports(){
+		List <User> users = userRepository.findAll().stream().filter(e->e.getRole().equals("PATIENT")).collect(Collectors.toList());
+		return users;
+	}
+	
+	public List<LabTest> viewLabTests(User user){
+		List<LabTest> labTests=labTestRepository.findByUser(user)
+				.stream().filter(e->e.getStatus().equals("Reported"))
+				.collect(Collectors.toList());
+		return labTests;
+		
 	}
 
 }

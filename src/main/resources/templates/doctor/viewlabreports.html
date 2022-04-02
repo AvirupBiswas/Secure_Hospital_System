@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+   <title>Secure Hospital System</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"/>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<script th:inline="javascript">
+        function getTest(id) {
+            $.ajax({
+                url : "[(@{'/patient/requestLabReports/'})]"+id,
+                type : "GET",
+                success : function(data) {
+	              window.location = '/patient/viewLabTests';
+                },
+                error : function() {
+                    console.log("There was an error");
+                }
+            }); 
+        }
+        
+        
+    </script>
+</head>
+<body>
+<div class="container">
+    <nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
+        <a th:href="@{/doctor/home}" class="navbar-brand" href="#">Secure Hospital System</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+          
+          <div class="collapse navbar-collapse justify-content-end" id="navbarsExampleDefault">
+	        <ul style="list-style: none; display:contents">
+		        <li class="nav-item active" style="padding-right: 20px;">
+	        		<div style="display: flex; align-items:center">
+				      	<div style="height: 10px; width: 10px; border-radius:50%; background-color: var(--success)"></div>
+				      	<em style="color:white; font-size: 15px; margin-left: 10px">logged in as <span th:text="${accountName}"></span></em>
+				    </div>
+			     </li>
+		        <li>
+    				<form sec:authorize="isAuthenticated()" th:action="@{/logout}" method="POST">
+		  				<button class="btn btn-outline-light" type="submit" title="Logout">Log Out</button>
+		         	</form>
+		        </li>
+	        </ul>
+    	</div>
+    </nav>
+    <br>
+    <br>
+     <br>
+    <input class="btn btn-primary" type="button" value="Go Back" onclick="history.back(-1)" />
+    <br>
+    <br>
+	
+</div>
+<div class="container">
+    <div class="starter-template">
+    <br>
+    <br>
+        <h2>Lab Reports</h2>
+		<br>
+
+        <table class="table table-striped table-bordered">
+            <tr>
+                <th scope="col">Test Name </th>
+                <th scope="col">Description</th>
+                <th scope="col">Status</th>
+	            <th scope="col"></th>
+            </tr>
+            <tr th:each = "labtest: ${labTests}">
+            	<td th:text="${labtest.testName}"></td>
+                <td th:text="${labtest.description}"></td>
+                <td th:text="${labtest.status}"></td>
+                <td th:if="${labtest.status=='Reported'}"><a th:href="@{|/viewPDF/doctor/reportView/${labtest.labTestId}|}" target="_blank"><i class="fa fa-file-pdf-o" style="font-size:24px;color:red;"></i></a></td>
+            </tr>
+        </table>	
+
+    </div>
+</div>
+</body>
+</html>
