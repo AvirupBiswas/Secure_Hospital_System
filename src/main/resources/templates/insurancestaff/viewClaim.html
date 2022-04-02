@@ -7,7 +7,7 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"/>
       <script th:inline="javascript">
-        function approve(id,firstname,lastname,amount,insId) {
+        function approve(id,firstname,lastname,amount,insId,purpose) {
             $.ajax({
                 url : "[(@{'/insurancestaff/approveclaim/'})]"+id,
                 type : "GET",
@@ -21,7 +21,7 @@
                 	 $('#' + id).remove();
                 	 var info = {"id":"claimid:"+" "+id.toString(),
             			     "patient_name":firstname+' '+lastname,
-            			     "content":'amount: '+amount.toString()+', policy Id: '+insId,
+            			     "content":'amount: '+amount.toString()+', purpose: '+purpose+', policy Id: '+insId,
             			     "date":formatDate()
             	 			};
             	 $.ajax({
@@ -178,7 +178,7 @@
 	            <td>[[${claim.insuranceDetails.insuranceName}]]</td>
 	            <td>[[${claim.insuranceDetails.provider}]]</td>
 	            <td><button class="btn btn-success" 
-                       th:onclick=approve([[${claim.claimId}]],[[${claim.user.firstName}]],[[${claim.user.lastName}]],[[${claim.amount}]],[[${claim.insuranceDetails.insuranceId}]])>Approve</button></td>
+	                 th:onclick="approve([[${claim.claimId}]],[[${#strings.toString(claim.user.firstName)}]],[[${#strings.toString(claim.user.lastName)}]],[[${claim.amount}]],[[${claim.insuranceDetails.insuranceId}]],[[${#strings.toString(claim.purpose)}]]);">Approve</button></td>
                 <td><button class="btn btn-danger" 
                 	th:onclick="'deny(\''+${claim.claimId}+ '\');'">Deny</button></td>
 	        </tr>
