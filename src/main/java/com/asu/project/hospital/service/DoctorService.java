@@ -50,13 +50,13 @@ public class DoctorService {
 		doctorRepository.save(doctor);
 	}
 	
-	public void createDiagnosis(Diagnosis diagnosis) {
+	public Diagnosis createDiagnosis(Diagnosis diagnosis) {
 		SystemLog systemLog=new SystemLog();
 		systemLog.setMessage("Diagnosis created for "+diagnosis.getUser().getFirstName()+" "+diagnosis.getUser().getLastName()
 				+ "by "+diagnosis.getDoctorName());
 		systemLog.setTimestamp(new Date());
 		systemLogRepository.save(systemLog);
-		diagnosisRepository.save(diagnosis);
+		return diagnosisRepository.save(diagnosis);
 	}
 	
 	public void deleteDiagnosis(Diagnosis diagnosis) {

@@ -81,12 +81,16 @@ public class PatientController {
 	
 	@GetMapping("/bookappointment")
 	public String bookAppointment(Model model) {
+		User user = userService.getLoggedUser();
+		model.addAttribute("accountName", user.getFirstName());
 		model.addAttribute("Appointment", new Appointment());
 		return "patient/bookappointment";
 	}
 	
 	@GetMapping("/editinsurance")
 	public String claimInsurance(Model model) {
+		User user = userService.getLoggedUser();
+		model.addAttribute("accountName", user.getFirstName());
 		model.addAttribute("InsuranceDetails", new InsuranceDetails());
 		return "patient/editinsurance";
 	}
@@ -97,7 +101,7 @@ public class PatientController {
         System.out.println(user.getUserId());
         appointment.setStatus("Pending");
         appointmentService.createAppointment(user, appointment, date, time);
-        return "patient/patienthome";
+        return "patient/viewAppointmentHistory";
 	}
 	
 	@PostMapping("/addInsuranceDetails")
@@ -122,7 +126,9 @@ public class PatientController {
 	}
 	
 	@RequestMapping("/getInsuranceDetails")
-	public String getInsuranceDetails() {
+	public String getInsuranceDetails(Model model) {
+		User user = userService.getLoggedUser();
+		model.addAttribute("accountName", user.getFirstName());
 		return "redirect:/otp/generateOtp/insurancedetails";
 	}
 	
@@ -134,6 +140,7 @@ public class PatientController {
 	@GetMapping("/viewAppointmentHistory")
 	public String getAppointmentHistory(Model model) {
 		User user=userService.getLoggedUser();
+		model.addAttribute("accountName", user.getFirstName());
 		List<Appointment> appointment=patientService.findAllAppointments(user);
 		model.addAttribute("appointments", appointment);
 		return "patient/viewAppointmentHistory";
@@ -144,6 +151,8 @@ public class PatientController {
 	public String labRequest(@RequestParam("diagnosisID") String diagnosisID,Model model) {
 		Diagnosis diagnosis=diagnosisRepository.getById(Integer.parseInt(diagnosisID));
 		System.out.println(diagnosisID);
+		User user = userService.getLoggedUser();
+		model.addAttribute("accountName", user.getFirstName());
 		model.addAttribute("diagnosis", diagnosis);
 		return "patient/requestlabtest";
 	}
@@ -160,6 +169,7 @@ public class PatientController {
 	@GetMapping("/viewPendingPayments")
 	public String getPendingPayments(Model model) {
 		User user=userService.getLoggedUser();
+		model.addAttribute("accountName", user.getFirstName());
 		List<PatientPayment> patientPayments=patientService.findAllPaymentsByStatus();
 		model.addAttribute("patientPayments", patientPayments);
 		return "patient/viewpendingpayments";		
@@ -168,14 +178,17 @@ public class PatientController {
 	@GetMapping("/viewLabTests")
 	public String viewLabTests(Model model) {
 		User user=userService.getLoggedUser();
+		model.addAttribute("accountName", user.getFirstName());
 		List<LabTest> labTests=patientService.viewLabTests(user);
 		model.addAttribute("labTests", labTests);
 		return "patient/viewlabreports";
 	}
 	
 	@GetMapping("/requestLabReports/{labTestId}")
-	public String requestLabReports(@PathVariable("labTestId") String labTestId) {
+	public String requestLabReports(@PathVariable("labTestId") String labTestId,Model model) {
 		System.out.println("request lab request...");
+		User user = userService.getLoggedUser();
+		model.addAttribute("accountName", user.getFirstName());
 		patientService.requestLabTest(Integer.parseInt(labTestId));
 		return "patient/viewlabreports";
 		
@@ -184,6 +197,7 @@ public class PatientController {
 	@GetMapping("/viewAllDiagnosisReports")
 	public String viewAllDiagnosisReports(Model model) {
 		User user=userService.getLoggedUser();
+		model.addAttribute("accountName", user.getFirstName());
 		List<Diagnosis> diagnosisList=patientService.viewAllDiagnosis(user);
 		model.addAttribute("diagnosisList", diagnosisList);
 		return "patient/viewDiagnosis";
@@ -192,22 +206,27 @@ public class PatientController {
 	@GetMapping("/viewPaymentHistory")
 	public String viewAllPayments(Model model) {
 		User user=userService.getLoggedUser();
+		model.addAttribute("accountName", user.getFirstName());
 		List<PatientPayment> patientPayments= patientService.findAllPaymentsPaid();
 		model.addAttribute("patientPayments", patientPayments);
 		return "patient/viewPaymentHistory";
 	}
 	
 	@GetMapping("/makePaymentInsurance/{paymentId}")
-	public String makePaymentInsurance(@PathVariable("paymentId") String paymentId) {
+	public String makePaymentInsurance(@PathVariable("paymentId") String paymentId,Model model) {
 		System.out.println("request lab request...");
+		User user = userService.getLoggedUser();
+		model.addAttribute("accountName", user.getFirstName());
 		patientService.makePaymentInsurance(Long.parseLong(paymentId));
 		return "patient/viewlabreports";
 		
 	}
 	
 	@GetMapping("/makeSelfPayment/{paymentId}")
-	public String makeSelfPayment(@PathVariable("paymentId") String paymentId) {
+	public String makeSelfPayment(@PathVariable("paymentId") String paymentId, Model model) {
 		System.out.println("request lab request...");
+		User user = userService.getLoggedUser();
+		model.addAttribute("accountName", user.getFirstName());
 		patientService.makePayment(Long.parseLong(paymentId));
 		return "patient/viewpendingpayments";
 		
