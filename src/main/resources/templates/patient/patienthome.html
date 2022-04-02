@@ -7,124 +7,46 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"/>
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+	
 	<!-- chatbot -->
-	<link rel="stylesheet" type="text/css" href="/jquery.convform.css">	
-	<script type="text/javascript" src="/jquery.convform.js"></script>
+	<link rel="stylesheet" type="text/css" href="/chatbot.css">
 	<script type="text/javascript" src="/chatbot.js"></script>
-
-    <style>
-		/* chatbot */
-		.chat-icon {
-			position: fixed;
-			right: 30px;
-			bottom: 0;
-			font-size: 80px;
-			color: #212529;
-			cursor: pointer;
-			z-index: 1000;
-		}
-
-		.chat-box {
-			position: fixed;
-			right: 20px;
-			bottom: 100px;
-			width: 400px;
-			height: 70vh;
-			background: lightgray;
-			z-index: 1000;
-			transition: all 0.3s ease-out;
-			transform: scaleY(0);
-
-		}
-
-		.chat-box.active {
-			transform: scaleY(1);
-		}
-
-		.hidden {
-			display: none !important;
-		}
-
-		.conv-form-wrapper textarea {
-			height: 30px;
-			overflow: hidden;
-			resize: none;
-		}
-
-		#messages{
-			padding: 20px;
-
-		}
-
-		/* chatbot end */
-   .lds-dual-ring.hidden {
-        display: none;
-    }
-
-    .overlay {
-        position: fixed;
-        top:  50%;
-    	left: 50%;
-    	transform: translate(-50%,-50%);
-        text-align: center;
-    }
-    
-    /*Spinner Styles*/
-    .lds-dual-ring {
-        display: inline-block;
-        width: 80px;
-        height: 80px;
-    }
-    .lds-dual-ring:after {
-        content: " ";
-        display: block;
-        width: 64px;
-        height: 64px;
-        border-radius: 50%;
-        border: 6px solid #000000;
-        border-color: #000000 transparent #000000 transparent;
-        animation: lds-dual-ring 1.2s linear infinite;
-        text-align: center;
-    }
-    @keyframes lds-dual-ring {
-        0% {
-            transform: rotate(0deg);
-        }
-        100% {
-            transform: rotate(360deg);
-        }
-    }
-    </style>
+	
 </head>
+
 <body>
 
-<!-- Chatbot -->
-<div class="chat-icon">
-	<!-- <i class="fa fa-message-bot" aria-hidden="true"></i> -->
-	<!-- <i class="fa fa-message-dots" aria-hidden="true"></i> -->
-	<i class="fa fa-comments" aria-hidden="true"></i>
-</div>
-
-<div class="chat-box">
-	<div id="chat" class="conv-form-wrapper">
-	<form action="" method="GET" class="hidden">
-		<select name="category" data-conv-question="Hello! How can I help you?">
-			<option value="view-report">View Report</option>
-			<option value="show-doctor-appointment">Show Doctor Appointment</option>
-		</select>
-		<div data-conv-fork="category">
-			<div data-conv-case="view-report">
-				 <input type="text" data-conv-question="Please tell me the test name">
+	<div id="chatbot-body"> 
+  
+		<div id="chat-circle" class="btn btn-raised">
+			<div id="chat-overlay"></div>
+				<i class="fa fa-comments" aria-hidden="true"></i>
 			</div>
-			<div data-conv-case="show-doctor-appointment">
-				<input type="text" data-conv-question="Please tell me your name">
-		   </div>
-			
+		  
+			<div class="chat-box">
+				<div class="chat-box-header">ChatBot
+					<span class="chat-box-toggle">
+						<i class="fa fa-window-close fa-lg"></i>
+					</span>
+				</div>
+				<div class="chat-box-body">
+					<div class="chat-box-overlay"></div>
+						<div class="chat-logs">
+				
+						</div><!--chat-log -->
+					</div>
+				<div class="chat-input">      
+				<form>
+					<input type="text" id="chat-input" placeholder="Send your query..."/>
+				<button type="submit" class="chat-submit" id="chat-submit">
+					<i class="fa fa-paper-plane fa-lg" aria-hidden="true"></i>
+				</button>
+				</form>      
+				</div>
 		</div>
-	</form>
-</div>
-</div>
-<!-- Chatbot end -->
+	</div>
+		
+
 <div class="container">
     <nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
         <a th:href="@{/patient/home}" class="navbar-brand" href="#">Secure Hospital System</a>

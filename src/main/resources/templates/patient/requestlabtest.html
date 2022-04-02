@@ -7,9 +7,42 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"/>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<!-- chatbot -->
+<link rel="stylesheet" type="text/css" href="/chatbot.css">
+<script type="text/javascript" src="/chatbot.js"></script>
 
 </head>
 <body>
+	<div id="chatbot-body"> 
+  
+		<div id="chat-circle" class="btn btn-raised">
+			<div id="chat-overlay"></div>
+				<i class="fa fa-comments" aria-hidden="true"></i>
+			</div>
+		  
+			<div class="chat-box">
+				<div class="chat-box-header">ChatBot
+					<span class="chat-box-toggle">
+						<i class="fa fa-window-close fa-lg"></i>
+					</span>
+				</div>
+				<div class="chat-box-body">
+					<div class="chat-box-overlay"></div>
+						<div class="chat-logs">
+				
+						</div><!--chat-log -->
+					</div>
+				<div class="chat-input">      
+				<form>
+					<input type="text" id="chat-input" placeholder="Send your query..."/>
+				<button type="submit" class="chat-submit" id="chat-submit">
+					<i class="fa fa-paper-plane fa-lg" aria-hidden="true"></i>
+				</button>
+				</form>      
+				</div>
+		</div>
+	</div>
+		
 <div class="container">
     <nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
         <a th:href="@{/patient/home}" class="navbar-brand" href="#">Secure Hospital System</a>
