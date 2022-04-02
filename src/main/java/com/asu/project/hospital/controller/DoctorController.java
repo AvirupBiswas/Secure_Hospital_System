@@ -1,5 +1,8 @@
 package com.asu.project.hospital.controller;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.Date;
 import java.util.List;
 
 import javax.validation.Valid;
@@ -18,8 +21,10 @@ import com.asu.project.hospital.entity.Diagnosis;
 import com.asu.project.hospital.entity.Doctor;
 import com.asu.project.hospital.entity.Patient;
 import com.asu.project.hospital.entity.User;
+import com.asu.project.hospital.model.BlockChainDiagnosisObject;
 import com.asu.project.hospital.repository.DoctorRepository;
 import com.asu.project.hospital.repository.PatientRepository;
+import com.asu.project.hospital.service.BlockChainFeignService;
 import com.asu.project.hospital.service.DoctorService;
 import com.asu.project.hospital.service.UserService;
 
@@ -38,6 +43,9 @@ public class DoctorController {
 	
 	@Autowired
 	private PatientRepository patientRepository;
+	
+	@Autowired
+	private BlockChainFeignService blockChainService;
 	
 	@GetMapping("/home")
 	public String doctorHome(Model model) {
@@ -108,7 +116,15 @@ public class DoctorController {
 		StringBuilder doctorName=new StringBuilder(doctor.getFirstName());
 		doctorName.append(" ").append(doctor.getLastName());
 		diagnosis.setDoctorName(doctorName.toString());
-		doctorService.createDiagnosis(diagnosis);
+		Diagnosis diagnosisSaved=doctorService.createDiagnosis(diagnosis);
+		BlockChainDiagnosisObject blcObj=new BlockChainDiagnosisObject();
+		blcObj.setId("diagnosisid: "+ diagnosisSaved.getDiagnosisID());
+		blcObj.setPatient_name(diagnosisSaved.getUser().getFirstName()+" "+diagnosisSaved.getUser().getLastName());
+		blcObj.setContent("Diagnosis added by "+diagnosisSaved.getDoctorName()+", problem: "+diagnosisSaved.getProblem());
+		DateTimeFormatter dtf = DateTimeFormatter.ofPattern("MM/dd/yyyy");  
+		LocalDateTime now = LocalDateTime.now();
+		blcObj.setDate(dtf.format(now));
+		blockChainService.addDiagnosisToBlockChain(blcObj);
 		return "doctor/doctorhome";
 	}
 	

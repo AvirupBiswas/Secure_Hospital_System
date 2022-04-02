@@ -30,11 +30,13 @@
 		        <li class="nav-item active" style="padding-right: 20px;">
 	        		<div style="display: flex; align-items:center">
 				      	<div style="height: 10px; width: 10px; border-radius:50%; background-color: var(--success)"></div>
-				      	<em style="color:white; font-size: 15px; margin-left: 10px">logged in as</span></em>
+				      	<em style="color:white; font-size: 15px; margin-left: 10px">logged in as<span th:text="${accountName}"></span></em>
 				    </div>
 			     </li>
 		        <li>
-		      	  <a th:href="@{/logout}" class="nav-link btn btn-outline-light">Log Out</a>
+		      	  <form sec:authorize="isAuthenticated()" th:action="@{/logout}" method="POST">
+						<button class="btn btn-outline-light" type="submit" title="Logout">Log Out</button>
+					</form>
 		        </li>
 	        </ul>
     	</div>

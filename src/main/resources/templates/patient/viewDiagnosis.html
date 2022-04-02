@@ -37,7 +37,7 @@
 		        <li class="nav-item active" style="padding-right: 20px;">
 	        		<div style="display: flex; align-items:center">
 				      	<div style="height: 10px; width: 10px; border-radius:50%; background-color: var(--success)"></div>
-				      	<em style="color:white; font-size: 15px; margin-left: 10px">logged in as</span></em>
+				      	<em style="color:white; font-size: 15px; margin-left: 10px">logged in as <span th:text="${accountName}"></span></em>
 				    </div>
 			     </li>
 		        <li>
@@ -74,13 +74,11 @@
                 <td th:text="${diagnosis.problem}"></td>
                 <td th:text="${diagnosis.prescription}"></td>
                 <td th:text="${diagnosis.labtests}"></td>
-                <td th:if="${diagnosis.labTestNeeded=='Yes'}">
-                	<form th:action="@{/patient/labrequest}" method="post">
+                <td th:if="${diagnosis.labTestNeeded=='Yes'}" th:action="@{/patient/labrequest}" method="post">
                     	<input type="hidden" name="diagnosisID" id="diagnosisID" th:value="${diagnosis.diagnosisID}" />
-                    	<td><button data-toggle="tooltip" title="View Patient" data-placement="top" class="btn pill-btn" value="modify" name="action"><i value="modify" name="action" class="fa fa-pencil-square-o" aria-hidden="true" style="font-size:24px;color:brown;"></i></button></td>
-                	</form>
+                    	<button class="btn btn-success" title="Request Labtest" value="modify" name="action">Request LabTest</button>
                 </td>
-                <td th:if="${diagnosis.labTestNeeded!='yes'}">--</td>
+                <td th:if="${diagnosis.labTestNeeded!='Yes'}">--</td>
                 <td><a th:href="@{|/viewPDF/patient/diagnosisreport/${diagnosis.diagnosisID}|}" target="_blank"><i class="fa fa-file-pdf-o" style="font-size:24px;color:red;"></i></a></td>
             </tr>
         </table>	
