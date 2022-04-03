@@ -83,9 +83,20 @@ public class PatientController {
 	public String bookAppointment(Model model) {
 		User user = userService.getLoggedUser();
 		model.addAttribute("accountName", user.getFirstName());
+		model.addAttribute("doctors", patientService.getDoctorsList());
 		model.addAttribute("Appointment", new Appointment());
 		return "patient/bookappointment";
 	}
+	
+	@GetMapping("/bookspecialappointment")
+	public String bookSpecialAppointment(Model model) {
+		User user = userService.getLoggedUser();
+		model.addAttribute("accountName", user.getFirstName());
+		model.addAttribute("doctors", patientService.getDoctorsList());
+		model.addAttribute("Appointment", new Appointment());
+		return "patient/bookspecialappointment";
+	}
+	
 	
 	@GetMapping("/editinsurance")
 	public String claimInsurance(Model model) {
@@ -101,7 +112,7 @@ public class PatientController {
         System.out.println(user.getUserId());
         appointment.setStatus("Pending");
         appointmentService.createAppointment(user, appointment, date, time);
-        return "patient/viewAppointmentHistory";
+        return "patient/patienthome";
 	}
 	
 	@PostMapping("/addInsuranceDetails")
@@ -133,7 +144,9 @@ public class PatientController {
 	}
 	
 	@GetMapping("/viewClaimHistory")
-	public String getClaimsHistory() {
+	public String getClaimsHistory(Model model) {
+		User user = userService.getLoggedUser();
+		model.addAttribute("accountName", user.getFirstName());
 		return "redirect:/otp/generateOtp/viewClaimHistory";
 	}
 	
@@ -232,7 +245,4 @@ public class PatientController {
 		
 	}
 	
-	
-	
-
 }

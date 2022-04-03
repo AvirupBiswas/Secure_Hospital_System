@@ -48,6 +48,9 @@ public class Appointment {
     
     @Column(name="status")
     private String status;
+    
+    @Column(name="doctorEmail")
+    private String doctorEmail;
 
     public Appointment() {
 	}
@@ -65,6 +68,20 @@ public class Appointment {
 		this.endTime = endTime;
 		this.status = status;
 		this.phoneNumber = phoneNumber;
+	}
+
+
+
+
+	public String getDoctorEmail() {
+		return doctorEmail;
+	}
+
+
+
+
+	public void setDoctorEmail(String doctorEmail) {
+		this.doctorEmail = doctorEmail;
 	}
 
 

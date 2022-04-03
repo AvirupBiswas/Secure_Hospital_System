@@ -25,6 +25,7 @@ import com.asu.project.hospital.repository.LabTestRepository;
 import com.asu.project.hospital.repository.PatientPaymentRepository;
 import com.asu.project.hospital.repository.PatientRepository;
 import com.asu.project.hospital.repository.SystemLogRepository;
+import com.asu.project.hospital.repository.UserRepository;
 
 @Service
 public class PatientService {
@@ -52,6 +53,9 @@ public class PatientService {
 	
 	@Autowired
 	SystemLogRepository systemLogRepository;
+	
+	@Autowired
+	UserRepository userRepository;
 	
 	@Autowired
 	UserService userService;
@@ -180,6 +184,12 @@ public class PatientService {
 		systemLog.setTimestamp(new Date());
 		systemLogRepository.save(systemLog);
 		patientPaymentRepository.save(patientPayment);
+	}
+	
+	public List<User> getDoctorsList(){
+		List<User> doctors= userRepository.findAll().stream().filter(e->e.getRole().equals("DOCTOR"))
+				.collect(Collectors.toList());
+		return doctors;
 	}
 
 }

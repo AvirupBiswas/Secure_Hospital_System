@@ -102,6 +102,15 @@
 
       </div>
       <div class="form-group">
+	      <label class="dropdown">
+	      Doctor: 
+	      </label>
+	      <select id="doctorEmail" name="doctorEmail" class="form-control">
+	      <option th:each="doctor:${doctors}" th:value="${doctor.email}" th:text="|${doctor.firstName} ${doctor.lastName}|">
+	      </option>
+	      </select>
+      </div>
+      <div class="form-group">
 	      <label>
 	        Date
 	        </label>
