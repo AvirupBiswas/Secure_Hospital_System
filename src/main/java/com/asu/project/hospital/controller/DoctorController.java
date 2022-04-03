@@ -292,6 +292,6 @@ public class DoctorController {
 		User patientUser = userService.findByUserId(userId);
 		List<LabTest> labTests=doctorService.viewLabTests(patientUser);
 		model.addAttribute("labTests", labTests);
-		return "hospitalstaff/viewlabreports";
+		return "doctor/viewlabreports";
 	}
 }
