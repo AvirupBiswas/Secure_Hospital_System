@@ -121,10 +121,6 @@
 	    <a th:href="@{/patient/viewLabTests}" class="btn btn-dark">Lab Reports</a>
 	  </div>
 	</div>
-</div>
-<br><br>
-
-<div class="card-deck">
 	<div class="card text-center">
 	  <div class="card-body">
 	    <h5 class="card-title">View/Edit Insurance Details</h5>
@@ -134,6 +130,11 @@
 	    <a th:href="@{/patient/getInsuranceDetails}" class="btn btn-dark">View/Edit Insurance Details</a>
 	  </div>
 	</div>
+</div>
+<br><br>
+
+<div class="card-deck">
+	
 	<div class="card text-center">
 	  <div class="card-body">
 	    <h5 class="card-title">View Insurance Claims</h5>
@@ -161,7 +162,25 @@
 	    <a th:href="@{/patient/viewPaymentHistory}" class="btn btn-dark">View Payments</a>
 	  </div>
 	</div>
-</div>
+	<div class="card text-center">
+	  <div class="card-body">
+	    <h5 class="card-title">Submit Queries To Help and Support Centre</h5>
+	    <hr>
+	    <i class="fa fa-address-card-o" aria-hidden="true" style="font-size:8rem;"></i>
+	    <br><br>
+	    <a th:href="@{/patient/submitQuery}" class="btn btn-dark">Submit Queries</a>
+	  </div>
+    </div>
+    <div class="card text-center">
+	  <div class="card-body">
+	    <h5 class="card-title">View Queries Submitted To Help and Support Centre</h5>
+	    <hr>
+	    <i class="fa fa-address-card-o" aria-hidden="true" style="font-size:8rem;"></i>
+	    <br><br>
+	    <a th:href="@{/patient/viewQuery}" class="btn btn-dark">View Queries</a>
+	  </div>
+    </div>
+    </div>
 <br>
 <br>
 </div>

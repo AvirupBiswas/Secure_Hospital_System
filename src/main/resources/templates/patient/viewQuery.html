@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+   <title>Secure Hospital System</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"/>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<!-- chatbot -->
+<link rel="stylesheet" type="text/css" href="/chatbot.css">
+<script type="text/javascript" src="/chatbot.js"></script>
+
+</head>
+<body>
+	<div id="chatbot-body"> 
+  
+		<div id="chat-circle" class="btn btn-raised">
+			<div id="chat-overlay"></div>
+				<i class="fa fa-comments" aria-hidden="true"></i>
+			</div>
+		  
+			<div class="chat-box">
+				<div class="chat-box-header">ChatBot
+					<span class="chat-box-toggle">
+						<i class="fa fa-window-close fa-lg"></i>
+					</span>
+				</div>
+				<div class="chat-box-body">
+					<div class="chat-box-overlay"></div>
+						<div class="chat-logs">
+				
+						</div><!--chat-log -->
+					</div>
+				<div class="chat-input">      
+				<form>
+					<input type="text" id="chat-input" placeholder="Send your query..."/>
+				<button type="submit" class="chat-submit" id="chat-submit">
+					<i class="fa fa-paper-plane fa-lg" aria-hidden="true"></i>
+				</button>
+				</form>      
+				</div>
+		</div>
+	</div>
+		
+<div class="container">
+    <nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
+        <a th:href="@{/patient/home}" class="navbar-brand" href="#">Secure Hospital System</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+          
+          <div class="collapse navbar-collapse justify-content-end" id="navbarsExampleDefault">
+	        <ul style="list-style: none; display:contents">
+		        <li class="nav-item active" style="padding-right: 20px;">
+	        		<div style="display: flex; align-items:center">
+				      	<div style="height: 10px; width: 10px; border-radius:50%; background-color: var(--success)"></div>
+				      	<em style="color:white; font-size: 15px; margin-left: 10px">logged in as <span th:text="${accountName}"></span></em>
+				    </div>
+			     </li>
+		        <li>
+		      	  <form sec:authorize="isAuthenticated()" th:action="@{/logout}" method="POST">
+						<button class="btn btn-outline-light" type="submit" title="Logout">Log Out</button>
+					</form>
+		        </li>
+	        </ul>
+    	</div>
+    </nav>
+    <br>
+    <br>
+    <br>
+     <div th:if="${#lists.isEmpty(patientQueries)}">
+     <h2 style="text-align:center;">No Query Submitted by You </h2>
+     </div>
+    <br>
+    <input class="btn btn-primary" type="button" value="Go Back" onclick="history.back(-1)" />
+    <br>
+    <br>
+    <div th:unless="${#lists.isEmpty(patientQueries)}">
+    <table class="table table table-striped table-bordered">
+	    <thead>
+	        <tr>
+                <th scope="col">Patient Name</th>
+                <th scope="col">Patient Email</th>
+                <th scope="col">Query Submitted In</th>
+	            <th scope="col">Query Description</th>
+	            <th scope="col">Query Resolution</th>
+                <th scope="col">Query Status</th>
+	        </tr>
+	    </thead>
+	    <tbody class="tableBody">
+	        <tr th:each="query: ${patientQueries}" th:id="${query.queryId}">
+                <td>[[${query.user.firstName}]] [[${query.user.lastName}]]</td>
+                <td>[[${query.user.email}]]</td>
+                <td>[[${query.querySubmissionTime}]]</td>
+	            <td>[[${query.querydescription}]]</td>
+	            <td>[[${query.queryresolution}]]</td>
+	            <td>[[${query.querystatus}]]</td>
+	        </tr>
+	    </tbody>
+	</table>
+	</div>
+</div>
+</body>
+</html> 

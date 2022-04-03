@@ -15,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -28,7 +29,9 @@ import com.asu.project.hospital.entity.HospitalStaff;
 import com.asu.project.hospital.entity.InsuranceStaff;
 import com.asu.project.hospital.entity.LabStaff;
 import com.asu.project.hospital.entity.LabTest;
+import com.asu.project.hospital.entity.LabTestReport;
 import com.asu.project.hospital.entity.PatientPayment;
+import com.asu.project.hospital.entity.PatientQuery;
 import com.asu.project.hospital.entity.SignInHistory;
 import com.asu.project.hospital.entity.SystemLog;
 import com.asu.project.hospital.entity.User;
@@ -43,6 +46,7 @@ import com.asu.project.hospital.repository.InsuranceStaffRepository;
 import com.asu.project.hospital.repository.LabStaffRepository;
 import com.asu.project.hospital.repository.LabTestRepository;
 import com.asu.project.hospital.repository.PatientPaymentRepository;
+import com.asu.project.hospital.repository.PatientQueryRepository;
 import com.asu.project.hospital.repository.SignInHistoryRepository;
 import com.asu.project.hospital.repository.SystemLogRepository;
 import com.asu.project.hospital.repository.UserRepository;
@@ -91,6 +95,9 @@ public class AdminController {
 
 	@Autowired
 	private DiagnosisRepository diagnosisRepository;
+	
+	@Autowired
+	private PatientQueryRepository patientQueryRepository;
 
 	@GetMapping("/aproveUser/{Id}")
 	public ResponseEntity<String> aproveUser(@PathVariable("Id") String Id) {
@@ -475,6 +482,38 @@ public class AdminController {
 		}
 		model.addAttribute("allPatientWithReport", reportList);
 		return "admin/internalFile";
+	}
+	
+	@GetMapping("/viewSubmitedQueries")
+	public String viewSubmitedQueries( Model model) {
+		User user = userService.getLoggedUser();
+		model.addAttribute("accountName", user.getFirstName());
+		List<PatientQuery> patientQueries = patientQueryRepository.findAll();
+		model.addAttribute("patientQueries",patientQueries);
+		return "admin/viewAllSubmittedQueries";
+	}
+	
+	@GetMapping("/takeaction/{queryId}")
+	public String takeaction(@PathVariable("queryId") String queryId, Model model) {
+		User user = userService.getLoggedUser();
+		model.addAttribute("accountName", user.getFirstName());
+		Optional<PatientQuery> patientQuery = patientQueryRepository.findById(Long.parseLong(queryId));
+		model.addAttribute("patientQuery", patientQuery.get());
+		model.addAttribute("queryId", queryId);
+		return "admin/submitResolution";
+	}
+	
+	@PostMapping("/takeaction/{queryId}")
+	public String takeaction(@RequestParam("queryresolution") String queryresolution,
+			@PathVariable("queryId") String queryId, Model model) {
+		User user = userService.getLoggedUser();
+		model.addAttribute("accountName", user.getFirstName());
+		Optional<PatientQuery> patientQueryOptional = patientQueryRepository.findById(Long.parseLong(queryId));
+		PatientQuery patientQuery = patientQueryOptional.get();
+		patientQuery.setQueryresolution(queryresolution);
+		patientQuery.setQuerystatus("Resolved");
+		patientQueryRepository.save(patientQuery);
+		return "redirect:/admin/viewSubmitedQueries";
 	}
 
 }
