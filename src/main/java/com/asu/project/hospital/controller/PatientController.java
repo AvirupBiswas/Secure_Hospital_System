@@ -1,5 +1,6 @@
 package com.asu.project.hospital.controller;
 
+import java.util.Date;
 import java.util.List;
 
 import javax.validation.Valid;
@@ -14,7 +15,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.asu.project.hospital.entity.Appointment;
 import com.asu.project.hospital.entity.Diagnosis;
@@ -23,8 +23,10 @@ import com.asu.project.hospital.entity.InsuranceDetails;
 import com.asu.project.hospital.entity.LabTest;
 import com.asu.project.hospital.entity.Patient;
 import com.asu.project.hospital.entity.PatientPayment;
+import com.asu.project.hospital.entity.PatientQuery;
 import com.asu.project.hospital.entity.User;
 import com.asu.project.hospital.repository.DiagnosisRepository;
+import com.asu.project.hospital.repository.PatientQueryRepository;
 import com.asu.project.hospital.service.AppointmentService;
 import com.asu.project.hospital.service.PatientService;
 import com.asu.project.hospital.service.UserService;
@@ -44,6 +46,9 @@ public class PatientController {
 	
 	@Autowired
 	private DiagnosisRepository diagnosisRepository;
+	
+	@Autowired
+	private PatientQueryRepository patientQueryRepository;
 	
 	@GetMapping("/home")
 	public String adminHome(Model model) {
@@ -227,7 +232,6 @@ public class PatientController {
 	
 	@GetMapping("/makePaymentInsurance/{paymentId}")
 	public String makePaymentInsurance(@PathVariable("paymentId") String paymentId,Model model) {
-		System.out.println("request lab request...");
 		User user = userService.getLoggedUser();
 		model.addAttribute("accountName", user.getFirstName());
 		patientService.makePaymentInsurance(Long.parseLong(paymentId));
@@ -235,14 +239,32 @@ public class PatientController {
 		
 	}
 	
-	@GetMapping("/makeSelfPayment/{paymentId}")
-	public String makeSelfPayment(@PathVariable("paymentId") String paymentId, Model model) {
-		System.out.println("request lab request...");
+	@GetMapping("/submitQuery")
+	public String submitQuery( Model model) {
 		User user = userService.getLoggedUser();
 		model.addAttribute("accountName", user.getFirstName());
-		patientService.makePayment(Long.parseLong(paymentId));
-		return "patient/viewpendingpayments";
-		
+		return "patient/submitQuery";
 	}
 	
+	@PostMapping("/savingQueries")
+	public String savingQueries(@RequestParam("queryName") String queryName,Model model) {
+		User user = userService.getLoggedUser();
+		model.addAttribute("accountName", user.getFirstName());
+		PatientQuery patientQuery = new PatientQuery();
+		patientQuery.setQuerydescription(queryName);
+		patientQuery.setQuerystatus("Submitted");
+		patientQuery.setQuerySubmissionTime(new Date());
+		patientQuery.setUser(user);
+		patientQueryRepository.save(patientQuery);
+		return "redirect:/patient/home";
+	}
+	
+	@GetMapping("/viewQuery")
+	public String viewQuery( Model model) {
+		User user = userService.getLoggedUser();
+		model.addAttribute("accountName", user.getFirstName());
+		List<PatientQuery> patientQueries = patientQueryRepository.findAll();
+		model.addAttribute("patientQueries",patientQueries);
+		return "patient/viewQuery";
+	}
 }

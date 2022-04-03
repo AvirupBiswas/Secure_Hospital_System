@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+   <title>Secure Hospital System</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"/>
+</head>
+<body>
+<div class="container">
+    <nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
+        <a th:href="@{/admin/home}" class="navbar-brand" href="#">Secure Hospital System</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+       <div class="collapse navbar-collapse justify-content-end" id="navbarsExampleDefault">
+	        <ul style="list-style: none; display:contents">
+		        <li class="nav-item active" style="padding-right: 20px;">
+	        		<div style="display: flex; align-items:center">
+				      	<div style="height: 10px; width: 10px; border-radius:50%; background-color: var(--success)"></div>
+				      	<em style="color:white; font-size: 15px; margin-left: 10px">logged in as <span th:text="${accountName}"></span></em>
+				    </div>
+			     </li>
+		        <li>
+		      	  <form sec:authorize="isAuthenticated()" th:action="@{/logout}" method="POST">
+		  				<button class="btn btn-outline-light" type="submit" title="Logout">Log Out</button>
+		         	</form>
+		        </li>
+	        </ul>
+    	</div>
+    </nav>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <input class="btn btn-primary" type="button" value="Go Back" onclick="history.back(-1)" />
+    <br>
+     <br>
+  			<div class="form-group">
+                <label for="patientName">Patient Name:</label>
+                <input readonly="readonly" type="text" class="form-control" id="patientName" name="patientName" th:value="|${patientQuery.user.firstName} ${patientQuery.user.firstName}|">
+            </div>
+            <div class="form-group">
+                <label for="email">Patient Email:</label>
+                <input readonly="readonly" type="text" class="form-control" id="email" name="email" th:value="${patientQuery.user.email}">
+            </div>
+             <div class="form-group">
+                <label for="querySubmissionTime">Query Submission TimeStamp:</label>
+                <input readonly="readonly" type="text" class="form-control" id="querySubmissionTime" name="querySubmissionTime" th:value="${patientQuery.querySubmissionTime}">
+            </div>
+            <div class="form-group">
+                <label for="querydescription">Query Description:</label>
+                <input readonly="readonly" type="text" class="form-control" id="querydescription" name="querydescription" th:value="${patientQuery.querydescription}">
+            </div>
+    <form th:action="@{|/admin/takeaction/${queryId}|}" method="post">
+        <fieldset class="form-group">
+            <div class="form-group">
+                <label for="queryresolution">Query Resolution:</label>
+                <input  type="text" class="form-control" id="queryresolution" name="queryresolution">
+            </div>
+            <br>
+            <button type="submit" class="btn btn-primary">Submit Resolution</button>
+        </fieldset>
+    </form>
+
+    </div>
+</body>
+</html>
