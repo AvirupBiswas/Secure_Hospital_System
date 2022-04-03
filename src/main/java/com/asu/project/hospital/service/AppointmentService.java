@@ -34,6 +34,13 @@ public class AppointmentService {
 	        app.setDescription(appointment.getDescription());
 	        app.setUser(user);
 	        app.setStatus("Pending");
+	        if(appointment.getDoctorEmail()!=null) {
+	        	app.setDoctorEmail(appointment.getDoctorEmail());
+	        	app.setType("Special Appointment");
+	        }
+	        else {
+	         app.setType("General Appointment");
+	        }
 
 	        System.out.println("SELECTED TIME: " + selectedTime + " AND SELECTED DATE: " + selectedDate);
 
