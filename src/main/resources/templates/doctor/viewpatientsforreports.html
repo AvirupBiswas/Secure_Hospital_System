@@ -82,21 +82,23 @@
     <div class="starter-template">
         <h1>Patients</h1>
         <br>
-
-
         <table class="table table-striped table-bordered">
-            <tr>
+          <tr>
                 <th scope="col">Email ID</th>
                 <th scope="col">First Name</th>
                 <th scope="col">Last Name</th>
-                <th scope="col">Lab Reports</th>	
+                <th scope="col">Appointment Start</th>
+                <th scope="col">Appointment End</th>
+                <th scope="col"></th>
             </tr>
-            <tr th:each = "employee: ${patient}">
-                <td th:text="${employee.getEmail()}"></td>
-                <td th:text="${employee.getFirstName()}"></td>
-                <td th:text="${employee.getLastName()}"></td>
+            <tr th:each = "appointment: ${appointments}">
+                <td th:text="${appointment.getUser().getEmail()}"></td>
+                <td th:text="${appointment.getUser().getFirstName()}"></td>
+                <td th:text="${appointment.getUser().getLastName()}"></td>
+                <td th:text="${appointment.getStartTime()}"></td>
+                <td th:text="${appointment.getEndTime()}"></td>
                 <form action="#" th:action="@{/doctor/viewlabreports/}" method="get">
-                    <input type="hidden" name="userId" id="userId" th:value="${employee.getUserId()}" />
+                    <input type="hidden" name="userId" id="userId" th:value="${appointment.getUser().getUserId()}" />
                     <td><button class="btn btn-primary" data-toggle="tooltip" title="Lab Reports" data-placement="top" value="modify" name="action">Lab Reports</button></td>
                 </form>
             </tr>

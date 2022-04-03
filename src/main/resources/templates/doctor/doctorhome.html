@@ -5,49 +5,20 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"/>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-
-    <style>
-   .lds-dual-ring.hidden {
-        display: none;
-    }
-
-    .overlay {
-        position: fixed;
-        top:  50%;
-    	left: 50%;
-    	transform: translate(-50%,-50%);
-        text-align: center;
-    }
-    
-    /*Spinner Styles*/
-    .lds-dual-ring {
-        display: inline-block;
-        width: 80px;
-        height: 80px;
-    }
-    .lds-dual-ring:after {
-        content: " ";
-        display: block;
-        width: 64px;
-        height: 64px;
-        border-radius: 50%;
-        border: 6px solid #000000;
-        border-color: #000000 transparent #000000 transparent;
-        animation: lds-dual-ring 1.2s linear infinite;
-        text-align: center;
-    }
-    @keyframes lds-dual-ring {
-        0% {
-            transform: rotate(0deg);
-        }
-        100% {
-            transform: rotate(360deg);
-        }
-    }
-    </style>
 </head>
+<style>
+
+ul.nav-tabs li.nav-item a.nav-link:active,.nav-item a.nav-link:hover {
+color:red;
+background-color:yellow;
+border: 1px solid brown;
+border-bottom: 4px solid brown;
+font-weight: 600;
+}
+</style>
 <body>
 <div class="container">
     <nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
@@ -87,10 +58,17 @@
         <br>
     </div>
     <br>
-  	<div id="loader" class="lds-dual-ring hidden overlay">
-  	
-    </div>
-    
+    <ul class="nav-tabs nav">
+			<li class="nav-item">
+				<a href="#general" id="generalAppointment" class="nav-link active" data-toggle="tab">General Appointments</a>
+			</li>
+			<li class="nav-item">
+				<a href="#special" id="specialAppointment" class="nav-link" data-toggle="tab">Special Appointment</a>
+			</li>
+	</ul>
+<div class="tab-content">
+<div class="tab-pane fade show active" id="general">
+<br>
     <div class="card-deck">
 <div class="card text-center">
   <div class="card-body">
@@ -127,6 +105,49 @@
     <br><br><br>
     <a th:href="@{/doctor/viewpatientsforreports}" class="btn btn-dark">View Patient Lab Reports</a>
   </div>
+</div>
+</div>
+</div>
+<div class="tab-pane" id="special">
+<br>
+    <div class="card-deck">
+<div class="card text-center">
+  <div class="card-body">
+    <h5 class="card-title">Create/Update Diagnosis for Special Appointment Patient</h5>
+    <hr>
+   <i class="fa fa-file-o" aria-hidden="true" style="font-size:8rem;"></i>
+   <br><br><br>
+    <a th:href="@{/doctor/viewSpecialApptPatients}" class="btn btn-dark">Create/Update Diagnosis</a>
+  </div>
+</div>
+<div class="card text-center">
+  <div class="card-body">
+    <h5 class="card-title">Edit/Delete diagnosis  for Special Appointment Patient</h5>
+    <hr>
+    <i class="fa fa-address-card-o"  aria-hidden="true" style="font-size:8rem;"></i>
+    <br><br><br>
+    <a th:href="@{/doctor/viewSpApptPatientsdiagnosis}" class="btn btn-dark">Edit/Delete diagnosis</a>
+  </div>
+</div>
+<div class="card text-center">
+  <div class="card-body">
+    <h5 class="card-title">View/Update Patient Records for Special Appointment Patient</h5>
+    <hr>
+    <i class="fa fa-address-card-o"  aria-hidden="true" style="font-size:8rem;"></i>
+    <br><br><br>
+    <a th:href="@{/doctor/viewsplApptPatientsrecords}" class="btn btn-dark">View/Update Patient Records</a>
+  </div>
+</div>
+<div class="card text-center">
+  <div class="card-body">
+    <h5 class="card-title">View Patient Lab Reports  for Special Appointment Patient</h5>
+    <hr>
+    <i class="fa fa-history" aria-hidden="true" style="font-size:8rem;"></i>
+    <br><br><br>
+    <a th:href="@{/doctor/viewsplApptPatientsforreports}" class="btn btn-dark">View Patient Lab Reports</a>
+  </div>
+</div>
+</div>
 </div>
 </div>
 <br>

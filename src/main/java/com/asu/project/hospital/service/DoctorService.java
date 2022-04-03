@@ -23,79 +23,107 @@ import com.asu.project.hospital.repository.UserRepository;
 
 @Service
 public class DoctorService {
-	
+
 	@Autowired
 	DoctorRepository doctorRepository;
-	
+
 	@Autowired
 	PatientRepository patientRepository;
-	
+
 	@Autowired
 	UserRepository userRepository;
-	
+
 	@Autowired
 	UserService userService;
-	
+
 	@Autowired
 	DiagnosisRepository diagnosisRepository;
-	
+
 	@Autowired
 	AppointmentRepository appointmentRepository;
-	
+
 	@Autowired
 	SystemLogRepository systemLogRepository;
-	
+
 	@Autowired
 	LabTestRepository labTestRepository;
-	
+
 	public void updateDoctorInfo(Doctor doctor) {
-		User user= userService.getLoggedUser();
+		User user = userService.getLoggedUser();
 		doctor.setUser(user);
 		doctorRepository.save(doctor);
 	}
-	
+
 	public Diagnosis createDiagnosis(Diagnosis diagnosis) {
-		SystemLog systemLog=new SystemLog();
-		systemLog.setMessage("Diagnosis created for "+diagnosis.getUser().getFirstName()+" "+diagnosis.getUser().getLastName()
-				+ "by "+diagnosis.getDoctorName());
+		SystemLog systemLog = new SystemLog();
+		systemLog.setMessage("Diagnosis created for " + diagnosis.getUser().getFirstName() + " "
+				+ diagnosis.getUser().getLastName() + "by " + diagnosis.getDoctorName());
 		systemLog.setTimestamp(new Date());
 		systemLogRepository.save(systemLog);
 		return diagnosisRepository.save(diagnosis);
 	}
-	
+
 	public void deleteDiagnosis(Diagnosis diagnosis) {
-		System.out.println("Delete diagnosis service"+diagnosis.getDiagnosisID());
+		System.out.println("Delete diagnosis service" + diagnosis.getDiagnosisID());
 		diagnosisRepository.deleteById(diagnosis.getDiagnosisID());
 	}
-	
-	public List<User> getAllPatients(){
-		List <User> patients = userRepository.findAll().stream().filter(e->e.getRole().equals("PATIENT")).collect(Collectors.toList());
-		List<Appointment>  allAppointments = appointmentRepository.findAll();
-		List<Appointment>  appointments = allAppointments.stream().filter(a->a.getStatus().equals("Approved")).collect(Collectors.toList());
-		List<User> patientwithAppointmentList = appointments.stream().map(e->e.getUser()).collect(Collectors.toList());
-		List <User> patientwithAppointment = patients.stream().filter(e->patientwithAppointmentList.contains(e)).collect(Collectors.toList());
+
+	public List<Appointment> getAllPatients() {
+		/*
+		 * List <User> patients =
+		 * userRepository.findAll().stream().filter(e->e.getRole().equals("PATIENT")).
+		 * collect(Collectors.toList()); List<Appointment> allAppointments =
+		 * appointmentRepository.findAll(); List<Appointment> appointments =
+		 * allAppointments.stream().filter(a->a.getDoctorEmail()==null &&
+		 * a.getStatus().equals("Approved")).collect(Collectors.toList()); List<User>
+		 * patientwithAppointmentList =
+		 * appointments.stream().map(e->e.getUser()).collect(Collectors.toList()); List
+		 * <User> patientwithAppointment =
+		 * patients.stream().filter(e->patientwithAppointmentList.contains(e)).collect(
+		 * Collectors.toList());
+		 */
+
+		List<Appointment> allAppointments = appointmentRepository.findAll();
+		List<Appointment> patientwithAppointment = allAppointments.stream()
+				.filter(a -> a.getDoctorEmail() == null && a.getStatus().equals("Approved"))
+				.collect(Collectors.toList());
+
 		return patientwithAppointment;
 	}
-	
-	public List<Diagnosis> getAllDiagnosis(User user){
+
+	public List<Appointment> getAllSpecialAppointment(String doctorEmail) {
+		/*
+		 * List <User> patients =
+		 * userRepository.findAll().stream().filter(e->e.getRole().equals("PATIENT")).
+		 * collect(Collectors.toList()); List<User> patientwithAppointmentList =
+		 * appointments.stream().map(e->e.getUser()).collect(Collectors.toList()); List
+		 * <User> patientwithAppointment =
+		 * patients.stream().filter(e->patientwithAppointmentList.contains(e)).collect(
+		 * Collectors.toList());
+		 */
+
+		List<Appointment> allAppointments = appointmentRepository.findAll();
+		List<Appointment> patientwithAppointment = allAppointments.stream()
+				.filter(a -> (a.getDoctorEmail() != null && a.getDoctorEmail().equals(doctorEmail))
+						&& a.getStatus().equals("Approved"))
+				.collect(Collectors.toList());
+
+		return patientwithAppointment;
+	}
+
+	public List<Diagnosis> getAllDiagnosis(User user) {
 		return diagnosisRepository.findByUser(user);
 	}
-	
+
 	public Diagnosis findByDiagnosis(int diagnosisId) {
 		return diagnosisRepository.findByDiagnosisID(diagnosisId);
 	}
-	
-	public List<User> getAllPatientsforLabReports(){
-		List <User> users = userRepository.findAll().stream().filter(e->e.getRole().equals("PATIENT")).collect(Collectors.toList());
-		return users;
-	}
-	
-	public List<LabTest> viewLabTests(User user){
-		List<LabTest> labTests=labTestRepository.findByUser(user)
-				.stream().filter(e->e.getStatus().equals("Reported"))
-				.collect(Collectors.toList());
+
+	public List<LabTest> viewLabTests(User user) {
+		List<LabTest> labTests = labTestRepository.findByUser(user).stream()
+				.filter(e -> e.getStatus().equals("Reported")).collect(Collectors.toList());
 		return labTests;
-		
+
 	}
 
 }
