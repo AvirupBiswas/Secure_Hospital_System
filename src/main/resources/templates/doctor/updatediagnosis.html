@@ -66,11 +66,18 @@
             </div>
             <div class="form-group">
                 <label for="LabTestsNeeded">Is Lab Test needed?</label><br>
-                <input type="radio" id="Yes" name="labtestsneeeded" value="Yes">
+                <div th:if="${diagnosis.getLabTestNeeded()=='Yes'}">
+                 <input type="radio" id="Yes" name="labtestsneeeded" value="Yes" checked>
                 <label for="Yes">Yes</label><br>
                 <input type="radio" id="No" name="labtestsneeeded" value="No">
                 <label for="No">No</label><br>
-                <span class="text-danger"></span>
+                </div>
+                <div th:unless="${diagnosis.getLabTestNeeded()=='Yes'}">
+                 <input type="radio" id="Yes" name="labtestsneeeded" value="Yes">
+                <label for="Yes">Yes</label><br>
+                <input type="radio" id="No" name="labtestsneeeded" value="No" checked>
+                <label for="No">No</label><br>
+                </div>
             </div>
             <div class="form-group">
                 <label for="LabTests">If yes, please select the name of the Lab Test</label>
