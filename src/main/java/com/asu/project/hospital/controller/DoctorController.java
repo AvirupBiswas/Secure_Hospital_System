@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.asu.project.hospital.entity.Appointment;
 import com.asu.project.hospital.entity.Diagnosis;
 import com.asu.project.hospital.entity.Doctor;
 import com.asu.project.hospital.entity.LabTest;
@@ -132,17 +133,35 @@ public class DoctorController {
 	public String viewPatients(Model model) {
 		User user = userService.getLoggedUser();
 		model.addAttribute("accountName", user.getFirstName());
-		List<User> allPatients=doctorService.getAllPatients();
-		model.addAttribute("patient",allPatients);
+		List<Appointment> allPatients=doctorService.getAllPatients();
+		model.addAttribute("appointments",allPatients);
+		return "doctor/viewpatients";
+	}
+	
+	@GetMapping("/viewSpecialApptPatients")
+	public String viewSpecialApptPatients(Model model) {
+		User user = userService.getLoggedUser();
+		model.addAttribute("accountName", user.getFirstName());
+		List<Appointment> allPatients=doctorService.getAllSpecialAppointment(user.getEmail());
+		model.addAttribute("appointments",allPatients);
 		return "doctor/viewpatients";
 	}
 	
 	@RequestMapping("/viewpatientsdiagnosis")
 	public String viewPatientsDiagnosis(Model model) {
-		List<User> allPatients=doctorService.getAllPatients();
-		model.addAttribute("patient",allPatients);
+		List<Appointment> allPatients=doctorService.getAllPatients();
+		model.addAttribute("appointments",allPatients);
 		User user = userService.getLoggedUser();
 		model.addAttribute("accountName", user.getFirstName());
+		return "doctor/viewpatientsdiagnosis";
+	}
+	
+	@RequestMapping("/viewSpApptPatientsdiagnosis")
+	public String viewSpApptPatientsdiagnosis(Model model) {
+		User user = userService.getLoggedUser();
+		model.addAttribute("accountName", user.getFirstName());
+		List<Appointment> allPatients=doctorService.getAllSpecialAppointment(user.getEmail());
+		model.addAttribute("appointments",allPatients);
 		return "doctor/viewpatientsdiagnosis";
 	}
 	
@@ -160,8 +179,16 @@ public class DoctorController {
 	public String viewPatientsRecords(Model model) {
 		User user = userService.getLoggedUser();
 		model.addAttribute("accountName", user.getFirstName());
-		List<User> allPatients=doctorService.getAllPatients();
-		model.addAttribute("patient",allPatients);
+		List<Appointment> allPatients=doctorService.getAllPatients();
+		model.addAttribute("appointments",allPatients);
+		return "doctor/viewpatientsrecords";
+	}
+	@GetMapping("/viewsplApptPatientsrecords")
+	public String viewsplApptPatientsrecords(Model model) {
+		User user = userService.getLoggedUser();
+		model.addAttribute("accountName", user.getFirstName());
+		List<Appointment> allPatients=doctorService.getAllSpecialAppointment(user.getEmail());
+		model.addAttribute("appointments",allPatients);
 		return "doctor/viewpatientsrecords";
 	}
 	
@@ -244,8 +271,17 @@ public class DoctorController {
 	public String viewPatientsforReports(Model model) {
 		User account = userService.getLoggedUser();
 		model.addAttribute("accountName", account.getFirstName());
-		List<User> allPatients=doctorService.getAllPatientsforLabReports();
-		model.addAttribute("patient",allPatients);
+		List<Appointment> allPatients=doctorService.getAllPatients();
+		model.addAttribute("appointments",allPatients);
+		return "doctor/viewpatientsforreports";
+	}
+	
+	@GetMapping("/viewsplApptPatientsforreports")
+	public String viewsplApptPatientsforreports(Model model) {
+		User account = userService.getLoggedUser();
+		model.addAttribute("accountName", account.getFirstName());
+		List<Appointment> allPatients=doctorService.getAllSpecialAppointment(account.getEmail());
+		model.addAttribute("appointments",allPatients);
 		return "doctor/viewpatientsforreports";
 	}
 	

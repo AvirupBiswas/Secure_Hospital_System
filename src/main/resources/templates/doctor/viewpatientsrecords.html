@@ -87,20 +87,23 @@
     <div class="starter-template">
         <h1>List of all Patients</h1>
 		<br><br>
-
-        <table class="table table-striped table-bordered">
-            <tr>
+		 <table class="table table-striped table-bordered">
+        <tr>
                 <th scope="col">Email ID</th>
                 <th scope="col">First Name</th>
                 <th scope="col">Last Name</th>
+                <th scope="col">Appointment Start</th>
+                <th scope="col">Appointment End</th>
                 <th scope="col"></th>
             </tr>
-            <tr th:each = "employee: ${patient}">
-                <td th:text="${employee.getEmail()}"></td>
-                <td th:text="${employee.getFirstName()}"></td>
-                <td th:text="${employee.getLastName()}"></td>
+            <tr th:each = "appointment: ${appointments}">
+                <td th:text="${appointment.getUser().getEmail()}"></td>
+                <td th:text="${appointment.getUser().getFirstName()}"></td>
+                <td th:text="${appointment.getUser().getLastName()}"></td>
+                <td th:text="${appointment.getStartTime()}"></td>
+                <td th:text="${appointment.getEndTime()}"></td>
                 <form action="#" th:action="@{/doctor/updatepatientinfo}" method="post">
-                    <input type="hidden" name="userId" id="userId" th:value="${employee.getUserId()}" />
+                    <input type="hidden" name="userId" id="userId" th:value="${appointment.getUser().getUserId()}" />
                     <td><button data-toggle="tooltip" title="View/Update Patient" data-placement="top" class="btn pill-btn" value="modify" name="action"><i value="modify" name="action" class="fa fa-pencil-square-o" aria-hidden="true" style="font-size:24px;color:brown;"></i></button></td>
                 </form>
             </tr>
