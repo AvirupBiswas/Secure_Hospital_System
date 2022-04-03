@@ -62,6 +62,26 @@
         	$("#loader").removeClass('hidden');
         }
         
+        function denyAsNoInsurance(id) {
+            $.ajax({
+               url : "[(@{'/insurancestaff/denyclaimAsNoinsuurance/'})]"+id,
+               type : "GET",
+               beforeSend: function () {
+       	    	$("#loader").removeClass('hidden');
+       	        },
+       	    complete: function () {
+       	        $("#loader").addClass('hidden');
+       	        },
+               success : function(data) {
+               	 $('#' + id).remove();
+               },
+               error : function() {
+                   console.log("There was an error");
+               }
+           });
+       	$("#loader").removeClass('hidden');
+       }
+        
         function formatDate()
         {
          date = new Date()
@@ -174,13 +194,19 @@
                 <td>[[${claim.user.email}]]</td>
 	            <td>[[${claim.amount}]]</td>
 	            <td>[[${claim.purpose}]]</td>
-	            <td>[[${claim.insuranceDetails.insuranceId}]]</td>
-	            <td>[[${claim.insuranceDetails.insuranceName}]]</td>
-	            <td>[[${claim.insuranceDetails.provider}]]</td>
-	            <td><button class="btn btn-success" 
+	            <td th:if="${claim.insuranceDetails!=null}">[[${claim.insuranceDetails.insuranceId}]]</td>
+	            <td th:if="${claim.insuranceDetails==null}"></td>
+	            <td th:if="${claim.insuranceDetails!=null}">[[${claim.insuranceDetails.insuranceName}]]</td>
+	            <td th:if="${claim.insuranceDetails==null}"></td>
+	            <td th:if="${claim.insuranceDetails!=null}">[[${claim.insuranceDetails.provider}]]</td>
+	            <td th:if="${claim.insuranceDetails==null}"></td>
+	            <td th:if="${claim.insuranceDetails!=null}"><button class="btn btn-success" 
 	                 th:onclick="approve([[${claim.claimId}]],[[${#strings.toString(claim.user.firstName)}]],[[${#strings.toString(claim.user.lastName)}]],[[${claim.amount}]],[[${claim.insuranceDetails.insuranceId}]],[[${#strings.toString(claim.purpose)}]]);">Approve</button></td>
-                <td><button class="btn btn-danger" 
+                 <td th:if="${claim.insuranceDetails==null}">No Insurance for this Patient</td>
+                <td th:if="${claim.insuranceDetails!=null}"><button class="btn btn-danger" 
                 	th:onclick="'deny(\''+${claim.claimId}+ '\');'">Deny</button></td>
+                <td th:if="${claim.insuranceDetails==null}"><button class="btn btn-danger" 
+                	th:onclick="'denyAsNoInsurance(\''+${claim.claimId}+ '\');'">Deny</button></td>
 	        </tr>
 	    </tbody>
 	</table>
