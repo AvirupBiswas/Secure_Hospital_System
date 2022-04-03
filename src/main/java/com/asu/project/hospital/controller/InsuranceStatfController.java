@@ -153,7 +153,7 @@ public class InsuranceStatfController {
 	}
 	
 	@GetMapping("/approveclaim/{claimId}")
-	public String approveLabTest(@PathVariable("claimId") String claimId, Model model) {
+	public String approveClaim(@PathVariable("claimId") String claimId, Model model) {
 		User user = insuranceStaffService.updateClaimStatus("Approved", Long.parseLong(claimId));
 		emailService.sendInsuranceClaimApprovalMail(user.getEmail(), user.getFirstName(), user.getLastName(),
 				claimId);
@@ -166,13 +166,30 @@ public class InsuranceStatfController {
 	}
 
 	@GetMapping("/denyclaim/{claimId}")
-	public String denyLabTest(@PathVariable("claimId") String claimId, Model model) {
+	public String denyClaim(@PathVariable("claimId") String claimId, Model model) {
 		User user = insuranceStaffService.updateClaimStatus("Denied", Long.parseLong(claimId));
 		InsuranceClaims claim=insuranceClaimsRepository.getById(Long.parseLong(claimId));
 		PatientPayment patientPayment=claim.getPatientPayment();
 		patientPayment.setStatus("Pending");
 		patientPaymentRepository.save(patientPayment);
 		emailService.sendInsuranceClaimDenyMail(user.getEmail(), user.getFirstName(), user.getLastName(),
+				claimId);
+		SystemLog systemLog = new SystemLog();
+		systemLog.setMessage(user.getEmail() + " claim " + claimId
+				+ " denied by  insuranceStaff " + userService.getLoggedUser().getEmail());
+		systemLog.setTimestamp(new Date());
+		systemLogRepository.save(systemLog);
+		return "insurancestaff/viewClaim";
+	}
+	
+	@GetMapping("/denyclaimAsNoinsuurance/{claimId}")
+	public String denyclaimAsNoinsurance(@PathVariable("claimId") String claimId, Model model) {
+		User user = insuranceStaffService.updateClaimStatus("Denied", Long.parseLong(claimId));
+		InsuranceClaims claim=insuranceClaimsRepository.getById(Long.parseLong(claimId));
+		PatientPayment patientPayment=claim.getPatientPayment();
+		patientPayment.setStatus("Pending");
+		patientPaymentRepository.save(patientPayment);
+		emailService.sendClaimAsNoInsuranceDenyMail(user.getEmail(), user.getFirstName(), user.getLastName(),
 				claimId);
 		SystemLog systemLog = new SystemLog();
 		systemLog.setMessage(user.getEmail() + " claim " + claimId

@@ -114,7 +114,14 @@ public class MailService {
 		sendEmail(email, "Insurance Claim request for claim id " + calimId + " has been denied!", "<html><body>" + "Sorry "+firstName+" "+lastName+ ".Your claim id "+ calimId +" has been denied by Insurance staff." + "</body></html>", false, true);
 	
 	}
-
+	
+	@Async
+	public void sendClaimAsNoInsuranceDenyMail(String email,String firstName,String lastName, String calimId) {
+		sendEmail(email, "Insurance Claim request for claim id " + calimId + " has been denied!", "<html><body>" + "Sorry "+firstName+" "+lastName+ ".Your claim id "+ calimId +" has been denied by Insurance Staff as there is no insurance id present in the claim." + "</body></html>", false, true);
+	
+	}
+	
+	@Async
 	public void sendInsuranceClaimAmountDisburseMail(String email, String firstName, String lastName, String claimId,
 			BigDecimal amount) {
 		sendEmail(email, "Insurance Claim amount "+amount+ " for claim id " + claimId + " has been disbursed!", "<html><body>" + "Congraluation "+firstName+" "+lastName+ ".Your claim amount "+ amount + "corresponding to claim id "+claimId+" has been disbursed by Insurance staff." + "</body></html>", false, true);
