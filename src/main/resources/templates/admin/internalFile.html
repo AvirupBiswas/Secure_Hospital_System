@@ -130,8 +130,6 @@ font-weight: 600;
             	<th scope="col">Patient Name</th>
             	<th scope="col">Patient Email</th>
                 <th scope="col">Lab Test Recommended By Doctor</th>
-                <th scope="col">Lab Test Reported</th>
-                <th scope="col">Test Description</th>
                 <th scope="col">Referred By Doctor</th>
                 <th scope="col">Patient Diagnosis Report</th>
             </tr>
@@ -143,8 +141,6 @@ font-weight: 600;
              	<td>[[${report.firstName}]] [[${report.lastName}]]</td>
              	<td>[[${report.email}]]</td>
 	            <td>[[${report.testNameRecommendedByDoctor}]]</td>
-	            <td>[[${report.testNameReported}]]</td>
-	            <td>[[${report.description}]]</td>
 	            <td>[[${report.doctorName}]]</td>
 	            <td><a th:unless=${report.diagnosisID==null} th:href="@{|/viewPDF/patient/diagnosisreport/${report.diagnosisID}|}" target="_blank"><i class="fa fa-file-pdf-o" style="font-size:24px;color:red;"></i></a></td>
 	            <td><button th:onclick="'deleteDiagReport(\''+${report.diagnosisID}+ '\');'" data-toggle="tooltip" title="Delete Diagnosis Report" data-placement="top" class="btn pill-btn" value="delete" name="action"><i class="fa fa-trash-o" aria-hidden="true" style="font-size:24px;color:red;"></i></button></td>

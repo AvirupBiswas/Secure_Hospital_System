@@ -477,7 +477,9 @@ public class AdminController {
 					obj.setEndTime(d.getAppointment().getEndTime());
 					labreportList.add(obj);
 				}
-			} else {
+			} 
+		}
+		for (Diagnosis d : diagnosisList) {
 				ViewDiagNosticAndLabTestReport obj = new ViewDiagNosticAndLabTestReport();
 				obj.setFirstName(d.getUser().getFirstName());
 				obj.setLastName(d.getUser().getLastName());
@@ -488,7 +490,6 @@ public class AdminController {
 				obj.setStartTime(d.getAppointment().getStartTime());
 				obj.setEndTime(d.getAppointment().getEndTime());
 				diagreportList.add(obj);
-			}
 		}
 		model.addAttribute("allPatientWithLabReport", labreportList);
 		model.addAttribute("allPatientWithDiagReport", diagreportList);
@@ -532,7 +533,7 @@ public class AdminController {
 		labStaffService.deleteLabTestReport(Integer.parseInt(labTestReportId));
 		User user = userService.getLoggedUser();
 		model.addAttribute("accountName", user.getFirstName());
-		return "admin/getInternalPatientFiles";
+		return "redirect:/admin/getInternalPatientFiles";
 	}
 	
 	@GetMapping("/DeleteDiagnosisReport/{diagnosisId}")
@@ -541,7 +542,7 @@ public class AdminController {
 		model.addAttribute("accountName", user.getFirstName());
 		Diagnosis diagnosis = doctorService.findByDiagnosis(Integer.parseInt(diagnosisId));
 		doctorService.deleteDiagnosis(diagnosis);
-		return "admin/getInternalPatientFiles";
+		return "redirect:/admin/getInternalPatientFiles";
 	}
 
 }
