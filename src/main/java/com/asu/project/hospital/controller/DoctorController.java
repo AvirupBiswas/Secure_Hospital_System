@@ -136,10 +136,8 @@ public class DoctorController {
 		Diagnosis diagnosisSaved = doctorService.createDiagnosis(diagnosis);
 		
 		BlockChainDiagnosisObject blcObj = new BlockChainDiagnosisObject();
-		DateTimeFormatter dtf = DateTimeFormatter.ofPattern("MM/dd/yyyy 'at' hh:mm a z");
-		ZonedDateTime zdt = ZonedDateTime.now();
-		blcObj.setDate(dtf.format(zdt));
-		blcObj.setId("diagnosisid: " + diagnosisSaved.getDiagnosisID()+"at"+ dtf.format(zdt));
+		blcObj.setDate(new Date());
+		blcObj.setId("diagnosisid: " + diagnosisSaved.getDiagnosisID()+" at "+ blcObj.getDate());
 		blcObj.setPatient_name(diagnosisSaved.getUser().getFirstName() + " " + diagnosisSaved.getUser().getLastName());
 		blcObj.setContent(
 				"Diagnosis added by " + diagnosisSaved.getDoctorName() + ", problem: " + diagnosisSaved.getProblem());
@@ -255,10 +253,8 @@ public class DoctorController {
 		updatedDiagnosis.setLabTestNeeded(diagnosis.getLabTestNeeded());
 		updatedDiagnosis.setSymptoms(diagnosis.getSymptoms());
 		BlockChainDiagnosisObject blcObj = new BlockChainDiagnosisObject();
-		DateTimeFormatter dtf = DateTimeFormatter.ofPattern("MM/dd/yyyy 'at' hh:mm a z");
-		ZonedDateTime zdt = ZonedDateTime.now();
-		blcObj.setDate(dtf.format(zdt));
-		blcObj.setId("diagnosisid: " + updatedDiagnosis.getDiagnosisID()+"at"+ dtf.format(zdt));
+		blcObj.setDate(new Date());
+		blcObj.setId("diagnosisid: " + updatedDiagnosis.getDiagnosisID()+" at "+ blcObj.getDate());
 		blcObj.setPatient_name(updatedDiagnosis.getUser().getFirstName() + " " + updatedDiagnosis.getUser().getLastName());
 		blcObj.setContent(
 				"Diagnosis added by " + updatedDiagnosis.getDoctorName() + ", problem: " + updatedDiagnosis.getProblem());
