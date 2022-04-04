@@ -319,7 +319,6 @@ public class HospitalStaffController {
 		User patientUser = userService.findByUserId(userId);
 		List<LabTest> labTests=hospitalStaffService.viewLabTests(patientUser);
 		model.addAttribute("labTests", labTests);
-		
 		User user = userService.getLoggedUser();
 		model.addAttribute("accountName", user.getFirstName());
 		SystemLog systemLog = new SystemLog();
