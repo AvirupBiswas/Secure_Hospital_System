@@ -69,17 +69,16 @@ public class DoctorService {
 	}
 
 	public void deleteDiagnosis(Diagnosis diagnosis) {
-		LabTest labTest=labTestRepository.findByDiagnosis(diagnosis);
-		if(labTest!=null) {
-			LabTestReport report=reportRepository.findByLabTest(labTest);
+		List<LabTest> labTests=labTestRepository.findByDiagnosis(diagnosis);
+		if(labTests!=null) {
+			for(LabTest labtest:labTests) {
+			LabTestReport report=reportRepository.findByLabTest(labtest);
 			if(report!=null) {
 				reportRepository.delete(report);
-				System.out.println("report deleted");
 			}
-			labTestRepository.delete(labTest);
-			System.out.println("labtest deleted");
+			labTestRepository.delete(labtest);
+			}
 		}
-		System.out.println("Delete diagnosis service" + diagnosis.getDiagnosisID());
 		diagnosisRepository.delete(diagnosis);
 	}
 
