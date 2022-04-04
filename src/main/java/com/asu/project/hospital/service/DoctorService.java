@@ -11,11 +11,13 @@ import com.asu.project.hospital.entity.Appointment;
 import com.asu.project.hospital.entity.Diagnosis;
 import com.asu.project.hospital.entity.Doctor;
 import com.asu.project.hospital.entity.LabTest;
+import com.asu.project.hospital.entity.LabTestReport;
 import com.asu.project.hospital.entity.SystemLog;
 import com.asu.project.hospital.entity.User;
 import com.asu.project.hospital.repository.AppointmentRepository;
 import com.asu.project.hospital.repository.DiagnosisRepository;
 import com.asu.project.hospital.repository.DoctorRepository;
+import com.asu.project.hospital.repository.LabTestReportRepository;
 import com.asu.project.hospital.repository.LabTestRepository;
 import com.asu.project.hospital.repository.PatientRepository;
 import com.asu.project.hospital.repository.SystemLogRepository;
@@ -47,6 +49,9 @@ public class DoctorService {
 
 	@Autowired
 	LabTestRepository labTestRepository;
+	
+	@Autowired
+	LabTestReportRepository reportRepository;
 
 	public void updateDoctorInfo(Doctor doctor) {
 		User user = userService.getLoggedUser();
@@ -64,8 +69,18 @@ public class DoctorService {
 	}
 
 	public void deleteDiagnosis(Diagnosis diagnosis) {
+		LabTest labTest=labTestRepository.findByDiagnosis(diagnosis);
+		if(labTest!=null) {
+			LabTestReport report=reportRepository.findByLabTest(labTest);
+			if(report!=null) {
+				reportRepository.delete(report);
+				System.out.println("report deleted");
+			}
+			labTestRepository.delete(labTest);
+			System.out.println("labtest deleted");
+		}
 		System.out.println("Delete diagnosis service" + diagnosis.getDiagnosisID());
-		diagnosisRepository.deleteById(diagnosis.getDiagnosisID());
+		diagnosisRepository.delete(diagnosis);
 	}
 
 	public List<Appointment> getAllPatients() {

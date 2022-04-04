@@ -213,7 +213,7 @@ public class DoctorController {
 	@GetMapping("/deletediagnosis")
 	public String deleteDiagnosis(@RequestParam("diagnosisId") int diagnosisId, Model model) {
 		Diagnosis diagnosis = doctorService.findByDiagnosis(diagnosisId);
-		System.out.println("Delete diagnosis" + diagnosisId);
+		// System.out.println("Delete diagnosis" + diagnosisId);
 		doctorService.deleteDiagnosis(diagnosis);
 		return "doctor/doctorhome";
 	}
