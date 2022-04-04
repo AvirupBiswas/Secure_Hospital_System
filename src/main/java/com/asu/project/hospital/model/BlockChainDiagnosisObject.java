@@ -11,9 +11,9 @@ public class BlockChainDiagnosisObject {
 	
 	String content;
 	
-	String date;
+	Date date;
 
-	public BlockChainDiagnosisObject(String id, String patient_name, String content, String date) {
+	public BlockChainDiagnosisObject(String id, String patient_name, String content, Date date) {
 		this.id = id;
 		this.patient_name = patient_name;
 		this.content = content;
@@ -49,11 +49,11 @@ public class BlockChainDiagnosisObject {
 		this.content = content;
 	}
 
-	public String getDate() {
+	public Date getDate() {
 		return date;
 	}
 
-	public void setDate(String date) {
+	public void setDate(Date date) {
 		this.date = date;
 	}
 	
