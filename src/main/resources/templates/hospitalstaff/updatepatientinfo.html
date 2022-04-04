@@ -19,7 +19,7 @@
 </head>
 <body>
 <div class="container">
-    <nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
+   <nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
         <a th:href="@{/hospitalstaff/home}" class="navbar-brand" href="#">Secure Hospital System</a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
@@ -44,6 +44,7 @@
     <br>
     <br>
     <br>
+    <br>
     <div th:if="${patientdetails}">
   	<div class="content-section col-md-8" id="patientdetailsfromdb">
 	<br>
@@ -53,10 +54,13 @@
       <div>
     <form action="#" th:action="@{/hospitalstaff/editpatientinformation}" id="patientdetails" method="POST" accept-charset="UTF-8" class="content-section col-md-8">
 	    <div class="form-group">
+	        <input type="hidden" readonly="readonly" class="form-control" id="userId" placeholder="Enter Patient userID" name="userId" th:value="${user.userId}">
+      </div>
+      <div class="form-group">
 	      <label>
-	        User ID
+	        User Name
 	        </label>
-	        <input type="text" readonly="readonly" class="form-control" id="userId" placeholder="Enter Patient userID" name="userId" th:value="${user.userId}">
+	        <input type="text" readonly="readonly" class="form-control" id="userName" placeholder="Enter Patient userName" name="userName" th:value="${user.firstName}">
       </div>
 	<div class="form-group">
 		<label>
@@ -111,10 +115,13 @@
 	<h2>Enter Patient Information</h2>
 	<br>
 	 <div class="form-group">
+	        <input type="hidden" readonly="readonly" class="form-control" id="userId" placeholder="Enter Patient userID" name="userId" th:value="${user.userId}">
+      </div>
+       <div class="form-group">
 	      <label>
-	        User ID
+	        User Name
 	        </label>
-	        <input type="text" readonly="readonly" class="form-control" id="userId" placeholder="Enter Patient userID" name="userId" th:value="${user.userId}">
+	        <input type="text" readonly="readonly" class="form-control" id="userName" placeholder="Enter Patient userName" name="userName" th:value="${user.firstName}">
       </div>
 	<div class="form-group">
 		<label>
