@@ -58,4 +58,10 @@ public class HospitalStaffService {
 	public List<Diagnosis> viewAllDiagnosis(User user){
 		return diagnosisRepository.findByUser(user);
 	}
+	
+	public List<User> getDoctorsList(){
+		List<User> doctors= userRepository.findAll().stream().filter(e->e.getRole().equals("DOCTOR"))
+				.collect(Collectors.toList());
+		return doctors;
+	}
 }
