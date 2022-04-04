@@ -96,6 +96,8 @@
 
         <table class="table table-striped table-bordered">
             <tr>
+           		<th scope="col">Appointment Start</th>
+            	<th scope="col">Appointment End</th>
                 <th scope="col">Doctor Name</th>
                 <th scope="col">Problem</th>
                 <th scope="col">Prescription</th>
@@ -104,7 +106,9 @@
 	            <th scope="col"> View PDF</th>
             </tr>
             <tr th:each = "diagnosis: ${diagnosisList}">
-                <td th:text="${diagnosis.doctorName}"></td>
+            <td th:if="${diagnosis.appointment !=null}" th:text="${diagnosis.appointment.startTime}"></td>
+            <td th:if="${diagnosis.appointment !=null}" th:text="${diagnosis.appointment.endTime}"></td>
+            	<td th:text="${diagnosis.doctorName}"></td>
                 <td th:text="${diagnosis.problem}"></td>
                 <td th:text="${diagnosis.prescription}"></td>
                 <td th:text="${diagnosis.labtests}"></td>

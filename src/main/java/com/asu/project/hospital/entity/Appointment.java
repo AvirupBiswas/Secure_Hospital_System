@@ -51,6 +51,8 @@ public class Appointment {
     
     @Column(name="doctorEmail")
     private String doctorEmail;
+    
+    
 
     public Appointment() {
 	}

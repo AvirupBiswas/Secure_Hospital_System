@@ -44,12 +44,15 @@ import com.asu.project.hospital.repository.DoctorRepository;
 import com.asu.project.hospital.repository.HospitalStaffRepository;
 import com.asu.project.hospital.repository.InsuranceStaffRepository;
 import com.asu.project.hospital.repository.LabStaffRepository;
+import com.asu.project.hospital.repository.LabTestReportRepository;
 import com.asu.project.hospital.repository.LabTestRepository;
 import com.asu.project.hospital.repository.PatientPaymentRepository;
 import com.asu.project.hospital.repository.PatientQueryRepository;
 import com.asu.project.hospital.repository.SignInHistoryRepository;
 import com.asu.project.hospital.repository.SystemLogRepository;
 import com.asu.project.hospital.repository.UserRepository;
+import com.asu.project.hospital.service.DoctorService;
+import com.asu.project.hospital.service.LabStaffService;
 import com.asu.project.hospital.service.MailService;
 import com.asu.project.hospital.service.UserService;
 
@@ -95,9 +98,18 @@ public class AdminController {
 
 	@Autowired
 	private DiagnosisRepository diagnosisRepository;
-	
+
 	@Autowired
 	private PatientQueryRepository patientQueryRepository;
+
+	@Autowired
+	private LabStaffService labStaffService;
+	
+	@Autowired
+	private DoctorService doctorService;
+	
+	@Autowired
+	private LabTestReportRepository labTestReportRepository;
 
 	@GetMapping("/aproveUser/{Id}")
 	public ResponseEntity<String> aproveUser(@PathVariable("Id") String Id) {
@@ -317,14 +329,6 @@ public class AdminController {
 		return "admin/error";
 	}
 
-	/*
-	 * @GetMapping("/signInHistory") public String signInHistory(Model model) { User
-	 * user = userService.getLoggedUser(); model.addAttribute("accountName",
-	 * user.getFirstName()); List<SignInHistory> signInHistoryList =
-	 * signInHistoryRepository.findAll(); model.addAttribute("signInHistoryList",
-	 * signInHistoryList); return "admin/signInHistory"; }
-	 */
-
 	@GetMapping("/signInHistory")
 	public String signInHistoryDefaultPage(
 			@RequestParam(value = "pagenum", required = false, defaultValue = "1") String pagenum, Model model) {
@@ -449,7 +453,8 @@ public class AdminController {
 	public String getReportsOfPatient(Model model) {
 		User user = userService.getLoggedUser();
 		model.addAttribute("accountName", user.getFirstName());
-		List<ViewDiagNosticAndLabTestReport> reportList = new ArrayList<>();
+		List<ViewDiagNosticAndLabTestReport> labreportList = new ArrayList<>();
+		List<ViewDiagNosticAndLabTestReport> diagreportList = new ArrayList<>();
 		List<Diagnosis> diagnosisList = diagnosisRepository.findAll();
 		List<LabTest> labTests = labTestRepository.findByStatus("Reported");
 		for (Diagnosis d : diagnosisList) {
@@ -463,11 +468,14 @@ public class AdminController {
 					obj.setEmail(d.getUser().getEmail());
 					obj.setDescription(l.getDescription());
 					obj.setLabTestId(l.getLabTestId());
+					obj.setLabTestReportId(labTestReportRepository.findByLabTest(l).getLabTestReportId());
 					obj.setTestNameReported(l.getTestName());
 					obj.setTestNameRecommendedByDoctor(d.getLabtests());
 					obj.setDiagnosisID(d.getDiagnosisID());
 					obj.setDoctorName(d.getDoctorName());
-					reportList.add(obj);
+					obj.setStartTime(d.getAppointment().getStartTime());
+					obj.setEndTime(d.getAppointment().getEndTime());
+					labreportList.add(obj);
 				}
 			} else {
 				ViewDiagNosticAndLabTestReport obj = new ViewDiagNosticAndLabTestReport();
@@ -477,22 +485,25 @@ public class AdminController {
 				obj.setTestNameRecommendedByDoctor(d.getLabtests());
 				obj.setDiagnosisID(d.getDiagnosisID());
 				obj.setDoctorName(d.getDoctorName());
-				reportList.add(obj);
+				obj.setStartTime(d.getAppointment().getStartTime());
+				obj.setEndTime(d.getAppointment().getEndTime());
+				diagreportList.add(obj);
 			}
 		}
-		model.addAttribute("allPatientWithReport", reportList);
+		model.addAttribute("allPatientWithLabReport", labreportList);
+		model.addAttribute("allPatientWithDiagReport", diagreportList);
 		return "admin/internalFile";
 	}
-	
+
 	@GetMapping("/viewSubmitedQueries")
-	public String viewSubmitedQueries( Model model) {
+	public String viewSubmitedQueries(Model model) {
 		User user = userService.getLoggedUser();
 		model.addAttribute("accountName", user.getFirstName());
 		List<PatientQuery> patientQueries = patientQueryRepository.findAll();
-		model.addAttribute("patientQueries",patientQueries);
+		model.addAttribute("patientQueries", patientQueries);
 		return "admin/viewAllSubmittedQueries";
 	}
-	
+
 	@GetMapping("/takeaction/{queryId}")
 	public String takeaction(@PathVariable("queryId") String queryId, Model model) {
 		User user = userService.getLoggedUser();
@@ -502,7 +513,7 @@ public class AdminController {
 		model.addAttribute("queryId", queryId);
 		return "admin/submitResolution";
 	}
-	
+
 	@PostMapping("/takeaction/{queryId}")
 	public String takeaction(@RequestParam("queryresolution") String queryresolution,
 			@PathVariable("queryId") String queryId, Model model) {
@@ -514,6 +525,23 @@ public class AdminController {
 		patientQuery.setQuerystatus("Resolved");
 		patientQueryRepository.save(patientQuery);
 		return "redirect:/admin/viewSubmitedQueries";
+	}
+
+	@GetMapping("/DeleteLabTestReport/{labTestReportId}")
+	public String DeleteLabTestReport(@PathVariable("labTestReportId") String labTestReportId, Model model) {
+		labStaffService.deleteLabTestReport(Integer.parseInt(labTestReportId));
+		User user = userService.getLoggedUser();
+		model.addAttribute("accountName", user.getFirstName());
+		return "admin/getInternalPatientFiles";
+	}
+	
+	@GetMapping("/DeleteDiagnosisReport/{diagnosisId}")
+	public String deleteDiagnosis(@PathVariable("diagnosisId") String diagnosisId, Model model) {
+		User user = userService.getLoggedUser();
+		model.addAttribute("accountName", user.getFirstName());
+		Diagnosis diagnosis = doctorService.findByDiagnosis(Integer.parseInt(diagnosisId));
+		doctorService.deleteDiagnosis(diagnosis);
+		return "admin/getInternalPatientFiles";
 	}
 
 }
