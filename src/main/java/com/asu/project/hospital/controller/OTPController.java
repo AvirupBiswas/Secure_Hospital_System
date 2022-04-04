@@ -66,6 +66,7 @@ public class OTPController {
 			@ModelAttribute("labTestId") String labTestId,Model model) {
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 		String username = auth.getName();
+		String accountName=userService.getLoggedUser().getFirstName();
 		otpnum = otpnum.trim();
 		if (Integer.parseInt(otpnum) >= 0) {
 			int serverOtp = otpService.getOtp(username);
@@ -78,12 +79,14 @@ public class OTPController {
 					else if (viewPage != null && viewPage.equals("insurancedetails")) {
 						User user=userService.getLoggedUser();
 						InsuranceDetails details=patientService.getInsuranceDetails(user);
+						model.addAttribute("accountName", accountName);
 						model.addAttribute("insurancedetails",details);
 						return "patient/insuranceclaim";
 					}
 					else if (viewPage != null && viewPage.equals("viewClaimHistory")) {
 						User user=userService.getLoggedUser();
 						List<InsuranceClaims> claims=patientService.findAllClaims(user);
+						model.addAttribute("accountName", accountName);
 						model.addAttribute("insuranceClaims", claims);
 						return "patient/viewClaimHistory";
 					}
