@@ -13,6 +13,6 @@ public interface LabTestRepository extends JpaRepository<LabTest, Integer>{
     
     public List<LabTest> findByUser(User user);
     
-    public LabTest findByDiagnosis(Diagnosis diagnosis);
+    public List<LabTest> findByDiagnosis(Diagnosis diagnosis);
     
 }
