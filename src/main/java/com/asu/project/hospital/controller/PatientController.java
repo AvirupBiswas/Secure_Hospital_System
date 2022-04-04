@@ -239,6 +239,15 @@ public class PatientController {
 		
 	}
 	
+	@GetMapping("/makeSelfPayment/{paymentId}")
+	public String makeSelfPayment(@PathVariable("paymentId") String paymentId,Model model) {
+		User user = userService.getLoggedUser();
+		model.addAttribute("accountName", user.getFirstName());
+		patientService.makePayment(Long.parseLong(paymentId));
+		return "patient/viewlabreports";
+		
+	}
+	
 	@GetMapping("/submitQuery")
 	public String submitQuery( Model model) {
 		User user = userService.getLoggedUser();

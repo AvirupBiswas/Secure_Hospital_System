@@ -90,7 +90,7 @@ public class AppointmentService {
 	        System.out.println(app.getEndTime());
 	        SystemLog systemLog=new SystemLog();
 			systemLog.setMessage("Appointment booked by "+user.getFirstName()+" "+user.getLastName()
-					+ ",at "+appointment.getStartTime());
+					+ ",at "+app.getStartTime());
 			systemLog.setTimestamp(new Date());
 			systemLogRepository.save(systemLog);
 	        appointmentRepository.save(app);
