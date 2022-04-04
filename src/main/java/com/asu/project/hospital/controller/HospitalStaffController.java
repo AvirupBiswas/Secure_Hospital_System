@@ -167,8 +167,9 @@ public class HospitalStaffController {
 	public String pendingDecisionForUsereAppointment(Model model) {
 		User user = userService.getLoggedUser();
 		model.addAttribute("accountName", user.getFirstName());
-		List<Appointment> users = hospitalStaffDecisionForUserRepository.findByStatus("Pending");
-		model.addAttribute("userList", users);
+		List<Appointment> appointments = hospitalStaffDecisionForUserRepository.findByStatus("Pending");
+		model.addAttribute("appointments", appointments);
+		model.addAttribute("doctors", hospitalStaffService.getDoctorsList());
 		return "hospitalstaff/hospitalstaffDecisionPending";
 	}
 	

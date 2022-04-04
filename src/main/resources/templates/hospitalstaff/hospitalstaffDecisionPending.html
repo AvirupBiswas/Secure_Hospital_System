@@ -114,13 +114,13 @@
     <br>
     <br>
     <br>
-     <div th:if="${#lists.isEmpty(userList)}">
-     <h2 style="text-align:center;">No Pending user account List </h2>
+     <div th:if="${#lists.isEmpty(appointments)}">
+     <h2 style="text-align:center;">No Pending appointments </h2>
      </div>
      <br>
   	<div id="loader" class="lds-dual-ring hidden overlay">
     </div>
-    <div th:unless="${#lists.isEmpty(userList)}">
+    <div th:unless="${#lists.isEmpty(appointments)}">
     <h2>Pending List ...</h2>
     <hr style="height:1px;border:none;color:#333;background-color:#333;" />
     <table class="table">
@@ -130,20 +130,28 @@
 	            <th scope="col">StartTime</th>
 	            <th scope="col">EndTime</th>
 	            <th scope="col">Type</th>
+	            <th scope="col">Doctor</th>
 	            <th scope="col"></th>
 	            <th scope="col"></th>
 	        </tr>
 	    </thead>
 	    <tbody class="tableBody">
-	        <tr th:each="user: ${userList}" th:id="${user.appId}">
-	        	<td>[[${user.user.firstName}]]</td>
-	            <td>[[${user.startTime}]]</td>
-	            <td>[[${user.endTime}]]</td>
-	            <td>[[${user.type}]]</td>
+	        <tr th:each="app: ${appointments}" th:id="${app.appId}">
+	        	<td>[[${app.user.firstName}]]</td>
+	            <td>[[${app.startTime}]]</td>
+	            <td>[[${app.endTime}]]</td>
+	            <td>[[${app.type}]]</td>
+	            
+                 <td th:if="${#lists.isEmpty(app.doctorEmail)}">
+	      			No Specification
+            	</td>
+            	
+            	<td th:unless="${#lists.isEmpty(app.doctorEmail)}">[[${app.doctorEmail}]]</td>
+            	
 	            <td><button class="btn btn-success"   
-                        th:onclick="'approve(\''+${user.appId}+ '\');'">Approve</button></td>
+                        th:onclick="'approve(\''+${app.appId}+ '\');'">Approve</button></td>
                 <td><button class="btn btn-danger" 
-                	th:onclick="'deny(\''+${user.appId}+ '\');'">Deny</button></td>
+                	th:onclick="'deny(\''+${app.appId}+ '\');'">Deny</button></td>
 	        </tr>
 	    </tbody>
 	</table>
