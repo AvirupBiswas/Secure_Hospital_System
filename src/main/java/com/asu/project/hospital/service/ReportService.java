@@ -1,6 +1,7 @@
 package com.asu.project.hospital.service;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.util.HashMap;
 import java.util.List;
@@ -23,8 +24,12 @@ public class ReportService {
 
 	public byte[] exportReport(List<?> values,String jrxmlFile) throws FileNotFoundException, JRException {
 		// load file and compile it
-		File file = ResourceUtils.getFile("classpath:"+jrxmlFile);
-		JasperReport jasperReport = JasperCompileManager.compileReport(file.getAbsolutePath());
+		/*
+		 * File file = ResourceUtils.getFile("classpath:"+jrxmlFile); JasperReport
+		 * jasperReport = JasperCompileManager.compileReport(file.getAbsolutePath());
+		 */
+		String file="src/main/resources/"+jrxmlFile;
+		JasperReport jasperReport = JasperCompileManager.compileReport(new FileInputStream(file));
 		JRBeanCollectionDataSource dataSource = new JRBeanCollectionDataSource(values);
 		Map<String, Object> parameters = new HashMap<>();
 		parameters.put("createdBy", "Avirup");
