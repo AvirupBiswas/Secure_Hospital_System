@@ -57,6 +57,8 @@
 	        <tr>
                 <th scope="col">Patient Name</th>
                 <th scope="col">Patient Email</th>
+                <th scope="col">Appointment Start</th>
+            	<th scope="col">Appointment End</th>
 	            <th scope="col">Test Name</th>
 	            <th scope="col">Test Result</th>
                 <th scope="col"></th>
@@ -68,6 +70,8 @@
 	        <tr th:each="labTestReport: ${allLabTestReports}" th:id="${labTestReport.labTestReportId}">
                 <td>[[${labTestReport.labTest.user.firstName}]] [[${labTestReport.labTest.user.lastName}]]</td>
                 <td>[[${labTestReport.labTest.user.email}]]</td>
+                <td th:if="${labTestReport.labTest.diagnosis.appointment !=null}" th:text="${labTestReport.labTest.diagnosis.appointment.startTime}"></td>
+           		<td th:if="${labTestReport.labTest.diagnosis.appointment !=null}" th:text="${labTestReport.labTest.diagnosis.appointment.endTime}"></td>
 	            <td>[[${labTestReport.labTest.testName}]]</td>
 	            <td>[[${labTestReport.testResult}]]</td>
 	            <td><a th:href="@{|/labstaff/manageLabTestReport/view/${labTestReport.labTestReportId}|}" target="_blank"><i class="fa fa-file-pdf-o" style="font-size:24px;color:red;"></i></a></td>

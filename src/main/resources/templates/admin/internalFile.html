@@ -5,8 +5,46 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"/>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<style>
+
+ul.nav-tabs li.nav-item a.nav-link:active,.nav-item a.nav-link:hover {
+color:red;
+background-color:yellow;
+border: 1px solid brown;
+border-bottom: 4px solid brown;
+font-weight: 600;
+}
+</style>
+
+      <script th:inline="javascript">
+        function deleteLabReport(id) {
+            $.ajax({
+                url : "[(@{'/admin/DeleteLabTestReport/'})]"+id,
+                type : "GET",
+                success : function(data) {
+                	 $('#' + id).remove();
+                },
+                error : function() {
+                    console.log("There was an error");
+                }
+            });
+        }
+        function deleteDiagReport(id) {
+             $.ajax({
+                url : "[(@{'/admin/DeleteDiagnosisReport/'})]"+id,
+                type : "GET",
+                success : function(data) {
+                	 $('#' + id).remove();
+                },
+                error : function() {
+                    console.log("There was an error");
+                }
+            });
+        }
+    </script>
 </head>
 <body>
 <div class="container">
@@ -36,55 +74,86 @@
     <br>
     <br>
     <br>
-     <div th:if="${#lists.isEmpty(allPatientWithReport)}">
-     <h2 style="text-align:center;">No Internal Files Available </h2>
-     </div>
     <br>
     <input class="btn btn-primary" type="button" value="Go Back" onclick="history.back(-1)" />
     <br>
     <br>
-    </div>
-    
-<div class="container">
-<div th:unless="${#lists.isEmpty(allPatientWithReport)}">
     <div class="starter-template">
         <h1>All internal Files</h1>
         <br>
-        <table class="table table-striped table-bordered">
+         <ul class="nav-tabs nav">
+			<li class="nav-item">
+				<a href="#labreport" id="labReport" class="nav-link active" data-toggle="tab">Patients Lab Reports</a>
+			</li>
+			<li class="nav-item">
+				<a href="#diagreport" id="DiagReport" class="nav-link" data-toggle="tab">Patients Diagnosis Reports</a>
+			</li>
+	</ul>
+	<div class="tab-content">
+	<div class="tab-pane fade show active" id="labreport">
+        <table class="table table-striped table-bordered text-center">
         <thead>
             <tr>
+           		<th scope="col">Appointment Start</th>
+            	<th scope="col">Appointment End</th>
             	<th scope="col">Patient Name</th>
             	<th scope="col">Patient Email</th>
                 <th scope="col">Lab Test Recommended By Doctor</th>
                 <th scope="col">Lab Test Reported</th>
                 <th scope="col">Test Description</th>
-                <th scope="col">Diagnostic Id</th>
-                <th scope="col">Lab report Id</th>
                 <th scope="col">Referred By Doctor</th>
                 <th scope="col">Patient Lab Report</th>
-                <th scope="col">Patient Diagnosis Report</th>
             </tr>
             </thead>
              <tbody class="tableBody">
-	        <tr th:each="report: ${allPatientWithReport}">
+	        <tr th:each="report: ${allPatientWithLabReport}" th:id="${report.labTestReportId}">
+	        	<td>[[${report.startTime}]]</td>
+	       		<td>[[${report.endTime}]]</td>
              	<td>[[${report.firstName}]] [[${report.lastName}]]</td>
              	<td>[[${report.email}]]</td>
 	            <td>[[${report.testNameRecommendedByDoctor}]]</td>
 	            <td>[[${report.testNameReported}]]</td>
 	            <td>[[${report.description}]]</td>
-	            <td>[[${report.diagnosisID}]]</td>
-	            <td>[[${report.labTestId}]]</td>
 	            <td>[[${report.doctorName}]]</td>
 				<td><a th:unless=${report.labTestId==null} th:href="@{|/viewPDF/hospitalStaff/reportView/${report.labTestId}|}" target="_blank"><i class="fa fa-file-pdf-o" style="font-size:24px;color:red;"></i></a></td>
-	            <td><a th:unless=${report.diagnosisID==null} th:href="@{|/viewPDF/patient/diagnosisreport/${report.diagnosisID}|}" target="_blank"><i class="fa fa-file-pdf-o" style="font-size:24px;color:red;"></i></a></td>
+	            <td><button th:onclick="'deleteLabReport(\''+${report.labTestReportId}+ '\');'" data-toggle="tooltip" title="Delete Lab Test Report" data-placement="top" class="btn pill-btn" value="delete" name="action"><i class="fa fa-trash-o" aria-hidden="true" style="font-size:24px;color:red;"></i></button></td>
 	        </tr>
 	    </tbody>
         </table>
-
-    </div>
-    </div>
 </div>
-
+	<div class="tab-pane" id="diagreport">
+        <table class="table table-striped table-bordered text-center">
+        <thead>
+            <tr>
+           		<th scope="col">Appointment Start</th>
+            	<th scope="col">Appointment End</th>
+            	<th scope="col">Patient Name</th>
+            	<th scope="col">Patient Email</th>
+                <th scope="col">Lab Test Recommended By Doctor</th>
+                <th scope="col">Lab Test Reported</th>
+                <th scope="col">Test Description</th>
+                <th scope="col">Referred By Doctor</th>
+                <th scope="col">Patient Diagnosis Report</th>
+            </tr>
+            </thead>
+             <tbody class="tableBody">
+	        <tr th:each="report: ${allPatientWithDiagReport}" th:id="${report.diagnosisID}">
+	        	<td>[[${report.startTime}]]</td>
+	       		<td>[[${report.endTime}]]</td>
+             	<td>[[${report.firstName}]] [[${report.lastName}]]</td>
+             	<td>[[${report.email}]]</td>
+	            <td>[[${report.testNameRecommendedByDoctor}]]</td>
+	            <td>[[${report.testNameReported}]]</td>
+	            <td>[[${report.description}]]</td>
+	            <td>[[${report.doctorName}]]</td>
+	            <td><a th:unless=${report.diagnosisID==null} th:href="@{|/viewPDF/patient/diagnosisreport/${report.diagnosisID}|}" target="_blank"><i class="fa fa-file-pdf-o" style="font-size:24px;color:red;"></i></a></td>
+	            <td><button th:onclick="'deleteDiagReport(\''+${report.diagnosisID}+ '\');'" data-toggle="tooltip" title="Delete Diagnosis Report" data-placement="top" class="btn pill-btn" value="delete" name="action"><i class="fa fa-trash-o" aria-hidden="true" style="font-size:24px;color:red;"></i></button></td>
+	        </tr>
+	    </tbody>
+        </table>
+</div>
+    </div>
+    </div>
 <br>
 <br>
 </div>

@@ -96,12 +96,16 @@
 
         <table class="table table-striped table-bordered">
             <tr>
+            	<th scope="col">Appointment Start</th>
+            	<th scope="col">Appointment End</th>
                 <th scope="col">Test Name </th>
                 <th scope="col">Description</th>
                 <th scope="col">Status</th>
 	            <th scope="col"></th>
             </tr>
             <tr th:each = "labtest: ${labTests}">
+                <td th:if="${labtest.diagnosis.appointment !=null}" th:text="${labtest.diagnosis.appointment.startTime}"></td>
+           		<td th:if="${labtest.diagnosis.appointment !=null}" th:text="${labtest.diagnosis.appointment.endTime}"></td>
             	<td th:text="${labtest.testName}"></td>
                 <td th:text="${labtest.description}"></td>
                 <td th:text="${labtest.status}"></td>

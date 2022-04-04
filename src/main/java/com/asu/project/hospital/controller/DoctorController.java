@@ -23,6 +23,7 @@ import com.asu.project.hospital.entity.LabTest;
 import com.asu.project.hospital.entity.Patient;
 import com.asu.project.hospital.entity.User;
 import com.asu.project.hospital.model.BlockChainDiagnosisObject;
+import com.asu.project.hospital.repository.AppointmentRepository;
 import com.asu.project.hospital.repository.DoctorRepository;
 import com.asu.project.hospital.repository.PatientRepository;
 import com.asu.project.hospital.service.BlockChainFeignService;
@@ -32,29 +33,32 @@ import com.asu.project.hospital.service.UserService;
 @Controller
 @RequestMapping("/doctor")
 public class DoctorController {
-	
+
 	@Autowired
 	private UserService userService;
-	
+
 	@Autowired
 	private DoctorService doctorService;
-	
+
 	@Autowired
 	private DoctorRepository doctorRepository;
-	
+
 	@Autowired
 	private PatientRepository patientRepository;
-	
+
 	@Autowired
 	private BlockChainFeignService blockChainService;
-	
+
+	@Autowired
+	private AppointmentRepository appointmentRepository;
+
 	@GetMapping("/home")
 	public String doctorHome(Model model) {
 		User user = userService.getLoggedUser();
 		model.addAttribute("accountName", user.getFirstName());
 		return "doctor/doctorhome";
 	}
-	
+
 	@GetMapping("/updateinfo")
 	public String register(Model model) {
 		User user = userService.getLoggedUser();
@@ -64,7 +68,7 @@ public class DoctorController {
 		model.addAttribute("userInfo", doctorUser);
 		return "doctor/updatedocinfo";
 	}
-	
+
 	@PostMapping("/updateinformation")
 	public String register(@Valid @ModelAttribute("doctor") Doctor userForm, BindingResult result, Model model) {
 
@@ -72,9 +76,9 @@ public class DoctorController {
 			return "doctor/updatedocinfo";
 		}
 		try {
-			User user=userService.getLoggedUser();
+			User user = userService.getLoggedUser();
 			model.addAttribute("age", userForm.getAge());
-			model.addAttribute("address",userForm.getAddress());
+			model.addAttribute("address", userForm.getAddress());
 			model.addAttribute("gender", userForm.getGender());
 			model.addAttribute("phoneNumber", userForm.getPhoneNumber());
 			doctorService.updateDoctorInfo(userForm);
@@ -83,10 +87,9 @@ public class DoctorController {
 		}
 		return "doctor/doctorhome";
 	}
-	
+
 	@PostMapping("/editinformation")
-	public String editInformation(@Valid @ModelAttribute("doctor") Doctor userForm, BindingResult result,
-			Model model) {
+	public String editInformation(@Valid @ModelAttribute("doctor") Doctor userForm, BindingResult result, Model model) {
 
 		if (result.hasErrors()) {
 			return "doctor/updateinfo";
@@ -109,118 +112,127 @@ public class DoctorController {
 		}
 		return "redirect:/doctor/home";
 	}
+
 	@PostMapping("/createDiagnosis")
-	public String createDiagnosis(@RequestParam("userId") String userId, @ModelAttribute("diagnosis") Diagnosis diagnosis) {
-		User patient=userService.findByUserId(userId);
+	public String createDiagnosis(@RequestParam("userId") String userId,
+			@ModelAttribute("diagnosis") Diagnosis diagnosis, @RequestParam("apptId") String apptId) {
+		User patient = userService.findByUserId(userId);
 		diagnosis.setUser(patient);
-		User doctor=userService.getLoggedUser();
-		StringBuilder doctorName=new StringBuilder(doctor.getFirstName());
+		User doctor = userService.getLoggedUser();
+		StringBuilder doctorName = new StringBuilder(doctor.getFirstName());
 		doctorName.append(" ").append(doctor.getLastName());
 		diagnosis.setDoctorName(doctorName.toString());
-		Diagnosis diagnosisSaved=doctorService.createDiagnosis(diagnosis);
-		BlockChainDiagnosisObject blcObj=new BlockChainDiagnosisObject();
-		blcObj.setId("diagnosisid: "+ diagnosisSaved.getDiagnosisID());
-		blcObj.setPatient_name(diagnosisSaved.getUser().getFirstName()+" "+diagnosisSaved.getUser().getLastName());
-		blcObj.setContent("Diagnosis added by "+diagnosisSaved.getDoctorName()+", problem: "+diagnosisSaved.getProblem());
-		DateTimeFormatter dtf = DateTimeFormatter.ofPattern("MM/dd/yyyy");  
+		Appointment appt = appointmentRepository.findById(Long.parseLong(apptId)).get();
+		diagnosis.setAppointment(appt);
+		Diagnosis diagnosisSaved = doctorService.createDiagnosis(diagnosis);
+		BlockChainDiagnosisObject blcObj = new BlockChainDiagnosisObject();
+		blcObj.setId("diagnosisid: " + diagnosisSaved.getDiagnosisID());
+		blcObj.setPatient_name(diagnosisSaved.getUser().getFirstName() + " " + diagnosisSaved.getUser().getLastName());
+		blcObj.setContent(
+				"Diagnosis added by " + diagnosisSaved.getDoctorName() + ", problem: " + diagnosisSaved.getProblem());
+		DateTimeFormatter dtf = DateTimeFormatter.ofPattern("MM/dd/yyyy");
 		LocalDateTime now = LocalDateTime.now();
 		blcObj.setDate(dtf.format(now));
 		blockChainService.addDiagnosisToBlockChain(blcObj);
 		return "doctor/doctorhome";
 	}
-	
+
 	@GetMapping("/viewpatients")
 	public String viewPatients(Model model) {
 		User user = userService.getLoggedUser();
 		model.addAttribute("accountName", user.getFirstName());
-		List<Appointment> allPatients=doctorService.getAllPatients();
-		model.addAttribute("appointments",allPatients);
+		List<Appointment> allPatients = doctorService.getAllPatients();
+		model.addAttribute("appointments", allPatients);
 		return "doctor/viewpatients";
 	}
-	
+
 	@GetMapping("/viewSpecialApptPatients")
 	public String viewSpecialApptPatients(Model model) {
 		User user = userService.getLoggedUser();
 		model.addAttribute("accountName", user.getFirstName());
-		List<Appointment> allPatients=doctorService.getAllSpecialAppointment(user.getEmail());
-		model.addAttribute("appointments",allPatients);
+		List<Appointment> allPatients = doctorService.getAllSpecialAppointment(user.getEmail());
+		model.addAttribute("appointments", allPatients);
 		return "doctor/viewpatients";
 	}
-	
+
 	@RequestMapping("/viewpatientsdiagnosis")
 	public String viewPatientsDiagnosis(Model model) {
-		List<Appointment> allPatients=doctorService.getAllPatients();
-		model.addAttribute("appointments",allPatients);
+		List<Appointment> allPatients = doctorService.getAllPatients();
+		model.addAttribute("appointments", allPatients);
 		User user = userService.getLoggedUser();
 		model.addAttribute("accountName", user.getFirstName());
 		return "doctor/viewpatientsdiagnosis";
 	}
-	
+
 	@RequestMapping("/viewSpApptPatientsdiagnosis")
 	public String viewSpApptPatientsdiagnosis(Model model) {
 		User user = userService.getLoggedUser();
 		model.addAttribute("accountName", user.getFirstName());
-		List<Appointment> allPatients=doctorService.getAllSpecialAppointment(user.getEmail());
-		model.addAttribute("appointments",allPatients);
+		List<Appointment> allPatients = doctorService.getAllSpecialAppointment(user.getEmail());
+		model.addAttribute("appointments", allPatients);
 		return "doctor/viewpatientsdiagnosis";
 	}
-	
+
 	@GetMapping("/viewdiagnosis")
-	public String viewAlldiagnosis(@RequestParam("userId") String userId,Model model) {
+	public String viewAlldiagnosis(@RequestParam("userId") String userId, Model model) {
 		User user = userService.findByUserId(userId);
-		List<Diagnosis> diagnosisList=doctorService.getAllDiagnosis(user);
-		model.addAttribute("diagnosis",diagnosisList);
+		List<Diagnosis> diagnosisList = doctorService.getAllDiagnosis(user);
+		model.addAttribute("diagnosis", diagnosisList);
 		User userLogged = userService.getLoggedUser();
 		model.addAttribute("accountName", userLogged.getFirstName());
 		return "doctor/viewdiagnosis";
 	}
-	
+
 	@GetMapping("/viewpatientsrecords")
 	public String viewPatientsRecords(Model model) {
 		User user = userService.getLoggedUser();
 		model.addAttribute("accountName", user.getFirstName());
-		List<Appointment> allPatients=doctorService.getAllPatients();
-		model.addAttribute("appointments",allPatients);
+		List<Appointment> allPatients = doctorService.getAllPatients();
+		model.addAttribute("appointments", allPatients);
 		return "doctor/viewpatientsrecords";
 	}
+
 	@GetMapping("/viewsplApptPatientsrecords")
 	public String viewsplApptPatientsrecords(Model model) {
 		User user = userService.getLoggedUser();
 		model.addAttribute("accountName", user.getFirstName());
-		List<Appointment> allPatients=doctorService.getAllSpecialAppointment(user.getEmail());
-		model.addAttribute("appointments",allPatients);
+		List<Appointment> allPatients = doctorService.getAllSpecialAppointment(user.getEmail());
+		model.addAttribute("appointments", allPatients);
 		return "doctor/viewpatientsrecords";
 	}
-	
+
 	@GetMapping("/updatediagnosis")
-	public String updateDiagnosis(@RequestParam("diagnosisId") int diagnosisId,Model model) {
-		Diagnosis diagnosis=doctorService.findByDiagnosis(diagnosisId);
-		model.addAttribute("diagnosis",diagnosis);
+	public String updateDiagnosis(@RequestParam("diagnosisId") int diagnosisId, Model model) {
+		Diagnosis diagnosis = doctorService.findByDiagnosis(diagnosisId);
+		model.addAttribute("diagnosis", diagnosis);
 		User user = userService.getLoggedUser();
 		model.addAttribute("accountName", user.getFirstName());
 		return "doctor/updatediagnosis";
 	}
 
 	@GetMapping("/deletediagnosis")
-	public String deleteDiagnosis(@RequestParam("diagnosisId") int diagnosisId,Model model) {
-		Diagnosis diagnosis=doctorService.findByDiagnosis(diagnosisId);
-		System.out.println("Delete diagnosis"+diagnosisId);
+	public String deleteDiagnosis(@RequestParam("diagnosisId") int diagnosisId, Model model) {
+		Diagnosis diagnosis = doctorService.findByDiagnosis(diagnosisId);
+		System.out.println("Delete diagnosis" + diagnosisId);
 		doctorService.deleteDiagnosis(diagnosis);
 		return "doctor/doctorhome";
 	}
-	
+
 	@PostMapping("/diagnosis")
-	public String createDiagnosis(@RequestParam("userId") String userId, Model model) {
+	public String createDiagnosis(@RequestParam("userId") String userId, Model model,
+			@RequestParam("apptId") String apptId) {
 		User account = userService.getLoggedUser();
 		model.addAttribute("accountName", account.getFirstName());
 		User user = userService.findByUserId(userId);
-		model.addAttribute("user",user);
+		model.addAttribute("user", user);
+		model.addAttribute("apptId", apptId);
 		return "doctor/diagnosis";
 	}
-	
+
 	@PostMapping("/editDiagnosis")
-	public String editDiagnosis(@RequestParam("diagnosisId") int diagnosisId,@ModelAttribute("diagnosis") Diagnosis diagnosis) {
-		Diagnosis updatedDiagnosis=doctorService.findByDiagnosis(diagnosisId);
+	public String editDiagnosis(@RequestParam("diagnosisId") int diagnosisId,
+			@ModelAttribute("diagnosis") Diagnosis diagnosis) {
+		Diagnosis updatedDiagnosis = doctorService.findByDiagnosis(diagnosisId);
 		updatedDiagnosis.setLabtests(diagnosis.getLabtests());
 		updatedDiagnosis.setProblem(diagnosis.getProblem());
 		updatedDiagnosis.setPrescription(diagnosis.getPrescription());
@@ -229,32 +241,34 @@ public class DoctorController {
 		doctorService.createDiagnosis(updatedDiagnosis);
 		return "doctor/doctorhome";
 	}
-	
+
 	@PostMapping("/updatepatientinfo")
 	public String updatePatientInfo(@RequestParam("userId") String userId, Model model) {
 		User user1 = userService.getLoggedUser();
 		model.addAttribute("accountName", user1.getFirstName());
 		User user = userService.findByUserId(userId);
-		Patient patientdetails=patientRepository.findByUser(user);
-		model.addAttribute("user",user);
+		Patient patientdetails = patientRepository.findByUser(user);
+		model.addAttribute("user", user);
 		model.addAttribute("patientdetails", patientdetails);
 		return "doctor/updatepatientinfo";
 	}
-	
+
 	@PostMapping("/updatepatientinformation")
-	public String updatepatientinformation(@ModelAttribute("updatepatientinformation") Patient patient, @ModelAttribute("userId") String userId) {
+	public String updatepatientinformation(@ModelAttribute("updatepatientinformation") Patient patient,
+			@ModelAttribute("userId") String userId) {
 		User user = userService.findByUserId(userId);
 		patient.setUser(user);
 		patientRepository.save(patient);
 		return "doctor/doctorhome";
 	}
-	
+
 	@PostMapping("/editpatientinformation")
-	public String editpatientinformation(@ModelAttribute("updatepatientinformation") Patient patient, @ModelAttribute("userId") String userId) {
+	public String editpatientinformation(@ModelAttribute("updatepatientinformation") Patient patient,
+			@ModelAttribute("userId") String userId) {
 		User user = userService.findByUserId(userId);
-		
+
 		try {
-			Patient oldpatient=patientRepository.findByUser(user);
+			Patient oldpatient = patientRepository.findByUser(user);
 			oldpatient.setHeight(patient.getHeight());
 			oldpatient.setWeight(patient.getWeight());
 			oldpatient.setAddress(patient.getAddress());
@@ -266,31 +280,31 @@ public class DoctorController {
 		}
 		return "doctor/doctorhome";
 	}
-	
+
 	@GetMapping("/viewpatientsforreports")
 	public String viewPatientsforReports(Model model) {
 		User account = userService.getLoggedUser();
 		model.addAttribute("accountName", account.getFirstName());
-		List<Appointment> allPatients=doctorService.getAllPatients();
-		model.addAttribute("appointments",allPatients);
+		List<Appointment> allPatients = doctorService.getAllPatients();
+		model.addAttribute("appointments", allPatients);
 		return "doctor/viewpatientsforreports";
 	}
-	
+
 	@GetMapping("/viewsplApptPatientsforreports")
 	public String viewsplApptPatientsforreports(Model model) {
 		User account = userService.getLoggedUser();
 		model.addAttribute("accountName", account.getFirstName());
-		List<Appointment> allPatients=doctorService.getAllSpecialAppointment(account.getEmail());
-		model.addAttribute("appointments",allPatients);
+		List<Appointment> allPatients = doctorService.getAllSpecialAppointment(account.getEmail());
+		model.addAttribute("appointments", allPatients);
 		return "doctor/viewpatientsforreports";
 	}
-	
+
 	@GetMapping("/viewlabreports")
 	public String viewLabTests(@RequestParam("userId") String userId, Model model) {
 		User account = userService.getLoggedUser();
 		model.addAttribute("accountName", account.getFirstName());
 		User patientUser = userService.findByUserId(userId);
-		List<LabTest> labTests=doctorService.viewLabTests(patientUser);
+		List<LabTest> labTests = doctorService.viewLabTests(patientUser);
 		model.addAttribute("labTests", labTests);
 		return "doctor/viewlabreports";
 	}

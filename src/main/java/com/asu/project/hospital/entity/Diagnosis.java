@@ -11,36 +11,39 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 @Entity
-@Table(name="diagnosis")
+@Table(name = "diagnosis")
 public class Diagnosis {
-	
+
 	@Id
-	@Column(name="diagnosisID")
+	@Column(name = "diagnosisID")
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int diagnosisID;
 
 	@ManyToOne
-	@JoinColumn(name="patientID", nullable=false)
+	@JoinColumn(name = "patientID", nullable = false)
 	private User user;
-	
-	@Column(name="doctorName")
+
+	@Column(name = "doctorName")
 	private String doctorName;
-	
-	@Column(name="problem")
+
+	@Column(name = "problem")
 	private String problem;
-	
-	@Column(name="symptoms")
+
+	@Column(name = "symptoms")
 	private String symptoms;
-	
-	@Column(name="labTestNeeded")
+
+	@Column(name = "labTestNeeded")
 	private String labTestNeeded;
-	
-	
-	@Column(name="prescription")
+
+	@Column(name = "prescription")
 	private String prescription;
-	
-	@Column(name="labtests")
+
+	@Column(name = "labtests")
 	private String labtests;
+
+	@OneToOne
+	@JoinColumn(name = "appId", nullable = false)
+	private Appointment appointment;
 
 	public int getDiagnosisID() {
 		return diagnosisID;
@@ -106,21 +109,15 @@ public class Diagnosis {
 		this.labtests = labtests;
 	}
 
-	public Diagnosis(int diagnosisID, User user, String doctorName, String problem, String symptoms,
-			String labTestNeeded, String prescription, String labtests) {
-		this.diagnosisID = diagnosisID;
-		this.user = user;
-		this.doctorName = doctorName;
-		this.problem = problem;
-		this.symptoms = symptoms;
-		this.labTestNeeded = labTestNeeded;
-		this.prescription = prescription;
-		this.labtests = labtests;
+	public Appointment getAppointment() {
+		return appointment;
+	}
+
+	public void setAppointment(Appointment appointment) {
+		this.appointment = appointment;
 	}
 
 	public Diagnosis() {
 	}
-	
-	
 
 }
