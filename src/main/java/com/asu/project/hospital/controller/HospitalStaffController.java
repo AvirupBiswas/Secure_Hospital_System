@@ -80,6 +80,7 @@ public class HospitalStaffController {
 	public String updateInfo(Model model) {
 		User user = userService.getLoggedUser();
 		HospitalStaff hStaff=hospitalStaffRepository.findByUser(user);
+		model.addAttribute("accountName", user.getFirstName());
 		model.addAttribute("hospitalstaff", new HospitalStaff());
 		model.addAttribute("hospitalstaffdetails", hStaff);
 		return "hospitalstaff/updateinfo";
@@ -93,6 +94,7 @@ public class HospitalStaffController {
 		}
 		try {
 			User user=userService.getLoggedUser();
+			model.addAttribute("accountName", user.getFirstName());
 			model.addAttribute("phoneNumber", userForm.getPhoneNumber());
 			model.addAttribute("address",userForm.getAddress());
 			hospitalStaffService.updateHospitalStaffInfo(userForm);
@@ -117,6 +119,7 @@ public class HospitalStaffController {
 			HospitalStaff hospitalStaff=hospitalStaffRepository.findByUser(user);
 			hospitalStaff.setPhoneNumber(userForm.getPhoneNumber());
 			hospitalStaff.setAddress(userForm.getAddress());
+			model.addAttribute("accountName", user.getFirstName());
 			model.addAttribute("phoneNumber", userForm.getPhoneNumber());
 			model.addAttribute("address",userForm.getAddress());
 			hospitalStaffService.updateHospitalStaffInfo(hospitalStaff);
@@ -175,9 +178,11 @@ public class HospitalStaffController {
 	
 	@GetMapping("/updateTransaction/{Id}")
 	public String  updateTransaction(@PathVariable("Id") String Id, Model model) {
+		User user = userService.getLoggedUser();
 		Long id = Long.parseLong(Id);
 		Appointment app = hospitalStaffDecisionForUserRepository.findByAppId(id);
 		System.out.println(app);
+		model.addAttribute("accountName", user.getFirstName());
 		model.addAttribute("app", app);
 		return "hospitalstaff/createTransaction";
 	}
@@ -205,29 +210,35 @@ public class HospitalStaffController {
 	
 	@GetMapping("/viewpatients")
 	public String viewPatients(Model model) {
+		User user = userService.getLoggedUser();
 		List<User> allPatients=hospitalStaffService.getAllPatients();
+		model.addAttribute("accountName", user.getFirstName());
 		model.addAttribute("patient",allPatients);
 		return "hospitalstaff/viewpatients";
 	}
 	
 	@GetMapping("/viewPatientsforTransac")
 	public String viewPatientsforTransac(Model model) {
+		User user = userService.getLoggedUser();
 		List<User> allPatients=hospitalStaffService.getAllPatients();
+		model.addAttribute("accountName", user.getFirstName());
 		model.addAttribute("patient",allPatients);
 		return "hospitalstaff/viewPatientsforTransac";
 	}
 	
 	@PostMapping("/updatepatientinfo")
 	public String updatePatientInfo(@RequestParam("userId") String userId, Model model) {
-		User user = userService.findByUserId(userId);
-		Patient patientdetails=patientRepository.findByUser(user);
-		model.addAttribute("user",user);
+		User user = userService.getLoggedUser();
+		User patientUser = userService.findByUserId(userId);
+		Patient patientdetails=patientRepository.findByUser(patientUser);
+		model.addAttribute("user",patientUser);
 		model.addAttribute("patientdetails", patientdetails);
+		model.addAttribute("accountName", user.getFirstName());
 		return "hospitalstaff/updatepatientinfo";
 	}
 	
 	@PostMapping("/updatepatientinformation")
-	public String updatepatientinformation(@ModelAttribute("updatepatientinformation") Patient patient, @ModelAttribute("userId") String userId) {
+	public String updatepatientinformation(@ModelAttribute("updatepatientinformation") Patient patient, @ModelAttribute("userId") String userId, Model model) {
 		User patientUser = userService.findByUserId(userId);
 		patient.setUser(patientUser);
 		patientRepository.save(patient);
@@ -237,11 +248,12 @@ public class HospitalStaffController {
 		systemLog.setMessage("Hospital Staff "+user.getFirstName() + " "+user.getLastName()+" has added details of patient - "+ patientUser.getFirstName()+" "+patientUser.getLastName());
 		systemLog.setTimestamp(new Date());
 		systemLogRepository.save(systemLog);
+		model.addAttribute("accountName", user.getFirstName());
 		return "hospitalstaff/home";
 	}
 	
 	@PostMapping("/editpatientinformation")
-	public String editpatientinformation(@ModelAttribute("updatepatientinformation") Patient patient, @ModelAttribute("userId") String userId) {
+	public String editpatientinformation(@ModelAttribute("updatepatientinformation") Patient patient, @ModelAttribute("userId") String userId, Model model) {
 		User patientUser = userService.findByUserId(userId);
 		
 		try {
@@ -259,6 +271,7 @@ public class HospitalStaffController {
 			systemLog.setMessage("Hospital Staff "+user.getFirstName() + " "+user.getLastName()+" has updated details of patient - "+ patientUser.getFirstName()+" "+patientUser.getLastName());
 			systemLog.setTimestamp(new Date());
 			systemLogRepository.save(systemLog);
+			model.addAttribute("accountName", user.getFirstName());
 		} catch (Exception e) {
 			return e.getMessage();
 		}
@@ -267,31 +280,37 @@ public class HospitalStaffController {
 	
 	@PostMapping("/createSpecificTransac")
 	public String createSpecificTransac(@RequestParam("userId") String userId, Model model) {
-		User user = userService.findByUserId(userId);
-		model.addAttribute("user",user);
+		User user = userService.getLoggedUser();
+		User patientUser = userService.findByUserId(userId);
+		model.addAttribute("user",patientUser);
 		model.addAttribute("patient", new Patient());
+		model.addAttribute("accountName", user.getFirstName());
 		return "hospitalstaff/createSpecificTransaction";
 	}
 	
 	@PostMapping("/createSpecificTransaction")
-	public String createSpecificTransaction(@ModelAttribute("createSpecificTransaction") PatientPayment patientPayment, @ModelAttribute("userId") String userId) {
+	public String createSpecificTransaction(@ModelAttribute("createSpecificTransaction") PatientPayment patientPayment, @ModelAttribute("userId") String userId, Model model) {
 		User patientUser = userService.findByUserId(userId);
 		patientPayment.setStatus("Pending");
 		patientPayment.setUser(patientUser);
 		patientPaymentRepository.save(patientPayment);
 		
 		User user = userService.getLoggedUser();
+		model.addAttribute("accountName", user.getFirstName());
 		SystemLog systemLog = new SystemLog();
 		systemLog.setMessage("Hospital Staff "+user.getFirstName() + " "+user.getLastName()+" has created transaction for patient - "+ patientUser.getFirstName()+" "+patientUser.getLastName());
 		systemLog.setTimestamp(new Date());
 		systemLogRepository.save(systemLog);
+		
 		return "hospitalstaff/home";
 	}
 	
 	@GetMapping("/viewPatientsforReports")
 	public String viewPatientsforReports(Model model) {
+		User user = userService.getLoggedUser();
 		List<User> allPatients=hospitalStaffService.getAllPatients();
 		model.addAttribute("patient",allPatients);
+		model.addAttribute("accountName", user.getFirstName());
 		return "hospitalstaff/viewPatientsforReports";
 	}
 	
@@ -300,8 +319,8 @@ public class HospitalStaffController {
 		User patientUser = userService.findByUserId(userId);
 		List<LabTest> labTests=hospitalStaffService.viewLabTests(patientUser);
 		model.addAttribute("labTests", labTests);
-		
 		User user = userService.getLoggedUser();
+		model.addAttribute("accountName", user.getFirstName());
 		SystemLog systemLog = new SystemLog();
 		systemLog.setMessage("Hospital Staff "+user.getFirstName() + " "+user.getLastName()+" viewed Lab reports of patient - "+ patientUser.getFirstName()+" "+patientUser.getLastName());
 		systemLog.setTimestamp(new Date());
@@ -316,6 +335,7 @@ public class HospitalStaffController {
 		model.addAttribute("diagnosisList", diagnosisList);
 		
 		User user = userService.getLoggedUser();
+		model.addAttribute("accountName", user.getFirstName());
 		SystemLog systemLog = new SystemLog();
 		systemLog.setMessage("Hospital Staff "+user.getFirstName() + " "+user.getLastName()+" viewed Diagnosis reports of patient - "+ patientUser.getFirstName()+" "+patientUser.getLastName());
 		systemLog.setTimestamp(new Date());
