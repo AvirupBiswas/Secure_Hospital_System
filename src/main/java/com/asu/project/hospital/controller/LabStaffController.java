@@ -1,6 +1,9 @@
 package com.asu.project.hospital.controller;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Optional;
 
 import javax.validation.Valid;
 
@@ -9,6 +12,7 @@ import com.asu.project.hospital.entity.LabTestReport;
 import com.asu.project.hospital.entity.SystemLog;
 import com.asu.project.hospital.repository.DiagnosisRepository;
 import com.asu.project.hospital.repository.LabStaffRepository;
+import com.asu.project.hospital.repository.LabTestReportRepository;
 import com.asu.project.hospital.repository.LabTestRepository;
 import com.asu.project.hospital.repository.SystemLogRepository;
 import com.asu.project.hospital.service.MailService;
@@ -48,6 +52,9 @@ public class LabStaffController {
 	
 	@Autowired
 	private LabTestRepository labTestRepository;
+	
+	@Autowired
+	private LabTestReportRepository labTestReportRepository;
 
 	@GetMapping("/home")
 	public String labStaffHome(Model model) {
@@ -174,6 +181,14 @@ public class LabStaffController {
 		User user = userService.getLoggedUser();
 		model.addAttribute("accountName", user.getFirstName());
 		LabTest labTestObj = labStaffService.getLabTest(Integer.parseInt(labTestId));
+		Diagnosis diagnosis = labTestObj.getDiagnosis();
+		String pattern = "yyyy-MM-dd HH:mm:ss";
+		DateFormat df = new SimpleDateFormat(pattern);
+		SystemLog systemLog = new SystemLog();
+		systemLog.setMessage("LabStaff with email "+userService.getLoggedUser().getEmail()+ " created lab report of Patient email "+diagnosis.getUser().getEmail()
+				+" who has appointment start "+df.format(diagnosis.getAppointment().getStartTime())+" and appointment end "+df.format(diagnosis.getAppointment().getEndTime()));
+		systemLog.setTimestamp(new Date());
+		systemLogRepository.save(systemLog);
 		labStaffService.createLabTestReport(labTestReport, labTestObj);
 		return "redirect:/labstaff/getLabTestRequests?status=Pending";
 	}
@@ -185,6 +200,15 @@ public class LabStaffController {
 			model.addAttribute("labTestReport",labTestReport);
 			return "labstaff/UpdateLabTestReport";
 		} else if (action.equals("delete")) {
+			Optional<LabTestReport> labTestReportOpt = labTestReportRepository.findById(Integer.parseInt(labTestReportId));
+			Diagnosis diagnosis = labTestReportOpt.get().getLabTest().getDiagnosis();
+			String pattern = "yyyy-MM-dd HH:mm:ss";
+			DateFormat df = new SimpleDateFormat(pattern);
+			SystemLog systemLog = new SystemLog();
+			systemLog.setMessage("LabStaff with email "+userService.getLoggedUser().getEmail()+ " deleted lab report of Patient email "+diagnosis.getUser().getEmail()
+					+" who has appointment start "+df.format(diagnosis.getAppointment().getStartTime())+" and appointment end "+df.format(diagnosis.getAppointment().getEndTime()));
+			systemLog.setTimestamp(new Date());
+			systemLogRepository.save(systemLog);
 			labStaffService.deleteLabTestReport(Integer.parseInt(labTestReportId));
 			return "redirect:/labstaff/ViewOrUpdateOrDeleteLabTest";
 		}
@@ -200,6 +224,15 @@ public class LabStaffController {
 	public String UpdateLabTestReport(@ModelAttribute("labTestReport") LabTestReport labTestReport,@PathVariable("labTestReportId") String labTestReportId, Model model) {
 		User user = userService.getLoggedUser();
 		model.addAttribute("accountName", user.getFirstName());
+		Optional<LabTestReport> labTestReportOpt = labTestReportRepository.findById(Integer.parseInt(labTestReportId));
+		Diagnosis diagnosis = labTestReportOpt.get().getLabTest().getDiagnosis();
+		String pattern = "yyyy-MM-dd HH:mm:ss";
+		DateFormat df = new SimpleDateFormat(pattern);
+		SystemLog systemLog = new SystemLog();
+		systemLog.setMessage("LabStaff with email "+userService.getLoggedUser().getEmail()+ " updated lab report of Patient email "+diagnosis.getUser().getEmail()
+				+" who has appointment start "+df.format(diagnosis.getAppointment().getStartTime())+" and appointment end "+df.format(diagnosis.getAppointment().getEndTime()));
+		systemLog.setTimestamp(new Date());
+		systemLogRepository.save(systemLog);
 		labStaffService.UpdateLabTestReport(labTestReport, Integer.parseInt(labTestReportId));
 		return "redirect:/labstaff/ViewOrUpdateOrDeleteLabTest";
 	}

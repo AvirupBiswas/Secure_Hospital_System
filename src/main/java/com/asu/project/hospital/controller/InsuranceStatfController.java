@@ -36,28 +36,28 @@ import com.asu.project.hospital.service.UserService;
 @Controller
 @RequestMapping("/insurancestaff")
 public class InsuranceStatfController {
-	
+
 	@Autowired
 	private UserService userService;
-	
+
 	@Autowired
 	private InsuranceStaffService insuranceStaffService;
-	
+
 	@Autowired
 	private UserRepository userRepository;
-	
+
 	@Autowired
 	private PatientPaymentRepository patientPaymentRepository;
-	
+
 	@Autowired
 	private SystemLogRepository systemLogRepository;
-	
+
 	@Autowired
 	private MailService emailService;
-	
+
 	@Autowired
 	private InsuranceClaimsRepository insuranceClaimsRepository;
-	
+
 	@GetMapping("/home")
 	public String inSuranceStaffHome(Model model) {
 		User user = userService.getLoggedUser();
@@ -74,9 +74,10 @@ public class InsuranceStatfController {
 		model.addAttribute("userInfo", InsuranceStaffUser);
 		return "insurancestaff/updateinfo";
 	}
-	
+
 	@PostMapping("/updateinformation")
-	public String register(@Valid @ModelAttribute("insuranceStaff") InsuranceStaff userForm, BindingResult result, Model model) {
+	public String register(@Valid @ModelAttribute("insuranceStaff") InsuranceStaff userForm, BindingResult result,
+			Model model) {
 
 		if (result.hasErrors()) {
 			return "redirect:/insuranceStaff/updateinfo";
@@ -94,8 +95,8 @@ public class InsuranceStatfController {
 	}
 
 	@PostMapping("/editinformation")
-	public String editInformation(@Valid @ModelAttribute("insuranceStaff") InsuranceStaff userForm, BindingResult result,
-			Model model) {
+	public String editInformation(@Valid @ModelAttribute("insuranceStaff") InsuranceStaff userForm,
+			BindingResult result, Model model) {
 
 		if (result.hasErrors()) {
 			return "redirect:/insuranceStaff/updateinfo";
@@ -114,52 +115,50 @@ public class InsuranceStatfController {
 		}
 		return "redirect:/insurancestaff/home";
 	}
-	
+
 	@GetMapping("/createInsurance")
 	public String createInsurance(Model model) {
 		User user = userService.getLoggedUser();
 		model.addAttribute("accountName", user.getFirstName());
 		return "insurancestaff/createInsurance";
 	}
-	
+
 	@PostMapping("/addInsuranceDetails")
-	public String addInsuranceDetails(@ModelAttribute("insurance") Insurance insurance,Model model) {
+	public String addInsuranceDetails(@ModelAttribute("insurance") Insurance insurance, Model model) {
 		User user = userService.getLoggedUser();
 		model.addAttribute("accountName", user.getFirstName());
 		InsuranceDetails insuranceDetails = new InsuranceDetails();
 		insuranceDetails.setInsuranceId(insurance.getInsuranceId());
 		insuranceDetails.setInsuranceName(insurance.getInsuranceName());
 		insuranceDetails.setProvider(insurance.getProvider());
-		Optional<User> userVal= userRepository.findOneByEmailIgnoreCase(insurance.getEmail());
+		Optional<User> userVal = userRepository.findOneByEmailIgnoreCase(insurance.getEmail());
 		insuranceDetails.setUser(userVal.get());
 		insuranceStaffService.addInsuranceDetails(insuranceDetails);
 		return "redirect:/insurancestaff/home";
 	}
-	
+
 	@GetMapping("/getInsuranceClaim")
 	public String getInsuranceClaim(Model model, @RequestParam(name = "status") String status) {
 		User user = userService.getLoggedUser();
 		model.addAttribute("accountName", user.getFirstName());
-		if(status.equals("Pending")) {
-		List<InsuranceClaims> claims = insuranceStaffService.getInsuranceClaimByStatus(status);
-		model.addAttribute("allclaims", claims);
-		return "insurancestaff/viewClaim";
-		}
-		else {
+		if (status.equals("Pending")) {
+			List<InsuranceClaims> claims = insuranceStaffService.getInsuranceClaimByStatus(status);
+			model.addAttribute("allclaims", claims);
+			return "insurancestaff/viewClaim";
+		} else {
 			List<InsuranceClaims> claims = insuranceStaffService.getInsuranceClaimByStatus(status);
 			model.addAttribute("allclaims", claims);
 			return "insurancestaff/viewClaimToDisburse";
 		}
 	}
-	
+
 	@GetMapping("/approveclaim/{claimId}")
 	public String approveClaim(@PathVariable("claimId") String claimId, Model model) {
 		User user = insuranceStaffService.updateClaimStatus("Approved", Long.parseLong(claimId));
-		emailService.sendInsuranceClaimApprovalMail(user.getEmail(), user.getFirstName(), user.getLastName(),
-				claimId);
+		emailService.sendInsuranceClaimApprovalMail(user.getEmail(), user.getFirstName(), user.getLastName(), claimId);
 		SystemLog systemLog = new SystemLog();
-		systemLog.setMessage(user.getEmail() + " claim " + claimId
-				+ " approved by  insuranceStaff " + userService.getLoggedUser().getEmail());
+		systemLog.setMessage("InsuranceStaff with email " + userService.getLoggedUser().getEmail() + " approved claim "
+				+ claimId + " of Patient with email " + user.getEmail());
 		systemLog.setTimestamp(new Date());
 		systemLogRepository.save(systemLog);
 		return "insurancestaff/viewClaim";
@@ -168,54 +167,51 @@ public class InsuranceStatfController {
 	@GetMapping("/denyclaim/{claimId}")
 	public String denyClaim(@PathVariable("claimId") String claimId, Model model) {
 		User user = insuranceStaffService.updateClaimStatus("Denied", Long.parseLong(claimId));
-		InsuranceClaims claim=insuranceClaimsRepository.getById(Long.parseLong(claimId));
-		PatientPayment patientPayment=claim.getPatientPayment();
+		InsuranceClaims claim = insuranceClaimsRepository.getById(Long.parseLong(claimId));
+		PatientPayment patientPayment = claim.getPatientPayment();
 		patientPayment.setStatus("Pending");
 		patientPaymentRepository.save(patientPayment);
-		emailService.sendInsuranceClaimDenyMail(user.getEmail(), user.getFirstName(), user.getLastName(),
-				claimId);
+		emailService.sendInsuranceClaimDenyMail(user.getEmail(), user.getFirstName(), user.getLastName(), claimId);
 		SystemLog systemLog = new SystemLog();
-		systemLog.setMessage(user.getEmail() + " claim " + claimId
-				+ " denied by  insuranceStaff " + userService.getLoggedUser().getEmail());
+		systemLog.setMessage("InsuranceStaff with email " + userService.getLoggedUser().getEmail() + " denied claim "
+				+ claimId + " of Patient with email " + user.getEmail());
 		systemLog.setTimestamp(new Date());
 		systemLogRepository.save(systemLog);
 		return "insurancestaff/viewClaim";
 	}
-	
-	@GetMapping("/denyclaimAsNoinsuurance/{claimId}")
+
+	@GetMapping("/denyclaimAsNoinsurance/{claimId}")
 	public String denyclaimAsNoinsurance(@PathVariable("claimId") String claimId, Model model) {
 		User user = insuranceStaffService.updateClaimStatus("Denied", Long.parseLong(claimId));
-		InsuranceClaims claim=insuranceClaimsRepository.getById(Long.parseLong(claimId));
-		PatientPayment patientPayment=claim.getPatientPayment();
+		InsuranceClaims claim = insuranceClaimsRepository.getById(Long.parseLong(claimId));
+		PatientPayment patientPayment = claim.getPatientPayment();
 		patientPayment.setStatus("Pending");
 		patientPaymentRepository.save(patientPayment);
-		emailService.sendClaimAsNoInsuranceDenyMail(user.getEmail(), user.getFirstName(), user.getLastName(),
-				claimId);
+		emailService.sendClaimAsNoInsuranceDenyMail(user.getEmail(), user.getFirstName(), user.getLastName(), claimId);
 		SystemLog systemLog = new SystemLog();
-		systemLog.setMessage(user.getEmail() + " claim " + claimId
-				+ " denied by  insuranceStaff " + userService.getLoggedUser().getEmail());
+		systemLog.setMessage("InsuranceStaff with email " + userService.getLoggedUser().getEmail() + " denied claim "
+				+ claimId + " of Patient with email " + user.getEmail());
 		systemLog.setTimestamp(new Date());
 		systemLogRepository.save(systemLog);
 		return "insurancestaff/viewClaim";
 	}
-	
-	
+
 	@GetMapping("/disburse/{claimId}")
 	public String disburse(@PathVariable("claimId") String claimId, Model model) {
 		User user = insuranceStaffService.updateClaimStatus("Disbursed", Long.parseLong(claimId));
-		Optional<InsuranceClaims> claim = insuranceClaimsRepository.findById( Long.parseLong(claimId));
+		Optional<InsuranceClaims> claim = insuranceClaimsRepository.findById(Long.parseLong(claimId));
 		InsuranceClaims claimObj = claim.get();
-		PatientPayment patientPayment=claimObj.getPatientPayment();
+		PatientPayment patientPayment = claimObj.getPatientPayment();
 		patientPayment.setStatus("paid");
 		patientPaymentRepository.save(patientPayment);
 		emailService.sendInsuranceClaimAmountDisburseMail(user.getEmail(), user.getFirstName(), user.getLastName(),
-				claimId,claimObj.getAmount());
+				claimId, claimObj.getAmount());
 		SystemLog systemLog = new SystemLog();
-		systemLog.setMessage(user.getEmail() + " claim amount " +claimObj.getAmount()+" corresponding to claim id "+ claimId
-				+ " has been disburse by  insuranceStaff " + userService.getLoggedUser().getEmail());
+		systemLog.setMessage("InsuranceStaff with email " + userService.getLoggedUser().getEmail() + " disburse claim amount "+ claimObj.getAmount() + " corresponding to claim id "
+				+ claimId +" of Patient with email " + user.getEmail());
 		systemLog.setTimestamp(new Date());
 		systemLogRepository.save(systemLog);
 		return "insurancestaff/viewClaimToDisburse";
 	}
-	
+
 }

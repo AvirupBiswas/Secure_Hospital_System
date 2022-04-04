@@ -1,5 +1,7 @@
 package com.asu.project.hospital.controller;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -530,8 +532,18 @@ public class AdminController {
 
 	@GetMapping("/DeleteLabTestReport/{labTestReportId}")
 	public String DeleteLabTestReport(@PathVariable("labTestReportId") String labTestReportId, Model model) {
-		labStaffService.deleteLabTestReport(Integer.parseInt(labTestReportId));
 		User user = userService.getLoggedUser();
+		Optional<LabTestReport> labTestReportOpt = labTestReportRepository.findById(Integer.parseInt(labTestReportId));
+		Diagnosis diagnosis = labTestReportOpt.get().getLabTest().getDiagnosis();
+		String pattern = "yyyy-MM-dd HH:mm:ss";
+		DateFormat df = new SimpleDateFormat(pattern);
+		SystemLog systemLog = new SystemLog();
+		systemLog.setMessage("Admin with email "+user.getEmail()+ " deleted lab report of Patient email "+diagnosis.getUser().getEmail()
+				+" who has appointment start "+df.format(diagnosis.getAppointment().getStartTime())+" and appointment end "+df.format(diagnosis.getAppointment().getEndTime()));
+		systemLog.setTimestamp(new Date());
+		systemLogRepository.save(systemLog);
+		labStaffService.deleteLabTestReport(Integer.parseInt(labTestReportId));
+		
 		model.addAttribute("accountName", user.getFirstName());
 		return "redirect:/admin/getInternalPatientFiles";
 	}
@@ -541,6 +553,15 @@ public class AdminController {
 		User user = userService.getLoggedUser();
 		model.addAttribute("accountName", user.getFirstName());
 		Diagnosis diagnosis = doctorService.findByDiagnosis(Integer.parseInt(diagnosisId));
+		
+		String pattern = "yyyy-MM-dd HH:mm:ss";
+		DateFormat df = new SimpleDateFormat(pattern);
+		
+		SystemLog systemLog = new SystemLog();
+		systemLog.setMessage("Admin with email "+user.getEmail()+ " deleted diagnosis report of Patient email "+diagnosis.getUser().getEmail()
+				+" who has appointment start "+df.format(diagnosis.getAppointment().getStartTime())+" and appointment end "+df.format(diagnosis.getAppointment().getEndTime()));
+		systemLog.setTimestamp(new Date());
+		systemLogRepository.save(systemLog);
 		doctorService.deleteDiagnosis(diagnosis);
 		return "redirect:/admin/getInternalPatientFiles";
 	}

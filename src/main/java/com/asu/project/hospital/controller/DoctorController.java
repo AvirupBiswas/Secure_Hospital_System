@@ -1,7 +1,10 @@
 package com.asu.project.hospital.controller;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Date;
 import java.util.List;
 
 import javax.validation.Valid;
@@ -21,11 +24,13 @@ import com.asu.project.hospital.entity.Diagnosis;
 import com.asu.project.hospital.entity.Doctor;
 import com.asu.project.hospital.entity.LabTest;
 import com.asu.project.hospital.entity.Patient;
+import com.asu.project.hospital.entity.SystemLog;
 import com.asu.project.hospital.entity.User;
 import com.asu.project.hospital.model.BlockChainDiagnosisObject;
 import com.asu.project.hospital.repository.AppointmentRepository;
 import com.asu.project.hospital.repository.DoctorRepository;
 import com.asu.project.hospital.repository.PatientRepository;
+import com.asu.project.hospital.repository.SystemLogRepository;
 import com.asu.project.hospital.service.BlockChainFeignService;
 import com.asu.project.hospital.service.DoctorService;
 import com.asu.project.hospital.service.UserService;
@@ -51,6 +56,9 @@ public class DoctorController {
 
 	@Autowired
 	private AppointmentRepository appointmentRepository;
+	
+	@Autowired
+	private SystemLogRepository systemLogRepository;
 
 	@GetMapping("/home")
 	public String doctorHome(Model model) {
@@ -213,7 +221,13 @@ public class DoctorController {
 	@GetMapping("/deletediagnosis")
 	public String deleteDiagnosis(@RequestParam("diagnosisId") int diagnosisId, Model model) {
 		Diagnosis diagnosis = doctorService.findByDiagnosis(diagnosisId);
-		// System.out.println("Delete diagnosis" + diagnosisId);
+		String pattern = "yyyy-MM-dd HH:mm:ss";
+		DateFormat df = new SimpleDateFormat(pattern);
+		SystemLog systemLog = new SystemLog();
+		systemLog.setMessage("Doctor with email "+userService.getLoggedUser().getEmail()+ " deleted diagnosis report of Patient email "+diagnosis.getUser().getEmail()
+				+" who has appointment start "+df.format(diagnosis.getAppointment().getStartTime())+" and appointment end "+df.format(diagnosis.getAppointment().getEndTime()));
+		systemLog.setTimestamp(new Date());
+		systemLogRepository.save(systemLog);
 		doctorService.deleteDiagnosis(diagnosis);
 		return "doctor/doctorhome";
 	}

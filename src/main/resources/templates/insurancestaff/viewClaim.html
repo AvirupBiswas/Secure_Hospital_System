@@ -64,7 +64,7 @@
         
         function denyAsNoInsurance(id) {
             $.ajax({
-               url : "[(@{'/insurancestaff/denyclaimAsNoinsuurance/'})]"+id,
+               url : "[(@{'/insurancestaff/denyclaimAsNoinsurance/'})]"+id,
                type : "GET",
                beforeSend: function () {
        	    	$("#loader").removeClass('hidden');
