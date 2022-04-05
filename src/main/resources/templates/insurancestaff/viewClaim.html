@@ -19,7 +19,7 @@
         	        },
                 success : function(data) {
                 	 $('#' + id).remove();
-                	 var info = {"id":"claimid:"+" "+id.toString(),
+                	 var info = {"id":"claimid:"+" "+id.toString()+" at "+formatDate(),
             			     "patient_name":firstname+' '+lastname,
             			     "content":'amount: '+amount.toString()+', purpose: '+purpose+', policy Id: '+insId,
             			     "date":formatDate()
@@ -84,13 +84,19 @@
         
         function formatDate()
         {
-         date = new Date()
-         var dd = date.getDate(); 
-         var mm = date.getMonth()+1;
-         var yyyy = date.getFullYear(); 
-         if(dd<10){dd='0'+dd} 
-         if(mm<10){mm='0'+mm}
-         return d = mm+'/'+dd+'/'+yyyy
+        	date = new Date()
+            var dd = date.getDate(); 
+            var mm = date.getMonth()+1;
+            var yyyy = date.getFullYear(); 
+            if(dd<10){dd='0'+dd} 
+            if(mm<10){mm='0'+mm}
+            var hr = date.getHours();
+            var min = date.getMinutes();
+            var sec = date.getMinutes();
+            if(hr<10){hr='0'+hr} 
+            if(min<10){min='0'+min}
+            if(sec<10){sec='0'+sec} 
+            return d = mm+'/'+dd+'/'+yyyy+" at "+hr+':'+min+':'+sec
        }
     </script>
     <style>
