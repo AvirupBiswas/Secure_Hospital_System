@@ -12,8 +12,8 @@ $(function() {
                 msg: rawText,
             },
             type: "POST",
-            // url: "https://cse-chatbot.herokuapp.com/get_response"
-            url: "http://localhost:5000/get_response"
+            url: "https://cse-chatbot.herokuapp.com/get_response"
+            // url: "http://localhost:5000/get_response"
         }).done(function(data) {
             console.log(data['data']);
             console.log(data['success']);
