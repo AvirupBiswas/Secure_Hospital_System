@@ -164,7 +164,7 @@
 	            <td>[[${payment.status}]]</td>
 	            <td>[[${payment.paymentType}]]</td>
 	            <td><button class="btn btn-success"   
-                        th:onclick=approve([[${payment.paymentID}]],[[${#strings.toString(payment.user.firstName)}]],[[${#strings.toString(payment.user.lastName)}]],[[${payment.amount}]])>Approve</button></td>
+                        th:onclick="approve([[${payment.paymentID}]],[[${#strings.toString(payment.user.firstName)}]],[[${#strings.toString(payment.user.lastName)}]],[[${payment.amount}]]);">Approve</button></td>
 	        </tr>
 	    </tbody>
 	</table>
