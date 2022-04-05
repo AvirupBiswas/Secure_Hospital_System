@@ -293,7 +293,9 @@ public class HospitalStaffController {
 		User patientUser = userService.findByUserId(userId);
 		patientPayment.setStatus("Pending");
 		patientPayment.setUser(patientUser);
+		if(patientPayment.getAmount()!=null && patientPayment.getPurpose()!=null) {
 		patientPaymentRepository.save(patientPayment);
+		}
 		
 		User user = userService.getLoggedUser();
 		model.addAttribute("accountName", user.getFirstName());
