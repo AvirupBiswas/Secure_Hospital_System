@@ -39,7 +39,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 				.permitAll().and()
 				.logout(logout -> logout.logoutUrl("/logout").logoutSuccessUrl("/login")
 						.logoutSuccessHandler(logoutSuccessHandler()).invalidateHttpSession(true))
-				.exceptionHandling().and().sessionManagement().and().csrf()
+				.exceptionHandling().and().sessionManagement().invalidSessionUrl("/login?invalid_session=true").and().csrf()
 				.csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()).and().headers().frameOptions().and()
 				.defaultsDisabled().xssProtection();
 	}

@@ -33,6 +33,7 @@ public class CustomLogoutSuccessHandler extends SimpleUrlLogoutSuccessHandler im
 	@Override
 	public void onLogoutSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication)
 			throws IOException, ServletException {
+		if(authentication!=null) {
 		Optional<User> user = userRepository.findOneByEmailIgnoreCase(authentication.getName());
 		if (user.isPresent()) {
 			SignInHistory signInHistory = new SignInHistory();
@@ -44,6 +45,7 @@ public class CustomLogoutSuccessHandler extends SimpleUrlLogoutSuccessHandler im
 			signInHistory.setLoginTimeStamp(loginSingleTon.getTimestamp());
 			signInHistory.setLogoutTimeStamp(new Date());
 			signInHistoryRepository.save(signInHistory);
+		}
 		}
 		super.onLogoutSuccess(request, response, authentication);
 	}

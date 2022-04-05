@@ -31,7 +31,11 @@ public class ViewController {
 	private UserService userService;
 
 	@GetMapping("/login")
-	public String login() {
+	public String login(@RequestParam(name = "invalid_session", defaultValue  = "false") boolean invalid_session,Model model) {
+		
+		if(invalid_session) {
+			model.addAttribute("invalid_session","Sorry your session expired ");
+		}
 		return "signin";
 	}
 	
