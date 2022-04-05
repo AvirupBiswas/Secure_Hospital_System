@@ -447,6 +447,11 @@ public class AdminController {
 			PatientPayment patientPayment = patientPaymentOpt.get();
 			patientPayment.setStatus("Approved");
 			patientPaymentRepository.save(patientPayment);
+			SystemLog systemLog = new SystemLog();
+			systemLog.setMessage("payment of patient with email "+patientPayment.getUser().getEmail() + " has approved By admin with email "
+					+ user.getEmail());
+			systemLog.setTimestamp(new Date());
+			systemLogRepository.save(systemLog);
 		}
 		return "admin/pendingPaymentApprovalList";
 	}
