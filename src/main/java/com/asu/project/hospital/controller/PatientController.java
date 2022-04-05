@@ -131,7 +131,7 @@ public class PatientController {
 	public String editInsuranceDetails(@ModelAttribute("insurance") InsuranceDetails insuranceDetails) {
 		User user = userService.getLoggedUser();
 		patientService.editInsuranceDetails(insuranceDetails);
-		return "patient/insuranceclaim";
+		return "patient/patienthome";
 	}
 	
 	@PostMapping("/addClaimDetails")
