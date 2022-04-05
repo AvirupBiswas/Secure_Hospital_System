@@ -20,25 +20,8 @@
         	        },
                 success : function(data) {
                 	 $('#' + id).remove();
-                	 //Block chain save
                 	 
-                	 var info = {"id":"paymentid:"+" "+id.toString()+" at "+formatDate(),
-                			     "patient_name":firstname+' '+lastname,
-                			     "amount":amount.toString(),
-                			     "date":formatDate()
-                	 			};
-                	 $.ajax({
-                	      method: "POST",
-                	      url: "http://52.53.242.26:8080/api/add_payment/",
-                	      data: JSON.stringify(info),
-                	      headers: {
-                	        'Content-Type': 'application/json',
-                	        'Access-Control-Allow-Origin': '*' 
-                	    }
-                	    })
-                	      .done(function( msg ) {
-                	    	  console.log("Sucessfully saved to block chain");
-                	      });
+                	
                 },
                 error : function() {
                     console.log("There was an error");

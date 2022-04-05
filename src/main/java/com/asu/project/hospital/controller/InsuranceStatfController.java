@@ -24,11 +24,13 @@ import com.asu.project.hospital.entity.LabTest;
 import com.asu.project.hospital.entity.PatientPayment;
 import com.asu.project.hospital.entity.SystemLog;
 import com.asu.project.hospital.entity.User;
+import com.asu.project.hospital.model.BlockChainDiagnosisObject;
 import com.asu.project.hospital.model.Insurance;
 import com.asu.project.hospital.repository.InsuranceClaimsRepository;
 import com.asu.project.hospital.repository.PatientPaymentRepository;
 import com.asu.project.hospital.repository.SystemLogRepository;
 import com.asu.project.hospital.repository.UserRepository;
+import com.asu.project.hospital.service.BlockChainFeignService;
 import com.asu.project.hospital.service.InsuranceStaffService;
 import com.asu.project.hospital.service.MailService;
 import com.asu.project.hospital.service.UserService;
@@ -57,6 +59,9 @@ public class InsuranceStatfController {
 
 	@Autowired
 	private InsuranceClaimsRepository insuranceClaimsRepository;
+	
+	@Autowired
+	BlockChainFeignService blockChainService;
 
 	@GetMapping("/home")
 	public String inSuranceStaffHome(Model model) {
@@ -155,7 +160,15 @@ public class InsuranceStatfController {
 	@GetMapping("/approveclaim/{claimId}")
 	public String approveClaim(@PathVariable("claimId") String claimId, Model model) {
 		User user = insuranceStaffService.updateClaimStatus("Approved", Long.parseLong(claimId));
+		User insuranceStaff=userService.getLoggedUser();
 		emailService.sendInsuranceClaimApprovalMail(user.getEmail(), user.getFirstName(), user.getLastName(), claimId);
+		BlockChainDiagnosisObject blcObj=new BlockChainDiagnosisObject();
+		blcObj.setDate(new Date());
+		blcObj.setId("ClaimID: " + claimId+" at "+ blcObj.getDate());
+		blcObj.setPatient_name(insuranceStaff.getFirstName() + " " + insuranceStaff.getLastName());
+		blcObj.setContent(
+				"Claim approved by " + user.getFirstName() + " " + user.getLastName());
+		blockChainService.addDiagnosisToBlockChain(blcObj);
 		SystemLog systemLog = new SystemLog();
 		systemLog.setMessage("InsuranceStaff with email " + userService.getLoggedUser().getEmail() + " approved claim "
 				+ claimId + " of Patient with email " + user.getEmail());
