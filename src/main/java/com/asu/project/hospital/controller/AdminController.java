@@ -37,6 +37,7 @@ import com.asu.project.hospital.entity.PatientQuery;
 import com.asu.project.hospital.entity.SignInHistory;
 import com.asu.project.hospital.entity.SystemLog;
 import com.asu.project.hospital.entity.User;
+import com.asu.project.hospital.model.BlockChainDiagnosisObject;
 import com.asu.project.hospital.model.SignInhistorySearchResult;
 import com.asu.project.hospital.model.SystemLogsSearchResult;
 import com.asu.project.hospital.model.ViewDiagNosticAndLabTestReport;
@@ -53,6 +54,7 @@ import com.asu.project.hospital.repository.PatientQueryRepository;
 import com.asu.project.hospital.repository.SignInHistoryRepository;
 import com.asu.project.hospital.repository.SystemLogRepository;
 import com.asu.project.hospital.repository.UserRepository;
+import com.asu.project.hospital.service.BlockChainFeignService;
 import com.asu.project.hospital.service.DoctorService;
 import com.asu.project.hospital.service.LabStaffService;
 import com.asu.project.hospital.service.MailService;
@@ -73,6 +75,9 @@ public class AdminController {
 
 	@Autowired
 	UserRepository userRepository;
+	
+	@Autowired
+	BlockChainFeignService blockChainService;
 
 	@Autowired
 	private SignInHistoryRepository signInHistoryRepository;
@@ -447,12 +452,20 @@ public class AdminController {
 			PatientPayment patientPayment = patientPaymentOpt.get();
 			patientPayment.setStatus("Approved");
 			patientPaymentRepository.save(patientPayment);
+			BlockChainDiagnosisObject blcObj=new BlockChainDiagnosisObject();
+			blcObj.setDate(new Date());
+			blcObj.setId("Paymentid: " + patientPayment.getPaymentID()+" at "+ blcObj.getDate());
+			blcObj.setPatient_name(patientPayment.getUser().getFirstName() + " " + patientPayment.getUser().getLastName());
+			blcObj.setContent(
+					"Payment approved for " + user.getFirstName() + " " + user.getLastName());
+			blockChainService.addDiagnosisToBlockChain(blcObj);
 			SystemLog systemLog = new SystemLog();
 			systemLog.setMessage("payment of patient with email "+patientPayment.getUser().getEmail() + " has approved By admin with email "
 					+ user.getEmail());
 			systemLog.setTimestamp(new Date());
 			systemLogRepository.save(systemLog);
 		}
+		
 		return "admin/pendingPaymentApprovalList";
 	}
 
